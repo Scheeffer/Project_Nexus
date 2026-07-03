@@ -158,7 +158,7 @@ flowchart TD
 |-------|:----:|--------|------------|
 | Aquecimento | **GPIO18** | Liga elemento de aquecimento (via relé) | Relé/SSR; carga em fonte separada |
 | Refrigeração | **GPIO19** | Liga ventilador/peltier (via relé) | GND comum com o ESP |
-| Sensor temp | _definir_ | Entrada do sensor | Se DS18B20: pull-up 4k7 no 1-Wire |
+| Sensor temp | DS18B20 | Entrada do sensor | Se DS18B20: pull-up 4k7 no 1-Wire |
 
 > Esquemático formal → exportar de Fritzing/KiCad para `figs/`.
 
@@ -192,7 +192,7 @@ firmware/esp32-idf/
 
 ---
 
-## 7. Pendências (o que falta versionar)
+## 7. Pendências (o que falta versionar, adicione pendências aqui.)
 
 - [ ] Endereço do **broker** e **tópicos** usados no `mqtt_app.c`
 
