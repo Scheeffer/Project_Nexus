@@ -158,8 +158,8 @@ O mesmo vale para o **HTTP REST** (Célula 2) e o **S7/ISO-on-TCP** (Célula 1):
 
 ## 6. Por que isso importa no dia do teste
 
-1. **Autonomia (25%):** como o controle roda local (CAN no ESP, malha térmica no ESP MQTT, PLC no S7), a disputa de meio *interna* não trava o processo — a célula opera sozinha.
-2. **Visibilidade global (20%):** a ausência de colisão no backbone comutado garante que a telemetria das três células chega ao Node-RED de forma confiável e ordenada (TCP).
+1. **Autonomia:** como o controle roda local (CAN no ESP, malha térmica no ESP MQTT, PLC no S7), a disputa de meio *interna* não trava o processo — a célula opera sozinha.
+2. **Visibilidade global:** a ausência de colisão no backbone comutado garante que a telemetria das três células chega ao Node-RED de forma confiável e ordenada (TCP).
 3. **Diagnóstico:** o bit `diag/online` (via **LWT** do MQTT) detecta um nó que sumiu — é o "controle de erro" na ponta, cobrindo o caso em que backoff/retransmissão não resolveram porque o nó realmente caiu.
 4. **Risco a monitorar:** o **Wi-Fi** é o elo mais frágil (CSMA/CA não determinístico, interferência na sala). Se houver perda intermitente na demonstração, o suspeito nº 1 é a contenção/ruído no canal 802.11, **não** o backbone cabeado.
 
