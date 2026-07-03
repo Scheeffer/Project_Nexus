@@ -10,8 +10,8 @@ const char* generate_html_page(
     const char* dummy,
     int adc_value,
     float velocidade,
-    int valor_slider_local, // <-- Apenas o slider manual da página HTML
-    int valor_node_red_freq // <-- Apenas a frequência vinda do Node-RED
+    int valor_slider_local, 
+    int valor_node_red_freq 
 )
 {
     // ==================================================
@@ -37,8 +37,25 @@ const char* generate_html_page(
     ".value { font-size:48px; font-weight:bold; margin-bottom:30px; }"
     ".unit { font-size:24px; opacity:0.8; }"
     ".online { color:#22c55e; font-size:32px; font-weight:bold; }"
-    ".btn { width:100%; padding:18px; border:none; border-radius:16px; background:#16a34a; color:white; font-size:24px; font-weight:bold; cursor:pointer; transition:0.3s; margin-top:15px; }"
-    ".btn:hover { transform:scale(1.03); }"
+    
+    ".btn-group { display:flex; gap:15px; margin-top:15px; }"
+    ".btn { flex:1; padding:18px; border:none; border-radius:16px; color:white; font-size:18px; font-weight:bold; cursor:pointer; transition:0.3s; text-transform:uppercase; }"
+    ".btn-ligar { background:#16a34a; }"
+    ".btn-ligar:hover { transform:scale(1.04); background:#15803d; }"
+    ".btn-desligar { background:#dc2626; }"
+    ".btn-desligar:hover { transform:scale(1.04); background:#b91c1c; }"
+    
+    /* Card MQTT */
+    ".btn-aquecer { background:#ea580c; }"
+    ".btn-aquecer:hover { transform:scale(1.04); background:#c2410c; }"
+    ".btn-refrigerar { background:#2563eb; }"
+    ".btn-refrigerar:hover { transform:scale(1.04); background:#1d4ed8; }"
+    
+    /* Estilos Adicionados para Exibição dos Dados do MQTT */
+    ".mqtt-display-box { background:rgba(167,139,250,0.08); padding:15px; border-radius:12px; border:1px dashed rgba(167,139,250,0.3); margin-top:20px; }"
+    ".mqtt-data-row { display:flex; justify-content:space-between; margin:8px 0; font-size:15px; color:#e2e8f0; }"
+    ".status-badge { font-weight:bold; color:#cbd5e1; transition:0.2s; }"
+
     ".slider-container { background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.02); }"
     ".slider-label { display:flex; justify-content:space-between; font-size:14px; color:#cbd5e1; margin-bottom:8px; text-transform:uppercase; }"
     ".slider-input { width:100%; accent-color:#06b6d4; cursor:pointer; height:6px; border-radius:3px; }" 
@@ -49,7 +66,7 @@ const char* generate_html_page(
     "<body>"
     "<div class='header'>"
     "<h1>MONITOR CAN</h1>"
-    "<p>GATEWAY (MODO CONCORRENTE)</p>"
+    "<p>GATEWAY</p>"
     "</div>"
     "<div class='container'>";
 
@@ -67,31 +84,32 @@ const char* generate_html_page(
     "const resposta = await fetch('/data');"
     "const dados = await resposta.json();"
     
-    // CARD 1: Velocidade atual
     "if(dados.velocidade !== undefined){"
     "document.getElementById('speed').innerHTML = dados.velocidade.toFixed(1) + ' <span class=\"unit\">km/h</span>';"
     "}"
     
-    // CARD 2: Slider Local 
     "if(!userIsDragging && dados.slider_local !== undefined){"
     "document.getElementById('slider_display').innerText = dados.slider_local;"
     "document.getElementById('freqSlider').value = dados.slider_local;"
     "}"
     
-    // CARD 2: Referência vinda do Node-RED
     "if(dados.nr_freq !== undefined){"
     "document.getElementById('nr_value_display').innerText = dados.nr_freq;"
     "}"
     
-    // CARD 3: Monitor dinâmico de quem assumiu o barramento por último
-    "if(dados.modo_remoto !== undefined){"
-    "const statusBox = document.getElementById('concorrenciaStatus');"
-    "if(dados.modo_remoto){"
-    "statusBox.innerHTML = 'Último Comando: <strong style=\"color:#06b6d4;\">NODE-RED (Via Rede)</strong>';"
-    "} else {"
-    "statusBox.innerHTML = 'Último Comando: <strong style=\"color:#22c55e;\">POTENCIÔMETRO (Local)</strong>';"
+    /* ATUALIZAÇÃO EM TEMPO REAL: Dados de Temperatura e Status Simulado */
+    "if(dados.mqtt_temp !== undefined){"
+    "document.getElementById('mqtt_temp_display').innerText = dados.mqtt_temp.toFixed(1);"
     "}"
+    "if(dados.mqtt_status !== undefined){"
+    "const statusEl = document.getElementById('mqtt_status_display');"
+    "statusEl.innerText = dados.mqtt_status;"
+    "if(dados.mqtt_status.includes('Resfriando')) statusEl.style.color = '#38bdf8';"
+    "else if(dados.mqtt_status.includes('Aquecendo')) statusEl.style.color = '#f87171';"
+    "else if(dados.mqtt_status.includes('Estável')) statusEl.style.color = '#4ade80';"
+    "else statusEl.style.color = '#cbd5e1';"
     "}"
+    
     "}catch(e){ console.log(e); }"
     "}"
 
@@ -107,15 +125,25 @@ const char* generate_html_page(
     "}catch(e){ console.log('Erro ao enviar slider local:', e); }"
     "}"
 
-    "async function toggleNodeRed(){"
-    "try{"
-    "const resposta = await fetch('/toggle', { method: 'POST' });"
-    "const estadoTexto = await resposta.text();"
-    "const estado = (estadoTexto.trim() === 'true');"
-    "const btn = document.getElementById('toggleBtn');"
-    "if(estado){ btn.innerHTML = 'DESLIGAR'; btn.style.background = '#dc2626'; }"
-    "else { btn.innerHTML = 'LIGAR'; btn.style.background = '#16a34a'; }"
-    "}catch(e){ console.log(e); }"
+    "async function acionarLigar(){"
+    "try{ await fetch('/ligar', { method: 'POST' }); }catch(e){}"
+    "}"
+
+    "async function acionarDesligar(){"
+    "try{ await fetch('/desligar', { method: 'POST' }); }catch(e){}"
+    "}"
+
+    /*FUNÇÕES JAVASCRIPT COM O NODE-RED */
+    "async function acionarMqttAquecer(){"
+    "try{ await fetch('/mqtt_aquecer', { method: 'POST' }); }catch(e){}"
+    "}"
+
+    "async function acionarMqttResfriar(){"
+    "try{ await fetch('/mqtt_resfriar', { method: 'POST' }); }catch(e){}"
+    "}"
+
+    "async function acionarMqttDesligar(){"
+    "try{ await fetch('/mqtt_desligar', { method: 'POST' }); }catch(e){}"
     "}"
     
     "atualizarDados();"
@@ -127,7 +155,7 @@ const char* generate_html_page(
     // ==================================================
     // MONTA HTML 
     // ==================================================
-    size_t html_size = strlen(html_header) + strlen(html_footer) + 8000;
+    size_t html_size = strlen(html_header) + strlen(html_footer) + 8500;
     char* html_page = (char*)malloc(html_size);
     if (html_page == NULL) return NULL;
 
@@ -150,7 +178,6 @@ const char* generate_html_page(
         "<div class='card'>"
         "<div class='title' style='font-size:22px;color:white;'>PROFINET - CLP</div>"
         
-        // Slider Manual Local
         "<div class='slider-container'>"
         "<div class='slider-label'>"
         "<span>Ajuste Local</span>"
@@ -161,26 +188,43 @@ const char* generate_html_page(
         "onchange='enviarSliderLocal(this.value)'>"
         "</div>"
 
-        // REFERÊNCIA REMOTA: Exibe estritamente o valor que vem do Node-RED (valor_node_red_freq)
         "<div class='nr-display-box'>"
         "<div style='font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;'>Referência Freq. Node-RED</div>"
         "<div style='font-size:32px; font-weight:bold; color:#06b6d4;'><span id='nr_value_display'>%d</span> <span style='font-size:18px;'>Hz</span></div>"
         "</div>"
 
-        "<p style='font-size:15px;color:#cbd5e1;line-height:1.5;margin-bottom:10px;'>"
-        "LIGA/DESLIGA."
+        "<p style='font-size:15px;color:#cbd5e1;line-height:1.5;margin-bottom:5px;'>"
+        "Controle de Operação do CLP:"
         "</p>"
-        "<button id='toggleBtn' class='btn' onclick='toggleNodeRed()'>LIGAR</button>"
+        
+        "<div class='btn-group'>"
+        "<button class='btn btn-ligar' onclick='acionarLigar()'>LIGAR</button>"
+        "<button class='btn btn-desligar' onclick='acionarDesligar()'>DESLIGAR</button>"
+        "</div>"
         "</div>"
 
-        /* CARD 3: STATUS DA CONCORRÊNCIA (QUEM ALTEROU PRIMEIRO ASSUMIU) */
-        "<div class='card'>"
-        "<div class='title' style='font-size:22px;color:white;'>STATUS DE CONTROLE</div>"
-        "<p style='font-size:15px;color:#cbd5e1;line-height:1.5;margin-bottom:20px;'>"
-        "O sistema opera de forma cooperativa automática. Quem enviar uma nova instrução assume o controle do Painel E620 imediatamente."
+        /* CARD 3 ATUALIZADO: Com exibição de temperatura*/
+        "<div class='card' style='border: 1px solid rgba(167, 139, 250, 0.2);'>"
+        "<div class='title' style='font-size:22px; color:#a78bfa;'>MQTT - ESP</div>"
+        "<p style='font-size:14px; color:#cbd5e1; line-height:1.5; margin-bottom:20px;'>"
+        "Controle de operação da rede MQTT e simulação."
         "</p>"
-        "<div class='nr-display-box' style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.1); margin-top:10px;'>"
-        "<div id='concorrenciaStatus' style='font-size:16px; color:#cbd5e1;'>Último Comando: <strong style=\"color:#22c55e;\">POTENCIÔMETRO (Local)</strong></div>"
+        "<div class='btn-group' style='flex-direction: column; gap: 10px;'>"
+        "<button class='btn btn-aquecer' onclick='acionarMqttAquecer()'>AQUECER</button>"
+        "<button class='btn btn-refrigerar' onclick='acionarMqttResfriar()'>REFRIGERAR</button>"
+        "<button class='btn btn-desligar' onclick='acionarMqttDesligar()'>DESLIGAR</button>"
+        "</div>"
+        
+        /*CAMPOS EXIBIDOS NO CARD MQTT */
+        "<div class='mqtt-display-box'>"
+        "<div class='mqtt-data-row'>"
+        "<span>Temperatura:</span>"
+        "<span><strong id='mqtt_temp_display' style='color:#a78bfa;'>0.0</strong> °C</span>"
+        "</div>"
+        "<div class='mqtt-data-row'>"
+        "<span>Status Atual:</span>"
+        "<span id='mqtt_status_display' class='status-badge'>Aguardando</span>"
+        "</div>"
         "</div>"
         "</div>"
         
