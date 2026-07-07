@@ -47,7 +47,7 @@ Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados 
 
 ### Estrutura de envio de dados
 
-| ID (HEX) | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
+| ID | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
 | :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
 | `ID: 0x4D2` | `velocidade LSB` | `velocidade MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
 
