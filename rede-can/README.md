@@ -39,7 +39,7 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 </p>
 
 <p align="center">
-  <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="500">
+  <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%">
 </p>
 
 
