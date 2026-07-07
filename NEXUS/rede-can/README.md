@@ -44,13 +44,6 @@ No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da
 Todos os itens que possuem o parametro **Combination switch** na coluna **SIGNAL SOURCE** são operados através da comutação de entradas físicas, sinalizados pela coluna **SIGNAL FORMAT**, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados internos e não são acessíveis pelo usuário ou programador. 
 Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna **SIGNAL FORMAT**. O display E620 possui dois id’s CAN presentes no datasheet, contudo somente um deles funciona, e somente parcialmente, por tanto iremos documentar apenas o ID 0x4D2. há também id’s de longo
 
-
-### Estrutura de envio de dados
-
-| ID | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
-| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
-| `ID: 0x4D2` | `velocidade LSB` | `velocidade MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
-
 ### Estrutura de envio de dados
 
 | Variavel | Descrição |
@@ -60,6 +53,12 @@ Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados 
 | `Marcha` | BYTE 6 é responsável pela marcha. 0 para N, 1 para D, e 2 para R. |
 | `Erro` | BYTE7 é responsável pelo sinal de erro. Qualquer número entre 1 e 255 irá fazer o display apitar e disponibilizar na tela o código de erro. |
 
+
+### Estrutura de envio de dados
+
+| ID | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
+| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
+| `ID: 0x4D2` | `velocidade LSB` | `velocidade MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
 
 ---
 ## 3. Descrição de funcionamento
