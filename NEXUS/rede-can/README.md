@@ -36,13 +36,10 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 ### Estrutura de envio de dados
 
-**| ID (HEX) | BYTE0 | BYTE1 / BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |**
-| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
-| `ID: 0x4D2` | `Speed LSB` | `Speed MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
 
-| ID (HEX) | BYTE0 | BYTE1 | BYTE2 | BYTE3 |
-| :--- | :--- | :---: | :--- | :--- |
-| `ID: 0x4D2` | `Speed LSB` | `Speed MSB` | nope | nope | nope |
+| ID (HEX) | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
+| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
+| `ID: 0x4D2` | `velocidade LSB` | `velocidade MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
 
 ---
 ## 3. Descrição de funcionamento
