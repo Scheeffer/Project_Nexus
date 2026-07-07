@@ -33,15 +33,17 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 <p align="center">
   <img src="figs/Diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750">
 </p>
+<p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
 
 <p align="center">
   <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500">
 </p>
+<p align="center"><b>Display Dashboard E620</b></p>
 
 <p align="center">
   <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%">
 </p>
-
+<p align="center"><b>Esquemático da rede CAN</b></p>
 
 Display dashboard obtido através do laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
 No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual cada item do dashboard é ligado. 
