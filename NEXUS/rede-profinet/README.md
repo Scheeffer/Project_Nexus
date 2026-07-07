@@ -41,12 +41,25 @@ A ideia dentro desta rede é de controlar um motor de 380V e 2cv de potencia atr
 
 ## 2. Diagrama de blocos
 
+    O sistema adota uma **topologia em estrela**, onde todas as comunicações são centralizadas em um swtich. Esta abordagem minimiza o impacto de falhas individuais nos cabos e simplifica o diagnóstico e a manutenção da infraestrutura de comunicação.
+
+* **Switch Industrial Phoenix Contact FL Switch 1108 (`SW`)** Atua como o nó central da rede Profinet. É responsável pelo chaveamento físico dos pacotes de dados, garantindo a comutação eficiente entre a camada de controle de campo e a camada de monitoramento.
+
+* **CLP Siemens S7-1217C (`PLC`) Endereço IP: `192.168.0.1`** Unidade central de processamento e lógica. Executa o algoritmo de controle do processo, gerencia os intertravamentos de segurança e coordena os demais periféricos.
+ 
+* **IHM Siemens KTP700 Basic (`IHM`) Endereço IP: `192.168.0.10`** Interface Homem-Máquina. Permite a interação do operador com o sistema para a visualização de variáveis em tempo real, inserção de parâmetros operacionais e interação com as demais redes.
+ 
+* **Inversor de Frequência Siemens Sinamics G120C (`G120`) Endereço IP: `192.168.0.5`** Acionamento e controle de velocidade do motor elétrico. Envia dados de diagnóstico (frequencia, ligado, desligado e falhas) e recebe comandos de frequência do CLP.
+  
+* **Camada de Supervisão e Integração (Backbone) Node-RED (`NR`) Endereço IP: `192.168.0.100`** Atua como o *backbone* de dados e gateway IoT. É responsável por coletar informações das redes para exibição em dashboards. Alem de gerenciar o acionamento e controle entre as redes. 
+ 
+
 ```mermaid
 flowchart LR
     IHM["IHM KTP700 Basic<br/>192.168.0.10"] == "PROFINET" ==> SW["FL Swith 1108 <br/>Phoenix Contact"]
     PLC["CLP S7-1217C<br/>192.168.0.1"] == "PROFINET" ==> SW
     G120["Inversor G120C<br/>192.168.0.5"] == "PROFINET" ==> SW
-    SW == "S7 / ISO-on-TCP" ==> NR["Node-RED (backbone)<br/>192.168.0.11"]
+    SW == "S7 / ISO-on-TCP" ==> NR["Node-RED (backbone)<br/>192.168.0.100"]
 ```
 
 ---
