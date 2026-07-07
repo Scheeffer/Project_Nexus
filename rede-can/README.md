@@ -30,15 +30,14 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 ## 2. Estrutura de dados
 
-O display dashboard obtido através do laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
-No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual cada item do dashboard é ligado. 
+O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
 
 <p align="center"> <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500"></p>
 <p align="center"><b>Display Dashboard E620</b></p>
 <br><br>
 
-Todos os itens que possuem o parametro **Combination switch** na coluna **SIGNAL SOURCE** são operados através da comutação de entradas físicas, sinalizados pela coluna **SIGNAL FORMAT**, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados internos e não são acessíveis pelo usuário ou programador. 
-Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna **SIGNAL FORMAT**. O display E620 possui dois id’s CAN presentes no datasheet, contudo somente um deles funciona, e somente parcialmente, por tanto iremos documentar apenas o ID 0x4D2. há também id’s de longo
+No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual cada item do dashboard é ligado. Todos os itens que possuem o parametro **Combination switch** na coluna **SIGNAL SOURCE** são operados através da comutação de entradas físicas, sinalizados pela coluna **SIGNAL FORMAT**, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados internos e não são acessíveis pelo usuário ou programador. 
+Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna **SIGNAL FORMAT**. O display E620 possui dois id’s CAN presentes no datasheet, contudo somente um deles funciona, e somente parcialmente, por tanto iremos documentar apenas o ID 0x4D2. Há também a existencia de ID's de formato longo, 24 bits ao invés de 12, no outro datasheet, não obtivemos sucesso com nenhum deles.
 
 ### Estrutura de envio de dados
 
@@ -67,6 +66,7 @@ O sistema é composto por duas placas ESP32 interligadas por um barramento CAN (
 
 <p align="center"> <img src="figs/Diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750"> </p>
 <p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
+<br><br>
 
 1. CANA (Atuador e Sensor Físico)
 O CANA lê continuamente um potenciômetro físico via ADC e monitora o barramento CAN. Ele opera sob duas regras de evento:
@@ -79,7 +79,7 @@ Transmissão (ID 0x4D2): A cada 50ms, o CANA transmite de forma fixa a velocidad
 
 <p align="center"> <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%"></p>
 <p align="center"><b>Esquemático da rede CAN</b></p>
-
+<br><br>
 2. CANB (Gateway, Servidor Web e Integração Node-RED)
 O CANB atua como a ponte entre o mundo físico (Barramento CAN) e o mundo digital (Rede IP):
 
