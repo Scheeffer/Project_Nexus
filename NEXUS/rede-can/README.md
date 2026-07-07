@@ -37,6 +37,9 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 <p align="center">
   <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500">
 </p>
+<p align="center">
+  <img src="figs/ESQUEMÁTICO_REDE_CAN.pdf" alt="Display Dashboard E620" width="500">
+</p>
 
 
 Display dashboard obtido através do laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
