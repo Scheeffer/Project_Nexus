@@ -28,24 +28,13 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 | `mqtt_resfriar` | `/mqtt_resfriar` | **POST** | `Object` (JSON) | Evento do Card MQTT gerado via HTML. Repassa `{"status":true}` para o endpoint `/mqtt_resfriar` do Node-RED. |
 | `mqtt_desligar` | `/mqtt_desligar` | **POST** | `Object` (JSON) | Evento do Card MQTT gerado via HTML. Repassa `{"status":false}` para o endpoint `/mqtt_desligar` do Node-RED. |
 
-## 2. Diagrama de blocos
+## 2. Estrutura de dados
 
-<p align="center">
-  <img src="figs/Diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750">
-</p>
-<p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
-
-<p align="center">
-  <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500">
-</p>
+<p align="center"> <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500"></p>
 <p align="center"><b>Display Dashboard E620</b></p>
 
-<p align="center">
-  <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%">
-</p>
-<p align="center"><b>Esquemático da rede CAN</b></p>
 
-Display dashboard obtido através do laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
+O display dashboard obtido através do laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
 No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual cada item do dashboard é ligado. 
 Todos os itens que possuem o parametro **Combination switch** na coluna **SIGNAL SOURCE** são operados através da comutação de entradas físicas, sinalizados pela coluna **SIGNAL FORMAT**, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados internos e não são acessíveis pelo usuário ou programador. 
 Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna **SIGNAL FORMAT**. O display E620 possui dois id’s CAN presentes no datasheet, contudo somente um deles funciona, e somente parcialmente, por tanto iremos documentar apenas o ID 0x4D2. há também id’s de longo
@@ -75,6 +64,9 @@ A estrutura de dados reconhecida pelo display E620 é a de uma sequencia de 8 by
 
 O sistema é composto por duas placas ESP32 interligadas por um barramento CAN (250 Kbps) e integradas a uma interface web e ao Node-RED via HTTP. O objetivo principal é controlar a variável g_velocidade_sistema, gerenciando de forma inteligente quem tem a prioridade no momento (Concorrência).
 
+<p align="center"> <img src="figs/Diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750"> </p>
+<p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
+
 1. CANA (Atuador e Sensor Físico)
 O CANA lê continuamente um potenciômetro físico via ADC e monitora o barramento CAN. Ele opera sob duas regras de evento:
 
@@ -83,6 +75,9 @@ O CANA lê continuamente um potenciômetro físico via ADC e monitora o barramen
 * Prioridade de Rede: Se o CANA detectar no barramento um frame com ID 0x100 (enviado pelo CANB/Node-RED), a Rede assume o controle imediatamente, atualizando a velocidade do sistema com o valor vindo do software.
 
 Transmissão (ID 0x4D2): A cada 50ms, o CANA transmite de forma fixa a velocidade consolidada do sistema (Bytes 0 e 1) e a posição pura, em tempo real, do potenciômetro (Bytes 2 e 3).
+
+<p align="center"> <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%"></p>
+<p align="center"><b>Esquemático da rede CAN</b></p>
 
 2. CANB (Gateway, Servidor Web e Integração Node-RED)
 O CANB atua como a ponte entre o mundo físico (Barramento CAN) e o mundo digital (Rede IP):
