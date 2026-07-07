@@ -31,7 +31,7 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 ## 2. Diagrama de blocos
 
 <p align="center">
-  <img src="figs/diagrama_rede_can.png" alt="Topologia Física da Rede CAN - Célula 2" width="750">
+  <img src="figs/Diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750">
 </p>
 
 ---
