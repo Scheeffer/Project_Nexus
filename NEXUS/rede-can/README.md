@@ -40,9 +40,9 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 | :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
 | `ID: 0x4D2` | `Speed LSB` | `Speed MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
 
-| Nome / Recurso | Rota / Endpoint | Método HTTP | Tipo no Node-RED | Uso / Formato de Origem |
+| ID (HEX) | BYTE0 | BYTE1 | BYTE2 | BYTE3 |
 | :--- | :--- | :---: | :--- | :--- |
-| `g_valor_can_bruto` | `/data` | **GET** | `Number` (via JSON) | Valor decimal bruto consolidado do sistema (origem bytes [0] e [1] do frame `0x4D2`). |
+| `ID: 0x4D2` | `Speed LSB` | `Speed MSB` | nope | nope | nope |
 
 ---
 ## 3. Descrição de funcionamento
