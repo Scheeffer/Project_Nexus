@@ -36,10 +36,19 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 ### Estrutura de envio de dados
 
-
 | ID (HEX) | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
 | :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
 | `ID: 0x4D2` | `velocidade LSB` | `velocidade MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
+
+### Estrutura de envio de dados
+
+| Variavel | Descrição |
+| :--- | :--- |
+| `Velocidade` | BYTE0 e BYTE1 é responsável pelos velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km|
+| `Bateria` | Passamos todos os valores entre 0 e 255 e nada foi acionado no display. Ou o display está com problema ou a variável da bateria situa-se em outro id, o qual o manual não disponibiliza.  |
+| `Marcha` | BYTE 6 é responsável pela marcha. 0 para N, 1 para D, e 2 para R. |
+| `Erro` | BYTE7 é responsável pelo sinal de erro. Qualquer número entre 1 e 255 irá fazer o display apitar e disponibilizar na tela o código de erro. |
+
 
 ---
 ## 3. Descrição de funcionamento
