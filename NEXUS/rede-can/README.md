@@ -58,13 +58,14 @@ Hardware ➔ Rede: O sistema está rodando pelo potenciômetro. Assim que um fra
 Rede ➔ Hardware: O sistema está obedecendo ao Node-RED. Se o operador girar o potenciômetro físico na bancada rompendo a barreira de 2.5% de variação, o comando físico "derruba" a rede e o Hardware reassume o controle imediatamente.
 
 Rede/Hardware ➔ Zerado: Se o potenciômetro físico for levado até o zero absoluto (valor == 0), a concorrência prioriza a segurança física do hardware, forçando o sistema para o estado Zerado, bloqueando atuações indesejadas.
+
 ---
 
 ## 4. COMPONENTES
 
 | Item | Valor |
 |------|-------|
-| ponte backbone  | **Microcontrolador ESP32 WROOM DEV-KIT V1** | [LINK]([URL_do_link](https://www.mercadolivre.com.br/esp32-wroom-devkit-v1-wifi-bluetooth-dual-core-esp32-desenvolvimento-iot-automaco-residencial-arduino-microcontrolador-programaco-eletrnica-blutu-projetos-inteligentes/p/MLB66943423?pdp_filters=item_id:MLB6491779650))|
+| ponte backbone | **Microcontrolador ESP32 WROOM DEV-KIT V1** | [LINK](https://www.mercadolivre.com.br/esp32-wroom-devkit-v1-wifi-bluetooth-dual-core-esp32-desenvolvimento-iot-automaco-residencial-arduino-microcontrolador-programaco-eletrnica-blutu-projetos-inteligentes/p/MLB66943423?pdp_filters=item_id:MLB6491779650) |
 | Controlador CAN | **Módulo MCP2515** + Transceptor TJA1050 (Cristal de 8MHz / SPI) |
 | Atuador | **Painel de Indicadores de Bancada E620** ( ID `0x4D2`) |
 | Sensor | **Pontenciometro(250kohms) + Microcontrolador ESP32 WROOM DEV-KIT V1** ( ID `0x100`) |
