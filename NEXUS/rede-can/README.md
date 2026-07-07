@@ -46,15 +46,19 @@ Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados 
 
 ### Estrutura de envio de dados
 
+Descrição geral das configurações das variaveis.
+
 | Variavel | Descrição |
 | :--- | :--- |
-| `Velocidade` | BYTE0 e BYTE1 é responsável pelos velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km|
-| `Bateria` | Passamos todos os valores entre 0 e 255 e nada foi acionado no display. Ou o display está com problema ou a variável da bateria situa-se em outro id, o qual o manual não disponibiliza.  |
-| `Marcha` | BYTE 6 é responsável pela marcha. 0 para N, 1 para D, e 2 para R. |
-| `Erro` | BYTE7 é responsável pelo sinal de erro. Qualquer número entre 1 e 255 irá fazer o display apitar e disponibilizar na tela o código de erro. |
+| `Velocidade` | BYTE0 e BYTE1 são responsáveis pelos velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km |
+| `Bateria` | Passamos todos os valores entre 0 e 255 e nada foi acionado no display. Ou o display está com problema ou a variável da bateria situa-se em outro id, o qual o manual de modelo que obtivemos não disponibilizam, nem mesmo os parametros **nope** ativaram alguma funcionalidade extra. |
+| `Marcha` | BYTE 6 é responsável pela marcha. 0 para N, 1 para D, e 2 para R. Quaisquer outros valores irão fazer com que nenhum estado de marcha esteja ativo |
+| `Erro` | BYTE7 é responsável pelo sinal de erro. Qualquer número entre 1 e 255 irá fazer o display apitar e disponibilizar na tela o código de erro intermitentemente. |
 
 
 ### Estrutura de envio de dados
+
+A estrutura de dados reconhecida pelo display E620 é a de uma sequencia de 8 bytes, cada qual responsavel por uma variavel, ou parte dela. É possivel enviar menos que 8 bytes, o display ainda irá recebe-los, bytes não enviados serão setados com zero por padrão.
 
 | ID | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
 | :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
