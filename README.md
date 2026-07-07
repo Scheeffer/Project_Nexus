@@ -93,10 +93,30 @@ flowchart TB
     BROKER <--> NR
 
     classDef cell fill:#f7f7f7,stroke:#888,stroke-width:1px;
+    classDef local fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
+    classDef central fill:#fff3e0,stroke:#e65100,stroke-width:1px;
     class CELULA1,CELULA2,CELULA3 cell;
+    class PLC,ESP2,ESP3 local;
+    class NR,BROKER central;
 ```
 
-Cada célula resolve sua automação localmente e sobe seus dados ao **Node-RED**, sendo ele o servidor central pelo protocolo que é própria da célula de produção — **S7** (PROFINET), **HTTP** (CAN) ou **MQTT**. O Node-RED atua como **hub multi-protocolo**, mantém a **Tabela Global de Variáveis** e expõe o **dashboard** de monitoramento e o sobreescreve. A unificação acontece **dentro** do Node-RED.
+### Legenda do diagrama
+
+| Símbolo | Significado |
+|--------|-------------|
+| 🟩 Nós **verdes** (`PLC`, `ESP2`, `ESP3`) | **Controladores locais.** É aqui que roda o *algoritmo de controle autônomo* de cada célula. |
+| 🟧 Nós **laranja** (`Node-RED`, `Broker`) | **Nível central (o PC).** Roda *apenas* agregação, monitoramento, Tabela Global e *override* — **não** roda a malha de controle das células. |
+| 🔀 `Switch` | Domínio de comutação do backbone Ethernet (full-duplex, sem colisão entre portas). |
+| Rótulo das setas | Pilha de protocolos **camada por camada** (mapeamento OSI) que cada célula usa para subir ao backbone. |
+
+### Onde o algoritmo roda (leitura correta do diagrama)
+
+> ⚠️ **Correção importante de interpretação:** este diagrama representa o **comportamento geral da rede inteira**, e **não** o que roda no PC. A decisão de controle é **distribuída**:
+>
+> - **A malha de controle de cada célula roda no próprio controlador local** (o nó verde): o CLP S7-1200 fecha a malha do inversor; o ESP32 CAN trata o nó CAN; o ESP32 MQTT decide `aquecer/refrigerar/desligar`. Isso satisfaz o critério **Autonomia da Célula (25%)** — a célula continua operando *mesmo se o backbone cair*.
+> - **O PC (Node-RED + broker, nós laranja) NÃO fecha malha de controle.** Ele só (a) **lê** as variáveis espelhadas de todas as células, (b) mantém a **Tabela Global de Variáveis** como ponto único de tradução entre os três protocolos, e (c) permite **override manual** pelo dashboard. Se o PC for desligado, cada célula continua controlando seu processo localmente — perde-se apenas a *visibilidade global* e o *override*.
+>
+> Em uma frase: **controle = distribuído nos nós verdes; integração/monitoração = centralizada no PC laranja.** A "língua geral" não é um protocolo único no fio, e sim a Tabela Global consolidada **dentro** do Node-RED, que fala **S7** (PROFINET), **HTTP** (CAN) e **MQTT** (Célula 3) simultaneamente.
 
 ---
 
@@ -108,6 +128,7 @@ Cada célula resolve sua automação localmente e sobe seus dados ao **Node-RED*
 - 📄 [Convenção de tópicos MQTT](docs/convencao-topicos-mqtt.md)
 - 📄 [Plano de endereçamento IP](docs/enderecamento-ip.md)
 - 📄 [Mapeamento OSI dos protocolos](docs/mapeamento-osi.md)
+- 📄 [Controle de acesso ao meio (colisões / MAC)](docs/acesso-ao-meio.md)
 
 ### 🏭 Células de produção
 - 📁 [**Rede PROFINET**](rede-profinet/README.md) — Dupla 1
