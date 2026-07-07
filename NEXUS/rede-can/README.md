@@ -34,6 +34,9 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
   <img src="figs/Diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750">
 </p>
 
+| ID (HEX) / BYTE0 | BYTE1 / BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
+| :--- | :--- | :---: | :--- | :--- |
+| `ID: 0x4D2` | `Speed LSB` | `Speed MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
 ---
 ## 3. Descrição de funcionamento
 
