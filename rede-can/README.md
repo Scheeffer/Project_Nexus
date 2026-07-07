@@ -38,6 +38,10 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
   <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500">
 </p>
 
+<p align="center">
+  <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="500">
+</p>
+
 
 Display dashboard obtido através do laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
 No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual cada item do dashboard é ligado. 
