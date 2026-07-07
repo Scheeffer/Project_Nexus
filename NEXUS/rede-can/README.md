@@ -13,8 +13,6 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 ### Variáveis Disponíveis ao Node-RED / Servidor HTTP
 
-### Variáveis Disponíveis ao Node-RED / Servidor HTTP
-
 | Nome / Recurso | Rota / Endpoint | Método HTTP | Tipo no Node-RED | Uso / Formato de Origem |
 | :--- | :--- | :---: | :--- | :--- |
 | `g_valor_can_bruto` | `/data` | **GET** | `Number` (via JSON) | Valor decimal bruto consolidado do sistema (origem bytes [0] e [1] do frame `0x4D2`). |
