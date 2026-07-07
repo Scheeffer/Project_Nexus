@@ -35,7 +35,7 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 </p>
 
 <p align="center">
-  <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="750">
+  <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500">
 </p>
 
 
