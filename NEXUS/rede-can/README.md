@@ -80,3 +80,22 @@ Rede/Hardware ➔ Zerado: Se o potenciômetro físico for levado até o zero abs
 <p align="center">
   <img src="figs/REDE_CAN_FISICA.jpg" alt="HARDWARE - Célula 2" width="750">
 </p>
+
+---
+
+## 5. INTERFACE DA REDE-CAN
+
+Para melhor comunicação das redes foi utilizado um esp dedicado tanto para fazer a comunicação com o backbone como interface do sistema. O microcontrolador CANA é responsável por tarefas de missão crítica: amostrar um sinal analógico (ADC) através de filtros de média móvel e gerenciar a concorrência de controle no barramento de campo (CAN).
+Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi. Essas pilhas de rede (Network Stacks) possuem execução não-determinística, o que causaria atrasos (jitter) na leitura do potenciômetro e na transmissão cíclica de 50ms da CAN, comprometendo a precisão física do sistema.
+
+* Painel de Monitoramento CAN (Card Atuador/Sensor): Apresenta visualmente a velocidade consolidada do sistema em tempo real e a tensão isolada calculada para o potenciômetro físico (0V a 3.3V). Ele serve como um diagnóstico rápido para atestar que o barramento a 250 Kbps está online e operando perfeitamente através do recebimento do ID 0x4D2.
+
+* Controle PROFINET - CLP: Permite a interação direta com a lógica de frequência. Traz um controle local (Slider de 0 a 60 Hz) acoplado a travas de segurança JavaScript (userIsDragging) para que o valor não sofra oscilações enquanto o operador arrasta o ponteiro, além de exibir a frequência de referência vinda do Node-RED e botões industriais de LIGAR e DESLIGAR.
+
+* Módulo MQTT - ESP: Uma área dedicada de telemetria ambiental e comandos de atuadores térmicos, apresentando botões para forçar estados de Aquecer, Refrigerar ou Desligar, com um display dinâmico.
+
+<p align="center">
+  <img src="figs/interface.png" alt="HARDWARE - Célula 2" width="750">
+</p>
+
+
