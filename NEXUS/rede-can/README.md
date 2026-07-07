@@ -92,7 +92,7 @@ Se o CANA também fizesse o papel de servidor web, o core do processador seria f
 
 * Controle PROFINET - CLP: Permite a interação direta com a lógica de frequência. Traz um controle local (Slider de 0 a 60 Hz) acoplado a travas de segurança JavaScript (userIsDragging) para que o valor não sofra oscilações enquanto o operador arrasta o ponteiro, além de exibir a frequência de referência vinda do Node-RED e botões industriais de LIGAR e DESLIGAR.
 
-* Módulo MQTT - ESP: Uma área dedicada de telemetria ambiental e comandos de atuadores térmicos, apresentando botões para forçar estados de Aquecer, Refrigerar ou Desligar, com um display dinâmico.
+* Módulo MQTT - ESP: Uma área dedicada de telemetria e comandos de atuadores térmicos, apresentando botões para forçar estados de Aquecer, Refrigerar ou Desligar, com um display dinâmico.
 
 <p align="center">
   <img src="figs/interface.png" alt="HARDWARE - Célula 2" width="750">
