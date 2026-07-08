@@ -1,14 +1,14 @@
 # 🟥 Website - online (Álvaro)
 
 [![Protocolo](https://img.shields.io/badge/Website%202.0A-red.svg)](https://www.iso.org/standard/63648.html)
-[![Controlador](https://img.shields.io/badge/Frontend-Javascript32%20%2F%20MCP2515-orange.svg)](#)
-[![Controlador](https://img.shields.io/badge/Backend-PHP/MySQL%20%2F%20MCP2515-purple.svg)](#)
+[![Controlador](https://img.shields.io/badge/Frontend-Javascript-orange.svg)](#)
+[![Controlador](https://img.shields.io/badge/Backend-PHP/MySQL-purple.svg)](#)
 
 ---
 
 ## 1. Descrição do projeto
 
-Para disponibilizar os resultados obtidos foi construído um site capaz de requisitar os dados para a porta de onde o Node-RED está trabalhando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
+Para disponibilizar os resultados obtidos sem depender de um dashboard local foi construído um site capaz de requisitar os dados para a porta de onde o `Node-RED` central está trabalhando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
 
 o website possui duas entradas, a geral e a local, a geral tem a função de disponibilizar os dados para o público geral, esses dados são requisitado em javascript em método post para um arquivo backend em php que rodará no servidor, onde está localizado o banco de dados,
 
