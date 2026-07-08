@@ -78,18 +78,18 @@ stateDiagram-v2
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Parado : Inicialização da Rede\n(Conexão PROFINET OK)
+    [*] --> Parado : Inicializacao da Rede\n(Conexao PROFINET OK)
     
     Parado --> Acionando : IHM envia bit START para o CLP\nCLP envia STW1 = 0x047F para o G120C
     
-    Acionando --> Rodando : G120C retorna rampa concluída\n(Bit ZSW1.8 - Setpoint alcançado)
+    Acionando --> Rodando : G120C retorna rampa concluida\n(Bit ZSW1.8 - Setpoint alcancado)
     
     Rodando --> Parado : IHM envia bit STOP para o CLP\nCLP envia STW1 = 0x047E (Rampa de parada)
     
-    Rodando --> Falha : G120C dispara bit de trip (ZSW1.3 - Falha ativa)\nCLP lê código de erro na PZD
+    Rodando --> Falha : G120C dispara bit de trip (ZSW1.3 - Falha ativa)\nCLP le codigo de erro na PZD
     
-    Falha --> Parado : IHM envia bit ACK_RESET para o CLP\nCLP envia pulso no bit STW1.7 (Reset)---
-
+    Falha --> Parado : IHM envia bit ACK_RESET para o CLP\nCLP envia pulso no bit STW1.7 (Reset)
+```
 ## 4. Diagrama de Sequência
 
 desenvolver
