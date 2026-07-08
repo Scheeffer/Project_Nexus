@@ -100,7 +100,50 @@ stateDiagram-v2
 
 ## 4. Diagrama de Sequência
 
-desenvolver
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Operador
+    participant IHM as IHM (KTP700)
+    participant CLP as CLP (S7-1217C)
+    participant G120 as Inversor (G120C)
+
+    Note over IHM, G120: Inicialização / Conexão PROFINET OK
+    CLP->>G120: Envia STW1 = 0x047E (Pronto / Saídas Bloqueadas)
+    CLP->>IHM: Atualiza Status: "Aguardando Setpoint"
+    IHM->>Operador: Exibe tela com botão START desabilitado
+
+    %% Etapa de Seleção de Frequência
+    rect rgb(240, 240, 240)
+        Note over Operador, CLP: Etapa de Seleção de Frequência
+        Operador->>IHM: Insere Frequência (Ex: 60Hz)
+        IHM->>CLP: Envia valor do Setpoint via PROFINET
+        CLP->>CLP: Normaliza valor para formato Profidrive (NSOLL_A)
+        CLP->>IHM: Habilita botão "START" na tela
+    end
+
+    %% Partida do Motor
+    Operador->>IHM: Pressiona botão "START"
+    IHM->>CLP: Envia bit de comando (START active)
+    CLP->>G120: Altera palavra de controle (STW1 = 0x047F)
+    Note over G120: Inicia Rampa de Aceleração
+    G120->>CLP: Envia velocidade atual (NIST_A) & ZSW1
+    
+    %% Motor Rodando
+    Note over G120: Setpoint de Frequência Alcançado
+    G120->>CLP: Altera bit de status (ZSW1.8 = 1)
+    CLP->>IHM: Atualiza Status: "Motor Rodando"
+    IHM->>Operador: Exibe animação do motor girando
+
+    %% Parada do Motor
+    Operador->>IHM: Pressiona botão "STOP"
+    IHM->>CLP: Envia bit de comando (STOP active)
+    CLP->>G120: Retorna palavra de controle (STW1 = 0x047E)
+    Note over G120: Desaceleração por Rampa (OFF1)
+    G120->>CLP: Altera bit de status (ZSW1.8 = 0)
+    CLP->>IHM: Atualiza Status: "Motor Parado"
+```
+
 ---
 
 ## 5. Diagrama Elétrico 
