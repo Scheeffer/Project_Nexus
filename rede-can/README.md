@@ -32,7 +32,7 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
 
-<p align="center"> <img src="figs/E620.jpeg" alt="Display Dashboard E620" width="500"></p>
+<p align="center"> <img src="figs/E620.png" alt="Display Dashboard E620" width="500"></p>
 <p align="center"><b>Display Dashboard E620</b></p>
 <br><br>
 
