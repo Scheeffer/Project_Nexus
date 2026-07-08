@@ -41,9 +41,7 @@ A ideia dentro desta rede é de controlar um motor de 380V e 2cv de potencia atr
 
 ## 2. Diagrama de blocos
 
-    O sistema adota uma **topologia em estrela**, onde todas as comunicações são centralizadas em um swtich.
-    Esta abordagem minimiza o impacto de falhas individuais nos cabos e simplifica o diagnóstico e a 
-    manutenção da infraestrutura de comunicação.
+O sistema adota uma **topologia em estrela**, onde todas as comunicações são centralizadas em um swtich. Esta abordagem minimiza o impacto de falhas individuais nos cabos e simplifica o diagnóstico e a manutenção da infraestrutura de comunicação.
 
 * **Switch Industrial Phoenix Contact FL Switch 1108** Atua como o nó central da rede Profinet. É responsável pelo chaveamento físico dos pacotes de dados, garantindo a comutação eficiente entre a camada de controle de campo e a camada de monitoramento.
 
@@ -77,6 +75,19 @@ stateDiagram-v2
     Rodando --> Falha: alarme do inversor
     Falha --> Parado: reconhecer falha
 ```
+
+stateDiagram-v2
+    [*] --> Parado : Inicialização da Rede\n(Conexão PROFINET OK)
+    
+    Parado --> Acionando : IHM envia bit START para o CLP\nCLP envia STW1 = 0x047F para o G120C
+    
+    Acionando --> Rodando : G120C retorna rampa concluída\n(Bit ZSW1.8 - Setpoint alcançado)
+    
+    Rodando --> Parado : IHM envia bit STOP para o CLP\nCLP envia STW1 = 0x047E (Rampa de parada)
+    
+    Rodando --> Falha : G120C dispara bit de trip (ZSW1.3 - Falha ativa)\nCLP lê código de erro na PZD
+    
+    Falha --> Parado : IHM envia bit ACK_RESET para o CLP\nCLP envia pulso no bit STW1.7 (Reset)
 ---
 ## 4. Diagrama de Sequência
 
