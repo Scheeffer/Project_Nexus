@@ -80,7 +80,13 @@ stateDiagram-v2
 stateDiagram-v2
     [*] --> Parado : Inicializacao da Rede\n(Conexao PROFINET OK)
     
-    Parado --> Acionando : IHM envia bit START para o CLP\nCLP envia STW1 = 0x047F para o G120C
+    Parado --> AguardandoFrequencia : IHM exibe status "Aguardando Setpoint"
+    
+    AguardandoFrequencia --> ProntoParaPartir : Operador insere Frequencia > 0 na IHM\nCLP atualiza tag NSOLL_A
+    
+    ProntoParaPartir --> AguardandoFrequencia : Frequencia alterada para 0 na IHM
+    
+    ProntoParaPartir --> Acionando : Operador pressiona START na IHM\nCLP envia STW1 = 0x047F para o G120C
     
     Acionando --> Rodando : G120C retorna rampa concluida\n(Bit ZSW1.8 - Setpoint alcancado)
     
