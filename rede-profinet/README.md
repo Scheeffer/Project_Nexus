@@ -76,6 +76,7 @@ stateDiagram-v2
     Falha --> Parado: reconhecer falha
 ```
 
+```mermaid
 stateDiagram-v2
     [*] --> Parado : Inicialização da Rede\n(Conexão PROFINET OK)
     
@@ -87,8 +88,8 @@ stateDiagram-v2
     
     Rodando --> Falha : G120C dispara bit de trip (ZSW1.3 - Falha ativa)\nCLP lê código de erro na PZD
     
-    Falha --> Parado : IHM envia bit ACK_RESET para o CLP\nCLP envia pulso no bit STW1.7 (Reset)
----
+    Falha --> Parado : IHM envia bit ACK_RESET para o CLP\nCLP envia pulso no bit STW1.7 (Reset)---
+
 ## 4. Diagrama de Sequência
 
 desenvolver
