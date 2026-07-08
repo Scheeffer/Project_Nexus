@@ -11,7 +11,7 @@ Para disponibilizar os resultados obtidos foi construído um site capaz de requi
 
 o website possui duas entradas, a geral e a local, a geral tem a função de disponibilizar os dados para o público geral, esses dados são requisitado em javascript em método post para um arquivo backend em php que rodará no servidor, onde está localizado o banco de dados,
 
-<p align="center"> <img src="figs/fluxograma.png" alt="diagrama" width="500"></p>
+<p align="center"> <img src="figs/Fluxograma.png" alt="diagrama" width="500"></p>
 <p align="center"><b>Fluxograma do website</b></p>
 <br><br>
 
