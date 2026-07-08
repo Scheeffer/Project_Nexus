@@ -66,22 +66,38 @@ flowchart LR
 
 ## 3. Diagrama de Estados 
 
+Este diagrama de estados descreve a sequência lógica de controle e a troca de sinais que ocorrem via rede **PROFINET** entre a **IHM KTP700**, o **CLP S7-1217C** e o **Inversor G120C** durante o ciclo de operação do motor.
+
+* **Inicialização -> PARADO:** `Inicialização da Rede Conexão PROFINET OK`: Ao ligar o painel elétrico, o Switch Phoenix Contact estabelece a comunicação entre todos os nós. Assim que o CLP reconhece a presença da IHM e do G120C na rede sem erros de barramento, o sistema entra no modo de espera seguro (`Parado`).
+ 
+
+* **PARADO -> ACIONANDO:** `IHM envia bit START para o CLP / CLP envia START para o G120C`: O operador pressiona o botão de partida na tela da IHM. Essa informação é enviada via rede para o CLP, que processa as lógicas de intertravamento. Estando tudo correto, o CLP envia a palavra de comando com o bit de partida para o inversor via PROFINET, partindo o motor.
+
+
+* **ACIONANDO -> RODANDO:** `G120C retorna rampa concluída / Setpoint de frequência alcançado`: O inversor acelera o motor. Assim que a frequência real medida pelo drive se iguala à frequência desejada (Setpoint), o inversor atualiza sua palavra de status na rede informando ao CLP que a rampa foi concluída. O sistema assume o estado `Rodando`.
+
+* **RODANDO -> PARADO:** `IHM envia bit STOP para o CLP / CLP envia STOP para o G120C`: Durante a operação normal, o operador solicita a parada através da IHM. O comando é enviado para o CLP, que remove o sinal de partida enviado ao inversor. O G120C desacelera o motor de forma controlada até a parada total, retornando ao estado `Parado`.
+
+* **RODANDO -> FALHA:** `G120C dispara bit de trip / CLP lê código de erro`: Se ocorrer qualquer anomalia elétrica ou mecânica com o motor em movimento, o inversor corta a saída por proteção e envia instantaneamente um bit de "Trip" (Falha Ativa) para o CLP via PROFINET, além do código correspondente ao erro. O CLP bloqueia o sistema e envia o alarme para a tela da IHM.
+
+* **FALHA -> PARADO:** `IHM envia bit RESET para o CLP / CLP envia pulso Reset para o G120C`: Após o operador verificar e sanar a causa do problema no campo, ele pressiona o botão de "Reset" na IHM. O CLP recebe a solicitação e envia um pulso de borda de subida no bit de reset para o inversor através da rede. Se a falha sumir, o inversor limpa o erro e o sistema volta a ficar pronto no estado `Parado`.
 
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Parado : Inicialização da Rede\n Conexão PROFINET OK
+    [*] --> Parado : Inicialização da Rede Conexão PROFINET OK
     
-    Parado --> Acionando : IHM envia bit START para o CLP\nCLP envia STW1 = 0x047F para o G120C
+    Parado --> Acionando : IHM envia bit START para o CLP CLP envia START para o G120C
     
-    Acionando --> Rodando : G120C retorna rampa concluida\n(Bit ZSW1.8 - Setpoint alcancado)
+    Acionando --> Rodando : G120C retorna rampa concluída Setpoint de frequência alcançado
     
-    Rodando --> Parado : IHM envia bit STOP para o CLP\nCLP envia STW1 = 0x047E (Rampa de parada)
+    Rodando --> Parado : IHM envia bit STOP para o CLP CLP envia STOP para o G120C
     
-    Rodando --> Falha : G120C dispara bit de trip (ZSW1.3 - Falha ativa)\nCLP le codigo de erro na PZD
+    Rodando --> Falha : G120C dispara bit de trip CLP lê código de erro 
     
-    Falha --> Parado : IHM envia bit ACK_RESET para o CLP\nCLP envia pulso no bit STW1.7 (Reset)
+    Falha --> Parado : IHM envia bit RESET para o CLP CLP envia pulso Reset para o G120C
 ```
+
 ## 4. Diagrama de Sequência
 
 desenvolver
