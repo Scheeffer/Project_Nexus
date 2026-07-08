@@ -38,8 +38,8 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura por um arquivo de nome index e quaisquer variações de configuração. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuário
 
-<p align="center"> <img src="figs/E620.png" alt="Display Dashboard E620" width="500"></p>
-<p align="center"><b>Display Dashboard E620</b></p>
+<p align="center"> <img src="figs/fluxograma.png" alt="Fluxograma" width="500"></p>
+<p align="center"><b>Fluxograma</b></p>
 <br><br>
 
 Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://curricularium.infinityfreeapp.com/upload.php ou somente curricularium.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. 
