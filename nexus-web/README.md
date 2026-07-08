@@ -1,6 +1,6 @@
-# 🟥 Rede CAN — Célula 2 (Alexandre & Alvaro)
+# 🟥 Website - online (Álvaro)
 
-[![Protocolo](https://img.shields.io/badge/protocolo-CAN%202.0A-red.svg)](https://www.iso.org/standard/63648.html)
+[![Protocolo](https://img.shields.io/badge/Website%202.0A-red.svg)](https://www.iso.org/standard/63648.html)
 [![Controlador](https://img.shields.io/badge/Gateway-ESP32%20%2F%20MCP2515-orange.svg)](#)
 
 ---
