@@ -103,6 +103,11 @@ stateDiagram-v2
 desenvolver
 ---
 
+## 5. Diagrama Elétrico 
+
+Para implementar este projeto foi realizado um diagrama elétrico multifilar onde é possível observar todas as conexões elétricas, tanto para a parte de potencia quanto para a parte da **Rede Profinet**. 
+
+
 ## 5. Componentes e Modelos
 | Componente | Especificação | Fornecedor| Link | Manual |
 |-----------|---------------|:---:|----------------|-------|
