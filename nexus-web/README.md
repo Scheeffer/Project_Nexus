@@ -2,6 +2,7 @@
 
 [![Protocolo](https://img.shields.io/badge/Website%202.0A-red.svg)](https://www.iso.org/standard/63648.html)
 [![Controlador](https://img.shields.io/badge/Gateway-ESP32%20%2F%20MCP2515-orange.svg)](#)
+[![Controlador](https://img.shields.io/badge/Gateway-Javascript32%20%2F%20MCP2515-orange.svg)](#)
 
 ---
 
