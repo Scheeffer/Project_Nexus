@@ -41,6 +41,7 @@ O sistema é dividido em **três células de produção**, cada uma com três n�
 2. **Visibilidade global** — espelhar suas variáveis no backbone para que as outras células leiam/escrevam.
 
 O Node-RED age como **hub multi-protocolo**: fala **S7/ISO-on-TCP** com o CLP (PROFINET), **HTTP REST** com o ESP32 da célula CAN, e **MQTT** com o ESP32 da célula MQTT. A "língua geral" não é um protocolo único no fio — é a **Tabela Global de Variáveis** consolidada dentro do Node-RED, que será apresentado mais a frente.
+
 ---
 
 ## 3. As três células (introdução)
@@ -113,7 +114,6 @@ flowchart TB
 
 ## 5. Sumário / Navegação
 
-### 🌐 Backbone e integração
 - 📁 [**Backbone (Node-RED + Broker)**](backbone/README.md) — switch, broker MQTT, dashboard, tabela global
 - 📁 [**Rede PROFINET**](rede-profinet/README.md) — Dupla 1
 - 📁 [**Rede CAN**](rede-can/README.md) — Dupla 2
