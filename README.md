@@ -39,12 +39,8 @@ O sistema é dividido em **três células de produção**, cada uma com três n�
 
 1. **Autonomia local** — ler o próprio sensor e comandar o próprio atuador *sem depender da rede externa*.
 2. **Visibilidade global** — espelhar suas variáveis no backbone para que as outras células leiam/escrevam.
-3. **Diagnóstico** — publicar um bit de presença (online/offline) no backbone.
 
-A "língua geral" que une as três redes é o **MQTT sobre TCP/IP**, agregado por um **broker central** e visualizado/orquestrado por um **dashboard Node-RED**. Redes que não falam MQTT nativamente (PROFINET, CAN) usam um **gateway/bridge** no próprio controlador para "subir" os dados ao nível Ethernet.
-
-> 📌 **Sobre o transporte do backbone:** o diagrama original indicava `http` entre os nós e o "Servidor de Controle" — e isso **está correto para parte do sistema**. O Node-RED age como **hub multi-protocolo**: fala **S7/ISO-on-TCP** com o CLP (PROFINET), **HTTP REST** com o ESP32 da célula CAN, e **MQTT** com o ESP32 da célula MQTT. A "língua geral" não é um protocolo único no fio — é a **Tabela Global de Variáveis** consolidada dentro do Node-RED. Comparação dos transportes em [`docs/mapeamento-osi.md`](docs/mapeamento-osi.md).
-
+O Node-RED age como **hub multi-protocolo**: fala **S7/ISO-on-TCP** com o CLP (PROFINET), **HTTP REST** com o ESP32 da célula CAN, e **MQTT** com o ESP32 da célula MQTT. A "língua geral" não é um protocolo único no fio — é a **Tabela Global de Variáveis** consolidada dentro do Node-RED, que será apresentado mais a frente.
 ---
 
 ## 3. As três células (introdução)
@@ -109,14 +105,9 @@ flowchart TB
 | 🔀 `Switch` | Domínio de comutação do backbone Ethernet (full-duplex, sem colisão entre portas). |
 | Rótulo das setas | Pilha de protocolos **camada por camada** (mapeamento OSI) que cada célula usa para subir ao backbone. |
 
-### Onde o algoritmo roda (leitura correta do diagrama)
 
-> ⚠️ **Correção importante de interpretação:** este diagrama representa o **comportamento geral da rede inteira**, e **não** o que roda no PC. A decisão de controle é **distribuída**:
->
-> - **A malha de controle de cada célula roda no próprio controlador local** (o nó verde): o CLP S7-1200 fecha a malha do inversor; o ESP32 CAN trata o nó CAN; o ESP32 MQTT decide `aquecer/refrigerar/desligar`. Isso satisfaz o critério **Autonomia da Célula (25%)** — a célula continua operando *mesmo se o backbone cair*.
-> - **O PC (Node-RED + broker, nós laranja) NÃO fecha malha de controle.** Ele só (a) **lê** as variáveis espelhadas de todas as células, (b) mantém a **Tabela Global de Variáveis** como ponto único de tradução entre os três protocolos, e (c) permite **override manual** pelo dashboard. Se o PC for desligado, cada célula continua controlando seu processo localmente — perde-se apenas a *visibilidade global* e o *override*.
->
-> Em uma frase: **controle = distribuído nos nós verdes; integração/monitoração = centralizada no PC laranja.** A "língua geral" não é um protocolo único no fio, e sim a Tabela Global consolidada **dentro** do Node-RED, que fala **S7** (PROFINET), **HTTP** (CAN) e **MQTT** (Célula 3) simultaneamente.
+ - **A malha de controle de cada célula roda no próprio controlador local** (o nó verde): o CLP S7-1200 fecha a malha do inversor; o ESP32 CAN trata o nó CAN; o ESP32 MQTT decide `aquecer/refrigerar/desligar`. Isso satisfaz o critério **Autonomia da Célula** — a célula continua operando *mesmo se o backbone cair*.
+ - **O PC (Node-RED + broker, nós laranja) NÃO fecha malha de controle.** Ele só (a) **lê** as variáveis espelhadas de todas as células, (b) mantém a **Tabela Global de Variáveis** como ponto único de tradução entre os três protocolos, e (c) permite **override manual** pelo dashboard. Se o PC for desligado, cada célula continua controlando seu processo localmente — perde-se apenas a *visibilidade global* e o *override* (controle de cada célula).
 
 ---
 
@@ -124,39 +115,18 @@ flowchart TB
 
 ### 🌐 Backbone e integração
 - 📁 [**Backbone (Node-RED + Broker)**](backbone/README.md) — switch, broker MQTT, dashboard, tabela global
-- 📄 [Tabela Global de Variáveis](docs/tabela-global-variaveis.md)
-- 📄 [Convenção de tópicos MQTT](docs/convencao-topicos-mqtt.md)
-- 📄 [Plano de endereçamento IP](docs/enderecamento-ip.md)
-- 📄 [Mapeamento OSI dos protocolos](docs/mapeamento-osi.md)
-- 📄 [Controle de acesso ao meio (colisões / MAC)](docs/acesso-ao-meio.md)
-
-### 🏭 Células de produção
 - 📁 [**Rede PROFINET**](rede-profinet/README.md) — Dupla 1
 - 📁 [**Rede CAN**](rede-can/README.md) — Dupla 2
 - 📁 [**Rede MQTT**](rede-mqtt/README.md) — Dupla 3
 
-### 📈 Resultados e referências
+### 📈 Resultados 
 - 📄 [Resultados (tempo, perda de pacotes, jitter, throughput)](docs/resultados.md)
 - 📄 [Referências e links úteis](docs/referencias.md)
 
 ---
 
-## 6. Como executar (visão rápida)
 
-```text
-1. Suba o broker MQTT central (Mosquitto) no notebook da Dupla 1.
-2. Inicie o Node-RED e importe o flow de backbone/node-red/flows.json.
-3. Conecte os três nós ao switch Ethernet (ver docs/enderecamento-ip.md).
-4. Energize cada célula — cada uma deve operar localmente (autonomia).
-5. Verifique no dashboard Node-RED a presença dos 3 bits de diagnóstico.
-6. Teste a interoperabilidade: leia/escreva variáveis de uma célula a partir de outra.
-```
-
-Instruções detalhadas em cada pasta de rede.
-
----
-
-## 7. Equipe
+## 6. Equipe
 
 | Dupla | Integrantes | Responsabilidade |
 |:-----:|:------------|:-----------------|
@@ -166,6 +136,6 @@ Instruções detalhadas em cada pasta de rede.
 
 ---
 
-## 8. Licença
+## 7. Licença
 
 Distribuído sob a licença [MIT](LICENSE).
