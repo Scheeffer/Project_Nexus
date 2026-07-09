@@ -17,6 +17,17 @@
 
 ---
 
+<div align="center">
+  <img src="NEXUS/docs/figs/animacao-sistema.svg" alt="Animação do sistema NEXUS em operação: sensores publicando telemetria, operador comandando via dashboard e atuadores respondendo" width="900"/>
+  <br/>
+  <sub>Loop de 16s — sensor → rede → IHM → operador → atuador → feedback. Veja a leitura completa em <a href="#4-diagrama-de-blocos-geral-do-sistema">§4</a>.</sub>
+</div>
+
+---
+
+## 1. Contexto
+---
+
 teste
 ## 1. Contexto
 
