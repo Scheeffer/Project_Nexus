@@ -53,11 +53,11 @@ Descrição geral das configurações das variaveis.
 
 ### Definições das Linguagens e arquivos utilizadas.
 
-`HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).
-`CSS` : Formata a configuração padrão de objetos HTML.
-`javascript` : Linguagem de alto nivel responsavel pelo 
-`PHP` : linguagem de backend.
-`MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações.
+`HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).<br>
+`CSS` : Formata a configuração padrão de objetos HTML.<br>
+`javascript` : Linguagem de alto nivel responsavel pelo <br>
+`PHP` : linguagem de backend.<br>
+`MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações.<br>
 
 
 
