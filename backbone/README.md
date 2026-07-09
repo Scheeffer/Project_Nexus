@@ -17,75 +17,14 @@ Por baixo dessa interface visual, o Node-RED roda inteiramente sobre o Node.js, 
 
 Na comunicação entre equipamentos distintos, o Node-RED atua como um middleware ou gateway inteligente, realizando a ingestão multiprotocolo de dados provenientes de hardwares que utilizam linguagens incompatíveis, como MQTT, Modbus, HTTP ou comunicação Serial. Após capturar esses dados brutos, a ferramenta realiza o parsing e a normalização das informações em tempo real e as roteia para seus respectivos destinos — sejam eles bancos de dados, painéis de monitoramento ou comandos de controle enviados de volta para dispositivos
 
-## 1. Node-red no Projeto NEXUS
+# Configuração de Rede
+Antes de explicar nosso fluxo de nós do node-red, segue a baixo nossa configuração de rede.
+Como gateway, o nosso access point para comunicação entre os dispositivos, utilizamos um roteador Tp-link com a configuração Access Point, a onde os dispotivos conectados via rede e os dispotivos via Wifi compartilham a mesma faixa de rede, nossa rede se Wifi  foi nomeada exclusivamente para esse projeto COM_N_26.1, "COM" sigla para materia academia desse projeto, Comunicação de Dados, "N" de noturno, que muito representativo e necessário exposição, pois o horário noturno é o unico que temos para nos dedicar a graduação a necessidade de trabalhar durante o dia e "26.1", ano e semestre de desenvolvimento desse projeto, que até onde esperamos que seja o ultimo.
+Segue abaixo configuração interna do roteador:
 
 
-### Conexão PROFINET (CLP)
-- **S7 endpoint** `S71217C` em `192.168.0.1` (rack 0 / slot 1, ISO-on-TCP, cycletime 1000 ms).
-- Variáveis no **DB4** (controle do inversor SINAMICS):
-
-| Nome | Endereço | Tipo | Uso |
-|------|----------|------|-----|
-| `START` | `DB4.DBX0.0` | bool | Liga o inversor |
-| `STOP` | `DB4.DBX.0.1` ⚠️ | bool | Para o inversor |
-| `ENTRADA_REF_FREQUENCIA` | `DB4.DBD10` | dword/real | Referência de frequência (setpoint) |
-| `FBK_REF_FREQUENCIA` | `DB4.DBD14` | dword/real | Feedback de frequência |
-
-> ⚠️ **Bug provável:** o endereço de `STOP` está escrito **`DB4.DBX.0.1`** (ponto a mais). O correto é **`DB4.DBX0.1`**. Do jeito que está, o nó S7 não resolve o endereço.
-
-### Integração CAN (HTTP)
-- `POST /can` → recebe dados do ESP32 CAN.
-- `POST /toggle` → liga/desliga o inversor (botões Liga/Desliga do dashboard).
-- `POST /slider` → ajuste de frequência/velocidade.
-- `http request` → envia para o ESP32 CAN (`192.168.0.63`): `/set_nodered_freq`, `/set_nodered_value`.
-
-### Dashboard (node-red-dashboard)
-- Páginas: **Home**, **CLP**, **CAN**.
-- Widgets: LED "Inversor Liga/Desliga Via Esp32", gauge **Km/h** (0–100), sliders de velocidade/frequência (0–60 e 0–100), botões **Liga/Desliga**.
-
-## 2. `flows-web-bridge.json` (HTTP MCU ⇄ Web)
-
-Flow de referência que serve uma página em `GET /site` e expõe:
-- `GET /api/state` (estado atual: temperatura, umidade, luz, atuador),
-- `POST /api/actuator` (site comanda atuador),
-- `POST /api/mcu/sensor` (MCU envia sensor e recebe o comando na mesma resposta).
-
-Útil como **template de integração HTTP** e como página web exigida ("comunicar com o website online").
 
 ---
 
-## 3. Diagrama de integração (real)
-
-```mermaid
-flowchart TB
-    PLC["CLP S7-1217C<br/>192.168.0.1 (DB4)"]
-    ESP2["ESP32 CAN<br/>192.168.0.63"]
-    ESP3["ESP32 MQTT"]
-    NR["Node-RED<br/>S7 + HTTP + (MQTT) + dashboard"]
-    BR["Broker MQTT<br/>(Mosquitto) — a definir"]
-    UI["💻 Dashboard :1880"]
-
-    PLC <-- "S7 / ISO-on-TCP" --> NR
-    ESP2 -- "POST /can" --> NR
-    NR -- "POST /set_nodered_*" --> ESP2
-    ESP3 <-- "MQTT" --> BR
-    BR <-- "mqtt in/out" --> NR
-    NR --> UI
-```
-
----
-
-## 4. Conteúdo desta pasta
-
-```text
-backbone/
-├── README.md
-├── node-red/
-│   ├── flows-backbone.json     ← S7 (PROFINET) + HTTP (CAN) + dashboard
-│   └── flows-web-bridge.json   ← demo HTTP MCU ⇄ Web
-├── diagramas/
-├── componentes/
-└── figs/
-```
 
 > ⚠️ **Segurança:** revise os flows antes de commitar — remova IPs sensíveis se necessário e **nunca** versione senhas de broker.
