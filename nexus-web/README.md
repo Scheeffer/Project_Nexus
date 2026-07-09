@@ -43,15 +43,21 @@ Descrição geral das configurações das variaveis.
 
 | Arquivo | Descrição |
 | :--- | :--- |
-| `index.php` | Disponibiliza um dashboard online através de requisições periodicas ao banco de dados do host. |
-| `upload.php` | Quando setado corretamente, fará o upload dos dados ao banco de dados do host. |
+| `index.php` | Disponibiliza um dashboard online através de requisições periodicas, geridas pelo arquivo controller.php, ao banco de dados do host. |
+| `upload.php` | Quando setado corretamente, fará o upload dos dados, geridas pelo arquivo controller.php, ao banco de dados do host. |
 | `controller.php` | Arquivo o qual decide que ações tomar a depender da requisição mandada para o mesmo.  |
 | `backend.php` | Arquivo que contem classes responsaveis por conectar-se ao banco de dados do host e para realizar query ao banco de dados. |
 | `estilo.css` | Arquivo responsavel por formatar a estética HTML do website. |
 | `/imagens` | Pasta que contem as imagens, icones, gifs, audio, etc, utilizados pelo website. |
 
 
-### Estrutura de envio de dados
+### Definições das Linguagens e arquivos utilizadas.
+
+`HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).
+`CSS` : Formata a configuração padrão de objetos HTML.
+`javascript` : Linguagem de alto nivel responsavel pelo 
+`PHP` : linguagem de backend.
+`MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações.
 
 
 
