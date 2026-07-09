@@ -85,15 +85,15 @@ Sobre a quantidade de nós utilizados temos segue a relação: **Total Geral:** 
 ### Campo Profinet
 Antes de explicar os nós vamos explicar como a comunicação do node-red com o CLP funciona, ao utilizar qualquer balão da biblioteca plcindustry é possivel selecionar e cadastrar o CLP de interesse, como explicação:
 Clique na opção "+":
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_como_cadastrar_disp_profinet.png" width="600">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_como_cadastrar_disp_profinet.png" width="400">
 
 Insira os dados recpectivos do seu CLP siemens:
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/st_config_disp.png" width="600">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/st_config_disp.png" width="400">
 
 Cadastre as variaveis de memória para uso no node-red do seu dispotivo:
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_cadastro_variavel_profinet.png" width="600">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_cadastro_variavel_profinet.png" width="400">
 
 Com isso ja explicado vamos para nosso Fluxo Profinet
 
@@ -105,14 +105,14 @@ Para explicar esse nó vamos generalizar e explicar cada tipo de nó aplicado:
 #### Tipo 1 - Leitura de Variavel S7 - S7 in
 Nó para leitura de variáveis do CLP, realizado seleção do dispotivo de origem, variável de interesse e opções de leitura:
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_in_profinet.png" width="600">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_in_profinet.png" width="400">
 
-No caso acima é o retorno do feedback da frequencia do inversor devolvida como um dado Float de 32-bits
+No caso acima é o retorno do feedback da frequencia do inversor devolvida como um dado Float de 32-bits.
 
 #### Tipo 2 - Escrita de Variavel S7 - S7 out
 Nó para escrita de variáveis do CLP, realizado seleção do dispotivo de origem, variável de interesse:
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_out_profinet.png" width="600">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_out_profinet.png" width="400">
 
 Nesse tipo foram selecionados as variaveis que recebem dados boleanos (true ou false), o que muda entre eles é o endereço de memória:
 
@@ -131,5 +131,15 @@ Unico que recebe um valor diferente é o S7 out - SET_FREQ, que recebe um valor 
 
 #### Tipo 3 - Nó Trigger
 
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_n%C3%B3_trigger.png" width="400">
+
+Nesse tipo é configurado que caso esse nó receba um dado de ativação, em sua saída terá um pulso de sáida "true" por 1 segundo, após esse tempo será um comando "false", foi configuraado dessa forma devido a lógica de funcionamento do CLP Siemens, como é possivel visualizar os nós trigger estão conectados com os nós que recebem dados boleanos, responsavel por ligar, desligar e resetar o inversor, caso esses nós recebessem continuamente os dados true ou false, isso afearia a logica do CLP, não senso possivel alterar os valores das variáveis por outros comandos.
+Todos os nós trigger estão configurados da mesma forma
+
+#### Tipo 4 - Funcition 2 - Conversor
+
+
+
+Como explicado no tipo 1, o dado do S7 in - REF_INV retorna um dado Float de 32-bits, esse function possui um script para converter esse dado para msg.payload para ser exibido no dashboard.
 
 
