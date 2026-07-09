@@ -154,8 +154,61 @@ stateDiagram-v2
     MODO_LOCAL --> MODO_REMOTO : Recebe ID 0x100 (Comando da Interface/Node-RED)
     MODO_REMOTO --> MODO_LOCAL : Potenciômetro físico varia >= 2.5%
 ```   
+---
 
-## . INTERFACE DA REDE-CAN
+## 6. Diagrama de Sequência
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Operador as Operador (Bancada)
+    participant HardwareA as CANA (Potenciômetro / Atuador)
+    participant CAN as Barramento CAN (250 Kbps)
+    participant HardwareB as CANB (Gateway / Node-RED)
+
+    %% CENÁRIO 1: CONTROLE LOCAL (PRIORIDADE DO POTENCIÔMETRO)
+    rect rgb(240, 248, 255)
+        note right of Operador: Cenário 1: Controle via Hardware Físico (Local)
+        Operador->>HardwareA: Gira botão físico (Variação >= 2.5%)
+        Note over HardwareA: g_velocidade_sistema assume valor do Potenciômetro
+        
+        loop Transmissão Cíclica (A cada 50ms)
+            Note over HardwareA: data[0] = g_velocidade & 0xFF<br/>data[1] = (g_velocidade >> 8) & 0xFF
+            HardwareA->>CAN: Injeta Frame 0x4D2 (DLC=8)
+            Note over CAN: Bytes 0-1: Velocidade Consolidada<br/>Bytes 2-3: Posição do Potenciômetro Pura
+            CAN->>HardwareB: MCP2515_readMessageAfterStatCheck()
+            Note over HardwareB: g_valor_can_bruto = data[0] | (data[1] << 8)
+        end
+    end
+
+    %% CENÁRIO 2: ALTERNÂNCIA PARA CONTROLE REMOTO (DISPUTA DE CONCORRÊNCIA)
+    rect rgb(255, 240, 245)
+        note right of HardwareB: Cenário 2: Intervenção Remota via Rede
+        Note over HardwareB: Node-RED envia novo valor via Web<br/>g_node_red_slider atualizado
+        
+        HardwareB->>CAN: Injeta Frame 0x100 (DLC=2)
+        Note over CAN: Data[1] = (uint8_t)g_node_red_slider
+        CAN->>HardwareA: MCP2515_readMessageAfterStatCheck()
+        
+        Note over HardwareA: [EVENTO REDE] Identifica ID 0x100<br/>g_velocidade_sistema = frame_rx.data[1] * 10<br/>Node-RED assume o controle da velocidade
+        loop Próximos ciclos de 50ms
+            HardwareA->>CAN: Injeta Frame 0x4D2 [Bytes 0-1 agora refletem o valor do ID 0x100]
+            CAN->>HardwareB: Mantém o gateway atualizado com a velocidade da rede
+        end
+    end
+
+    %% CENÁRIO 3: RETOMADA DO CONTROLE MANUAL
+    rect rgb(245, 255, 250)
+        note right of Operador: Cenário 3: Intervenção Humana (Retomada Manual)
+        Operador->>HardwareA: Move fisicamente o potenciômetro na bancada
+        Note over HardwareA: abs(valor_velocidade_pot - ultima_leitura_real_pot) >= threshold_mudanca
+        Note over HardwareA: [EVENTO HARDWARE] Derruba Modo Remoto<br/>g_velocidade_sistema volta a obedecer o ADC
+    end
+```    
+
+---
+
+## 7. INTERFACE DA REDE-CAN
 
 Para melhor comunicação das redes foi utilizado um esp dedicado tanto para fazer a comunicação com o backbone e como interface .html do sistema. O microcontrolador CANA é responsável por tarefas de missão crítica: amostrar um sinal analógico (ADC) através de filtros de média móvel e gerenciar a concorrência de controle no barramento de campo (CAN).
 Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi. Essas pilhas de rede (Network Stacks) possuem execução não-determinística, o que causaria atrasos (jitter) na leitura do potenciômetro e na transmissão cíclica de 50ms da CAN, comprometendo a precisão física do sistema.
