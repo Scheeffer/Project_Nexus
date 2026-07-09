@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Descrição do projeto
+## 1	Descrição do projeto
 
 Para disponibilizar os resultados obtidos sem depender de um dashboard local foi construído um site capaz de requisitar os dados para a porta de onde o `Node-RED` central está trabalhando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
 
@@ -37,9 +37,9 @@ Para inserir os dados é necessário adicionar o diretório “/upload.php” a 
 
 
 
-### Estrutura de envio de dados
+### 2	Estrutura de arquivos do Website.
 
-Descrição geral das configurações das variaveis.
+Estrutura de arquivos do Website.
 
 | Arquivo | Descrição |
 | :---: | :--- |
