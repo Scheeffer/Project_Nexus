@@ -127,10 +127,6 @@ flowchart TB
 - 📁 [**Rede CAN**](./rede-can/README.md) — Dupla 2
 - 📁 [**Rede MQTT**](./rede-mqtt/README.md) — Dupla 3
 
-### 📈 Resultados 
-- 📄 [Resultados (tempo, perda de pacotes, jitter, throughput)](docs/resultados.md)
-- 📄 [Referências e links úteis](docs/referencias.md)
-
 ---
 
 
