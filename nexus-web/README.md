@@ -41,12 +41,14 @@ Para inserir os dados é necessário adicionar o diretório “/upload.php” a 
 
 Descrição geral das configurações das variaveis.
 
-| Variavel | Descrição |
+| Arquivo | Descrição |
 | :--- | :--- |
-| `Velocidade` | BYTE0 e BYTE1 são responsáveis pelos velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km |
-| `Bateria` | Passamos todos os valores entre 0 e 255 e nada foi acionado no display. Ou o display está com problema ou a variável da bateria situa-se em outro id, o qual o manual de modelo que obtivemos não disponibilizam, nem mesmo os parametros **nope** ativaram alguma funcionalidade extra. |
-| `Marcha` | BYTE 6 é responsável pela marcha, 0 para N, 1 para D, e 2 para R. Quaisquer outros valores irão fazer com que nenhum estado de marcha esteja ativo |
-| `Erro` | BYTE7 é responsável pelo sinal de erro, qualquer número entre 1 e 255 irá fazer o display apitar e disponibilizar na tela o código de erro periodicamente. |
+| `index.php` | aaa |
+| `upload.php` | aaa |
+| `controller.php` | aaa |
+| `backend.php` | aaa |
+| `estilo.css` | aaa |
+| `/imagens` | aaa |
 
 
 ### Estrutura de envio de dados
