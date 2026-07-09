@@ -115,9 +115,49 @@ Rede/Hardware ➔ Zerado: Se o potenciômetro físico for levado até o zero abs
 
 ---
 
-## 5. INTERFACE DA REDE-CAN
+## 5. DIAGRAMA DE ESTADOS
 
-Para melhor comunicação das redes foi utilizado um esp dedicado tanto para fazer a comunicação com o backbone como interface do sistema. O microcontrolador CANA é responsável por tarefas de missão crítica: amostrar um sinal analógico (ADC) através de filtros de média móvel e gerenciar a concorrência de controle no barramento de campo (CAN).
+### 1. MODO_LOCAL (Controle via Hardware Físico)
+Ao ligar ou resetar o sistema (`Power On / Reset`), ele inicia automaticamente neste estado. O foco aqui é o controle manual na bancada:
+
+* **Monitorando:** O sistema fica em repouso lendo continuamente o potenciômetro físico.
+* **Atualizando:** Se o operador girar o botão e a leitura mudar mais de **2.5%**, o sistema sai do repouso para registrar a nova posição.
+* **Transmitindo_Local:** Ele envia essa nova velocidade(km/h) para o barramento CAN através do **ID `0x4D2`** (a cada 50 ms) e volta a monitorar o botão físico.
+
+### 2. MODO_REMOTO (Controle via Rede / Node-RED)
+Este estado gerencia as ordens que chegam de fora, ou seja, comandos virtuais vindos do Node-RED:
+
+* **Aguardando:** O sistema fica escutando o barramento CAN.
+* **Processando:** Assim que o gateway injeta a mensagem com o **ID `0x100`** na rede (via node-red), o sistema captura o comando.
+* **Transmitindo_Remoto:** Ele replica e consolida essa velocidade vinda da internet para o motor/atuador e volta a aguardar novas instruções da rede.
+
+```mermaid
+stateDiagram-v2
+
+    [*] --> MODO_LOCAL : Power On / Reset
+
+    state MODO_LOCAL {
+        [*] --> Monitorando
+        Monitorando --> Atualizando : Variação(potenciometro) >= 2.5%
+        Atualizando --> Transmitindo_Local : Envia ID 0x4D2 (50 ms)
+        Transmitindo_Local --> Monitorando : Aguarda nova variação
+    }
+
+    state MODO_REMOTO {
+        [*] --> Aguardando
+        Aguardando --> Processando : Recebe ID 0x100
+        Processando --> Transmitindo_Remoto : Replica mensagem CAN
+        Transmitindo_Remoto --> Aguardando
+    }
+
+    %% Alternância de Concorrência Direta
+    MODO_LOCAL --> MODO_REMOTO : Recebe ID 0x100 (Comando da Interface/Node-RED)
+    MODO_REMOTO --> MODO_LOCAL : Potenciômetro físico varia >= 2.5%
+```   
+
+## . INTERFACE DA REDE-CAN
+
+Para melhor comunicação das redes foi utilizado um esp dedicado tanto para fazer a comunicação com o backbone e como interface .html do sistema. O microcontrolador CANA é responsável por tarefas de missão crítica: amostrar um sinal analógico (ADC) através de filtros de média móvel e gerenciar a concorrência de controle no barramento de campo (CAN).
 Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi. Essas pilhas de rede (Network Stacks) possuem execução não-determinística, o que causaria atrasos (jitter) na leitura do potenciômetro e na transmissão cíclica de 50ms da CAN, comprometendo a precisão física do sistema.
 
 * Painel de Monitoramento CAN (Card Atuador/Sensor): Apresenta visualmente a velocidade consolidada do sistema em tempo real e a tensão isolada calculada para o potenciômetro físico (0V a 3.3V). Ele serve como um diagnóstico rápido para atestar que o barramento a 250 Kbps está online e operando perfeitamente através do recebimento do ID 0x4D2.
