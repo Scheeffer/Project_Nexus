@@ -42,7 +42,7 @@ Para inserir os dados é necessário adicionar o diretório “/upload.php” a 
 Descrição geral das configurações das variaveis.
 
 | Arquivo | Descrição |
-| :--- | :--- |
+| :---: | :--- |
 | `index.php` | Disponibiliza um dashboard online através de requisições periodicas, geridas pelo arquivo controller.php, ao banco de dados do host. |
 | `upload.php` | Quando setado corretamente, fará o upload dos dados, geridas pelo arquivo controller.php, ao banco de dados do host. |
 | `controller.php` | Arquivo o qual decide que ações tomar a depender da requisição mandada para o mesmo.  |
