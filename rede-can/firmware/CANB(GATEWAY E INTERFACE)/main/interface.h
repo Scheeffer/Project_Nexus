@@ -6,17 +6,12 @@
 #include <stdlib.h>
 
 const char* generate_html_page(
-    const char* dummy_status,
-    const char* dummy,
-    int adc_value,
     float velocidade,
+    float tensao,
     int valor_slider_local, 
     int valor_node_red_freq 
 )
 {
-    // ==================================================
-    // HTML HEADER & CSS
-    // ==================================================
     const char* html_header =
     "<!DOCTYPE html>"
     "<html lang='pt-BR'>"
@@ -37,25 +32,20 @@ const char* generate_html_page(
     ".value { font-size:48px; font-weight:bold; margin-bottom:30px; }"
     ".unit { font-size:24px; opacity:0.8; }"
     ".online { color:#22c55e; font-size:32px; font-weight:bold; }"
-    
     ".btn-group { display:flex; gap:15px; margin-top:15px; }"
     ".btn { flex:1; padding:18px; border:none; border-radius:16px; color:white; font-size:18px; font-weight:bold; cursor:pointer; transition:0.3s; text-transform:uppercase; }"
     ".btn-ligar { background:#16a34a; }"
     ".btn-ligar:hover { transform:scale(1.04); background:#15803d; }"
     ".btn-desligar { background:#dc2626; }"
     ".btn-desligar:hover { transform:scale(1.04); background:#b91c1c; }"
-    
-    /* Card MQTT */
     ".btn-aquecer { background:#ea580c; }"
     ".btn-aquecer:hover { transform:scale(1.04); background:#c2410c; }"
     ".btn-refrigerar { background:#2563eb; }"
     ".btn-refrigerar:hover { transform:scale(1.04); background:#1d4ed8; }"
-    
-    /* Estilos Adicionados para Exibição dos Dados do MQTT */
     ".mqtt-display-box { background:rgba(167,139,250,0.08); padding:15px; border-radius:12px; border:1px dashed rgba(167,139,250,0.3); margin-top:20px; }"
     ".mqtt-data-row { display:flex; justify-content:space-between; margin:8px 0; font-size:15px; color:#e2e8f0; }"
     ".status-badge { font-weight:bold; color:#cbd5e1; transition:0.2s; }"
-
+    ".can-display-box { background:rgba(34,197,94,0.08); padding:12px; border-radius:12px; border:1px dashed rgba(34,197,94,0.3); margin-bottom:20px; text-align:center; }"
     ".slider-container { background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.02); }"
     ".slider-label { display:flex; justify-content:space-between; font-size:14px; color:#cbd5e1; margin-bottom:8px; text-transform:uppercase; }"
     ".slider-input { width:100%; accent-color:#06b6d4; cursor:pointer; height:6px; border-radius:3px; }" 
@@ -70,22 +60,24 @@ const char* generate_html_page(
     "</div>"
     "<div class='container'>";
 
-    // ==================================================
-    // HTML FOOTER & JAVASCRIPT
-    // ==================================================
     const char* html_footer =
     "</div>"
     "<div class='footer'>ESP32 • HTTP • Node-RED • IFSC</div>"
     "<script>"
     "let userIsDragging = false;"
     
-    "async function atualizarDados(){"
+    "async function atualizarDados()"
+    "{"
     "try{"
     "const resposta = await fetch('/data');"
     "const dados = await resposta.json();"
     
     "if(dados.velocidade !== undefined){"
     "document.getElementById('speed').innerHTML = dados.velocidade.toFixed(1) + ' <span class=\"unit\">km/h</span>';"
+    "}"
+    
+    "if(dados.tensao !== undefined){"
+    "document.getElementById('pot_voltage_display').innerText = dados.tensao.toFixed(2) + ' V';"
     "}"
     
     "if(!userIsDragging && dados.slider_local !== undefined){"
@@ -97,7 +89,6 @@ const char* generate_html_page(
     "document.getElementById('nr_value_display').innerText = dados.nr_freq;"
     "}"
     
-    /* ATUALIZAÇÃO EM TEMPO REAL: Dados de Temperatura e Status Simulado */
     "if(dados.mqtt_temp !== undefined){"
     "document.getElementById('mqtt_temp_display').innerText = dados.mqtt_temp.toFixed(1);"
     "}"
@@ -125,26 +116,11 @@ const char* generate_html_page(
     "}catch(e){ console.log('Erro ao enviar slider local:', e); }"
     "}"
 
-    "async function acionarLigar(){"
-    "try{ await fetch('/ligar', { method: 'POST' }); }catch(e){}"
-    "}"
-
-    "async function acionarDesligar(){"
-    "try{ await fetch('/desligar', { method: 'POST' }); }catch(e){}"
-    "}"
-
-    /*FUNÇÕES JAVASCRIPT COM O NODE-RED */
-    "async function acionarMqttAquecer(){"
-    "try{ await fetch('/mqtt_aquecer', { method: 'POST' }); }catch(e){}"
-    "}"
-
-    "async function acionarMqttResfriar(){"
-    "try{ await fetch('/mqtt_resfriar', { method: 'POST' }); }catch(e){}"
-    "}"
-
-    "async function acionarMqttDesligar(){"
-    "try{ await fetch('/mqtt_desligar', { method: 'POST' }); }catch(e){}"
-    "}"
+    "async function acionarLigar(){ try{ await fetch('/ligar', { method: 'POST' }); }catch(e){} }"
+    "async function acionarDesligar(){ try{ await fetch('/desligar', { method: 'POST' }); }catch(e){} }"
+    "async function acionarMqttAquecer(){ try{ await fetch('/mqtt_aquecer', { method: 'POST' }); }catch(e){} }"
+    "async function acionarMqttResfriar(){ try{ await fetch('/mqtt_resfriar', { method: 'POST' }); }catch(e){} }"
+    "async function acionarMqttDesligar(){ try{ await fetch('/mqtt_desligar', { method: 'POST' }); }catch(e){} }"
     
     "atualizarDados();"
     "setInterval(atualizarDados,500);"
@@ -152,21 +128,23 @@ const char* generate_html_page(
     "</body>"
     "</html>";
 
-    // ==================================================
-    // MONTA HTML 
-    // ==================================================
     size_t html_size = strlen(html_header) + strlen(html_footer) + 8500;
     char* html_page = (char*)malloc(html_size);
     if (html_page == NULL) return NULL;
 
     snprintf(
         html_page, html_size,
-        "%s" 
-
-        /* CARD 1: VELOCIDADE DO VEÍCULO (REDE CAN) */
+        "%s" // html_header
+        
         "<div class='card'>"
         "<div class='title'>VELOCIDADE ATUAL</div>"
-        "<div class='value' id='speed'>%.1f <span class='unit'>km/h</span></div>"
+        "<div class='value' id='speed'>%.1f <span class='unit'>km/h</span></div>" // velocidade
+        
+        "<div class='can-display-box'>"
+        "<div style='font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;'>Tensão do Potenciômetro</div>"
+        "<div style='font-size:26px; font-weight:bold; color:#22c55e;' id='pot_voltage_display'>%.2f V</div>" // tensao
+        "</div>"
+
         "<div class='title'>MONITORAMENTO REDE CAN</div>"
         "<div class='online'>ONLINE</div>"
         "<p style='margin-top:18px;font-size:16px;color:#cbd5e1;line-height:1.5;'>"
@@ -174,23 +152,22 @@ const char* generate_html_page(
         "</p>"
         "</div>"
         
-        /* CARD 2: BLOCO PROFINET */
         "<div class='card'>"
         "<div class='title' style='font-size:22px;color:white;'>PROFINET - CLP</div>"
         
         "<div class='slider-container'>"
         "<div class='slider-label'>"
         "<span>Ajuste Local</span>"
-        "<span><strong id='slider_display' style='color:#06b6d4; font-size:18px;'>%d</strong> Hz</span>"
+        "<span><strong id='slider_display' style='color:#06b6d4; font-size:18px;'>%d</strong> Hz</span>" // valor_slider_local
         "</div>"
-        "<input type='range' id='freqSlider' class='slider-input' min='0' max='60' value='%d' "
+        "<input type='range' id='freqSlider' class='slider-input' min='0' max='60' value='%d' " // valor_slider_local
         "oninput='userIsDragging=true; document.getElementById(\"slider_display\").innerText=this.value;' "
         "onchange='enviarSliderLocal(this.value)'>"
         "</div>"
 
         "<div class='nr-display-box'>"
         "<div style='font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;'>Referência Freq. Node-RED</div>"
-        "<div style='font-size:32px; font-weight:bold; color:#06b6d4;'><span id='nr_value_display'>%d</span> <span style='font-size:18px;'>Hz</span></div>"
+        "<div style='font-size:32px; font-weight:bold; color:#06b6d4;'><span id='nr_value_display'>%d</span> <span style='font-size:18px;'>Hz</span></div>" // valor_node_red_freq
         "</div>"
 
         "<p style='font-size:15px;color:#cbd5e1;line-height:1.5;margin-bottom:5px;'>"
@@ -203,7 +180,6 @@ const char* generate_html_page(
         "</div>"
         "</div>"
 
-        /* CARD 3 ATUALIZADO: Com exibição de temperatura*/
         "<div class='card' style='border: 1px solid rgba(167, 139, 250, 0.2);'>"
         "<div class='title' style='font-size:22px; color:#a78bfa;'>MQTT - ESP</div>"
         "<p style='font-size:14px; color:#cbd5e1; line-height:1.5; margin-bottom:20px;'>"
@@ -215,7 +191,6 @@ const char* generate_html_page(
         "<button class='btn btn-desligar' onclick='acionarMqttDesligar()'>DESLIGAR</button>"
         "</div>"
         
-        /*CAMPOS EXIBIDOS NO CARD MQTT */
         "<div class='mqtt-display-box'>"
         "<div class='mqtt-data-row'>"
         "<span>Temperatura:</span>"
@@ -228,8 +203,8 @@ const char* generate_html_page(
         "</div>"
         "</div>"
         
-        "%s", 
-        html_header, velocidade, valor_slider_local, valor_slider_local, valor_node_red_freq, html_footer
+        "%s", // html_footer
+        html_header, velocidade, tensao, valor_slider_local, valor_slider_local, valor_node_red_freq, html_footer
     );
 
     return html_page;

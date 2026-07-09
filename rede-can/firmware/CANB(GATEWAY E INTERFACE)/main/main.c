@@ -29,14 +29,15 @@
 // WIFI
 // ======================================================
 #define WIFI_SSID "COM_N_26.1"
-#define WIFI_PASS "12345678" 
+//#define WIFI_PASS "12345678" 
 
 static EventGroupHandle_t wifi_event_group;
 
 // ======================================================
 // NODE-RED SERVER
 // ======================================================
-#define NODE_RED_IP   "192.168.0.50" 
+//#define NODE_RED_IP   "192.168.0.50"
+#define NODE_RED_IP   "192.168.0.100" 
 #define NODE_RED_URL  "http://" NODE_RED_IP ":1880/can"
 
 // ======================================================
@@ -51,13 +52,12 @@ static EventGroupHandle_t wifi_event_group;
 // VARIÁVEIS GLOBAIS 
 // ======================================================
 uint16_t g_valor_can_bruto = 0;
+uint16_t g_pot_hardware_bruto = 0; // Armazena estritamente o potenciômetro físico (Bytes 2 e 3)
 float g_velocidade = 0.0;
 int g_slider_value = 0;        
 int g_node_red_slider = 0;     
 int g_node_red_freq = 0;       
 bool g_modo_remoto = false;    
-
-// ADICIONADO: Variáveis de simulação para o Card MQTT
 float g_mqtt_temperatura = 0.0;        
 char g_mqtt_status[32] = "Aguardando"; 
 
@@ -88,12 +88,15 @@ bool SPI_Init(void)
 }
 
 // ======================================================
-// HTTP CLIENT - ENVIO NODE-RED
+// HTTP CLIENT - ENVIO NODE-RED (ATUALIZADO)
 // ======================================================
-void send_data_to_nodered(uint16_t valor_bruto, float velocidad)
+void send_data_to_nodered(uint16_t valor_bruto, float velocidad, float tensao)
 {
-    char json_data[150];
-    snprintf(json_data, sizeof(json_data), "{\"valor_can\":%u,\"velocidade\":%.1f}", valor_bruto, velocidad);
+    char json_data[200];
+    // JSON atualizado incluindo o campo da tensão isolada do hardware do potenciômetro
+    snprintf(json_data, sizeof(json_data), 
+             "{\"valor_can\":%u,\"velocidade\":%.1f,\"tensao\":%.2f}", 
+             valor_bruto, velocidad, tensao);
 
     esp_http_client_config_t config = {
         .url = NODE_RED_URL,
@@ -131,7 +134,7 @@ void wifi_init(void)
     esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL);
     esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL);
 
-    wifi_config_t wifi_config = { .sta = { .ssid = WIFI_SSID, .password = WIFI_PASS } };
+    wifi_config_t wifi_config = { .sta = { .ssid = WIFI_SSID, } };
     esp_wifi_set_mode(WIFI_MODE_STA);
     esp_wifi_set_config(WIFI_IF_STA, &wifi_config);
     esp_wifi_start();
@@ -144,7 +147,11 @@ void wifi_init(void)
 // ======================================================
 esp_err_t root_get_handler(httpd_req_t *req)
 {
-    const char* html_page = generate_html_page("OFF", "OK", (int)g_valor_can_bruto, g_velocidade, g_slider_value, g_node_red_freq);
+    float tensao_inicial = ((float)g_pot_hardware_bruto * 3.3f) / 1000.0f;
+    if (tensao_inicial > 3.3f) tensao_inicial = 3.3f;
+    if (tensao_inicial < 0.0f) tensao_inicial = 0.0f;
+
+    const char* html_page = generate_html_page(g_velocidade, tensao_inicial, g_slider_value, g_node_red_freq);
     if (html_page != NULL) {
         httpd_resp_send(req, html_page, strlen(html_page));
         free((void*)html_page);
@@ -154,13 +161,16 @@ esp_err_t root_get_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-// CORREÇÃO: Buffer aumentado e adicionado 'mqtt_temp' e 'mqtt_status' no JSON transmitido
 esp_err_t data_get_handler(httpd_req_t *req)
 {
-    char json[350]; 
+    float tensao = ((float)g_pot_hardware_bruto * 3.3f) / 1000.0f;
+    if (tensao > 3.3f) tensao = 3.3f;
+    if (tensao < 0.0f) tensao = 0.0f;
+
+    char json[400]; 
     snprintf(json, sizeof(json),
-        "{\"valor_can\":%u,\"velocidade\":%.1f,\"slider_local\":%d,\"nr_freq\":%d,\"modo_remoto\":%s,\"mqtt_temp\":%.1f,\"mqtt_status\":\"%s\"}", 
-        g_valor_can_bruto, g_velocidade, g_slider_value, g_node_red_freq, g_modo_remoto ? "true" : "false",
+        "{\"valor_can\":%u,\"velocidade\":%.1f,\"tensao\":%.2f,\"slider_local\":%d,\"nr_freq\":%d,\"modo_remoto\":%s,\"mqtt_temp\":%.1f,\"mqtt_status\":\"%s\"}", 
+        g_valor_can_bruto, g_velocidade, tensao, g_slider_value, g_node_red_freq, g_modo_remoto ? "true" : "false",
         g_mqtt_temperatura, g_mqtt_status
     );
     httpd_resp_set_type(req, "application/json");
@@ -279,32 +289,28 @@ esp_err_t mqtt_desligar_post_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-
 esp_err_t nodered_mqtt_sim_handler(httpd_req_t *req)
 {
-    char buf[150]; // Buffer aumentado para receber o JSON completo
+    char buf[150]; 
     int ret = httpd_req_recv(req, buf, req->content_len);
     if (ret <= 0) return ESP_FAIL;
     buf[ret] = '\0';
 
-    // Procura as chaves do JSON de forma simples/direta no buffer
     char *temp_ptr = strstr(buf, "\"temp\":");
     char *status_ptr = strstr(buf, "\"status\":\"");
 
-    // Extrai a temperatura se existir no pacote
     if (temp_ptr) {
         g_mqtt_temperatura = atof(temp_ptr + 7);
     }
 
-    // Extrai o texto do status se existir no pacote
     if (status_ptr) {
-        char *start = status_ptr + 10; // Pula o \"status\":\"
-        char *end = strchr(start, '"'); // Procura onde fecha as aspas do texto
+        char *start = status_ptr + 10; 
+        char *end = strchr(start, '"'); 
         if (end) {
             size_t len = end - start;
             if (len >= sizeof(g_mqtt_status)) len = sizeof(g_mqtt_status) - 1;
             strncpy(g_mqtt_status, start, len);
-            g_mqtt_status[len] = '\0'; // Garante o fim da string
+            g_mqtt_status[len] = '\0'; 
         }
     }
 
@@ -394,7 +400,6 @@ void start_webserver(void)
         httpd_uri_t desligar = { .uri = "/desligar", .method = HTTP_POST, .handler = desligar_post_handler };
         httpd_register_uri_handler(server, &desligar);
 
-        // REGISTRO DAS ROTAS DO CARD MQTT
         httpd_uri_t mqtt_aq = { .uri = "/mqtt_aquecer", .method = HTTP_POST, .handler = mqtt_aquecer_post_handler };
         httpd_register_uri_handler(server, &mqtt_aq);
 
@@ -404,7 +409,6 @@ void start_webserver(void)
         httpd_uri_t mqtt_desl = { .uri = "/mqtt_desligar", .method = HTTP_POST, .handler = mqtt_desligar_post_handler };
         httpd_register_uri_handler(server, &mqtt_desl);
         
-        // ADICIONADO: Nova rota HTTP para coletar dados do Slider de teste do Node-RED
         httpd_uri_t mqtt_sim = { .uri = "/set_mqtt_sim", .method = HTTP_POST, .handler = nodered_mqtt_sim_handler };
         httpd_register_uri_handler(server, &mqtt_sim);
         
@@ -423,6 +427,9 @@ void start_webserver(void)
     }
 }
 
+// ======================================================
+// CAN TASK - CONCORRÊNCIA E ENVIO COMPLETO AO NODE-RED
+// ======================================================
 void CAN_Task(void *pvParameters)
 {
     struct can_frame frame_geral; 
@@ -433,10 +440,22 @@ void CAN_Task(void *pvParameters)
         {
             if (frame_geral.can_id == 0x4D2)
             {
+                // MANTÉM CONCORRÊNCIA: Velocidade do último que atualizou o barramento (CANA ou Node-RED)
                 g_valor_can_bruto = frame_geral.data[0] | (frame_geral.data[1] << 8);
                 g_velocidade = (float)g_valor_can_bruto / 10.0f;
 
-                send_data_to_nodered(g_valor_can_bruto, g_velocidade);
+                // Captura isolada da posição do hardware do potenciômetro (Bytes 2 e 3)
+                if (frame_geral.can_dlc >= 4) {
+                    g_pot_hardware_bruto = frame_geral.data[2] | (frame_geral.data[3] << 8);
+                }
+
+                // Calcula a tensão real isolada do potenciômetro para mandar ao Node-RED
+                float tensao_envio = ((float)g_pot_hardware_bruto * 3.3f) / 1000.0f;
+                if (tensao_envio > 3.3f) tensao_envio = 3.3f;
+                if (tensao_envio < 0.0f) tensao_envio = 0.0f;
+
+                // Enviando velocidade e tensão integradas no mesmo JSON
+                send_data_to_nodered(g_valor_can_bruto, g_velocidade, tensao_envio);
             }
         }
         vTaskDelay(pdMS_TO_TICKS(50));
