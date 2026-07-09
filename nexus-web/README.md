@@ -43,19 +43,15 @@ Descrição geral das configurações das variaveis.
 
 | Arquivo | Descrição |
 | :--- | :--- |
-| `index.php` | aaa |
-| `upload.php` | aaa |
-| `controller.php` | aaa |
-| `backend.php` | aaa |
-| `estilo.css` | aaa |
-| `/imagens` | aaa |
+| `index.php` | Disponibiliza um dashboard online através de requisições periodicas ao banco de dados do host. |
+| `upload.php` | Quando setado corretamente, fará o upload dos dados ao banco de dados do host. |
+| `controller.php` | Arquivo o qual decide que ações tomar a depender da requisição mandada para o mesmo.  |
+| `backend.php` | Arquivo que contem classes responsaveis por conectar-se ao banco de dados do host e para realizar query ao banco de dados. |
+| `estilo.css` | Arquivo responsavel por formatar a estética HTML do website. |
+| `/imagens` | Pasta que contem as imagens, icones, gifs, audio, etc, utilizados pelo website. |
 
 
 ### Estrutura de envio de dados
 
-A estrutura de dados reconhecida pelo display E620 é a de uma sequencia de 8 bytes, cada qual responsavel por uma variavel, ou parte dela. É possivel enviar menos que 8 bytes, o display ainda irá recebe-los, bytes não enviados serão setados com zero por padrão.
 
-| ID | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
-| :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
-| `ID: 0x4D2` | `velocidade LSB` | `velocidade MSB` | nope | nope | nope | `Bateria` | `Marcha` | `Erro` |
 
