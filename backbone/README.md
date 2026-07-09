@@ -5,19 +5,20 @@
 [![HTTP](https://img.shields.io/badge/CAN-HTTP%20REST-green.svg)](#)
 [![MQTT](https://img.shields.io/badge/MQTT-cliente-orange.svg)](#)
 
-O backbone é a **espinha dorsal Ethernet**. Na prática, o **Node-RED** funciona como um **gateway que fala três protocolos ao mesmo tempo**, um para cada célula — em vez de forçar todas a usarem MQTT. Isso é válido pelo enunciado ("mapear seus dados para um servidor central") e é um padrão real de integração.
+O backbone é o núcleo central de alta capacidade da rede (sua "espinha dorsal"), cuja função é agregar, rotear e escoar volumes de tráfego de dados entre diversas sub-redes menores, provedores regionais e data centers, garantindo a conectividade de longa distância e a resiliência de toda a topologia. Em nosso projeto usamos o **Node-red**, como  backbone, sendo ele responsavel pelo gerenciamento e fluxo de dados dos nossos dispositivos.
 
-| Célula | Protocolo até o backbone | Nó Node-RED |
-|:------:|--------------------------|-------------|
-| 1 — PROFINET | **S7 / ISO-on-TCP** (CLP) | `node-red-contrib-s7` |
-| 2 — CAN | **HTTP REST** (ESP32) | `http in` / `http request` |
-| 3 — MQTT | **MQTT** (ESP32) | `mqtt in` / `mqtt out` *(a adicionar)* |
+# O que é o Node-red - https://nodered.org/
 
-> 💡 **Trade-off (S7/HTTP × MQTT):** o esquema atual funciona e é simples de depurar. Porém HTTP é *request/response* (precisa de polling para ter telemetria contínua) e o S7 lê por *cycletime*; já o MQTT é *push* assíncrono (menor latência e overhead em telemetria). Para a banca, vale citar os dois lados — ver [`docs/mapeamento-osi.md`](../docs/mapeamento-osi.md).
+O Node-RED é uma ferramenta de desenvolvimento de código aberto focada na programação baseada em fluxos (Flow-Based Programming), originalmente criada pela IBM para simplificar a interconexão de dispositivos de hardware, APIs e serviços online no ecossistema da Internet das Coisas (IoT). Através de uma interface gráfica executada diretamente no navegador, os usuários podem arrastar, soltar e interligar blocos funcionais chamados de "nós", o que reduz drasticamente a necessidade de codificação manual complexa para estabelecer fluxos de dados automatizados.
 
----
+A base estrutural do Node-RED repousa sobre o conceito de nós de entrada, processamento e saída, onde cada nó executa uma tarefa atômica e se comunica enviando mensagens padronizadas na forma de objetos JSON (JavaScript Object Notation). Toda a lógica visual construída pelo usuário, incluindo a disposição e o encadeamento desses nós, é convertida e salva nativamente em arquivos JSON de texto limpo, o que confere à plataforma uma extrema leveza, portabilidade e facilidade para exportação, importação e controle de versão de projetos de automação.
 
-## 1. O que o flow `flows-backbone.json` faz
+Por baixo dessa interface visual, o Node-RED roda inteiramente sobre o Node.js, um ambiente de execução (runtime) JavaScript assíncrono e orientado a eventos, construído sobre o motor V8 do Google Chrome. A arquitetura de I/O (Entrada/Saída) não-bloqueante do Node.js permite que o Node-RED gerencie milhares de conexões e eventos simultâneos em tempo real com um consumo mínimo de memória e CPU, tornando-o altamente eficiente tanto para servidores robustos em nuvem quanto para gateways industriais de recursos limitados e sistemas embarcados.
+
+Na comunicação entre equipamentos distintos, o Node-RED atua como um middleware ou gateway inteligente, realizando a ingestão multiprotocolo de dados provenientes de hardwares que utilizam linguagens incompatíveis, como MQTT, Modbus, HTTP ou comunicação Serial. Após capturar esses dados brutos, a ferramenta realiza o parsing e a normalização das informações em tempo real e as roteia para seus respectivos destinos — sejam eles bancos de dados, painéis de monitoramento ou comandos de controle enviados de volta para dispositivos
+
+## 1. Node-red no Projeto NEXUS
+
 
 ### Conexão PROFINET (CLP)
 - **S7 endpoint** `S71217C` em `192.168.0.1` (rack 0 / slot 1, ISO-on-TCP, cycletime 1000 ms).
