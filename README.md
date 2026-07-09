@@ -26,10 +26,6 @@
 ---
 
 ## 1. Contexto
----
-
-teste
-## 1. Contexto
 
 Projeto final da disciplina de **Comunicação de Dados** (IFSC — Departamento Acadêmico de Eletrônica). O objetivo é a **construção coletiva de um sistema de automação heterogêneo**: três duplas, três protocolos distintos, **uma única rede integrada**.
 
