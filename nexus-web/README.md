@@ -8,9 +8,12 @@
 
 ## 1	Descrição do projeto
 
-Para disponibilizar os resultados obtidos sem depender de um dashboard local foi construído um site capaz de requisitar os dados para a porta de onde o `Node-RED` central está trabalhando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
+Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
 
-o website possui duas entradas, a geral e a local, a geral tem a função de disponibilizar os dados para o público geral, esses dados são requisitado em javascript em método post para um arquivo backend em php que rodará no servidor, onde está localizado o banco de dados,
+o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url, por exemplo exemplo: www.google.com. Possui a função de disponibilizar os dados para o público geral, esses dados são requisitado periodicamente ao banco de dados, caso haja alguma alteração no mesmo, o site o receberá em alguns momentos.
+
+A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta htdocs, pasta a qual irá retornar
+em javascript em método post para um arquivo backend em php que rodará no servidor, onde está localizado o banco de dados,
 
 <p align="center"> <img src="figs/Fluxograma.png" alt="diagrama" width="500"></p>
 <p align="center"><b>Fluxograma do website</b></p>
