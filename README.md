@@ -114,10 +114,10 @@ flowchart TB
 
 ## 5. Sumário / Navegação
 
-- 📁 [**Backbone (Node-RED + Broker)**](backbone/README.md) — switch, broker MQTT, dashboard, tabela global
-- 📁 [**Rede PROFINET**](rede-profinet/README.md) — Dupla 1
-- 📁 [**Rede CAN**](rede-can/README.md) — Dupla 2
-- 📁 [**Rede MQTT**](rede-mqtt/README.md) — Dupla 3
+- 📁 [**Backbone (Node-RED + Broker)**](./backbone/README.md) — switch, broker MQTT, dashboard, tabela global
+- 📁 [**Rede PROFINET**](./rede-profinet/README.md) — Dupla 1
+- 📁 [**Rede CAN**](./rede-can/README.md) — Dupla 2
+- 📁 [**Rede MQTT**](./rede-mqtt/README.md) — Dupla 3
 
 ### 📈 Resultados 
 - 📄 [Resultados (tempo, perda de pacotes, jitter, throughput)](docs/resultados.md)
