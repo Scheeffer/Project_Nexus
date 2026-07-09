@@ -1,0 +1,618 @@
+[
+ {
+  "id": "52d3e910e6e8ef25",
+  "type": "tab",
+  "label": "MQTT",
+  "disabled": false,
+  "info": "",
+  "env": []
+ },
+ {
+  "id": "dbccfcf8b608c0bb",
+  "type": "mqtt in",
+  "z": "52d3e910e6e8ef25",
+  "name": "",
+  "topic": "ESP32S3/COM/temperatura",
+  "qos": "1",
+  "datatype": "utf8",
+  "broker": "8860c2e7aa1a2b1d",
+  "nl": false,
+  "rap": true,
+  "rh": 0,
+  "inputs": 0,
+  "x": 280,
+  "y": 120,
+  "wires": [
+   [
+    "608daca9b2e01fbf",
+    "nx_ui_txt_temp",
+    "nx_ui_chart_temp"
+   ]
+  ]
+ },
+ {
+  "id": "608daca9b2e01fbf",
+  "type": "debug",
+  "z": "52d3e910e6e8ef25",
+  "name": "temp",
+  "active": true,
+  "tosidebar": true,
+  "console": false,
+  "tostatus": false,
+  "complete": "payload",
+  "targetType": "msg",
+  "statusVal": "",
+  "statusType": "auto",
+  "x": 530,
+  "y": 120,
+  "wires": [],
+  "icon": "node-red/comment.svg"
+ },
+ {
+  "id": "da752f354312e050",
+  "type": "mqtt out",
+  "z": "52d3e910e6e8ef25",
+  "name": "Solicitar temperatura",
+  "topic": "ESP32S3/COM/get",
+  "qos": "0",
+  "retain": "false",
+  "respTopic": "",
+  "contentType": "",
+  "userProps": "",
+  "correl": "",
+  "expiry": "",
+  "broker": "8860c2e7aa1a2b1d",
+  "x": 440,
+  "y": 200,
+  "wires": []
+ },
+ {
+  "id": "5f7be7d9a0d8ccd1",
+  "type": "inject",
+  "z": "52d3e910e6e8ef25",
+  "name": "GET",
+  "props": [
+   {
+    "p": "payload"
+   },
+   {
+    "p": "topic",
+    "vt": "str"
+   }
+  ],
+  "repeat": "",
+  "crontab": "",
+  "once": false,
+  "onceDelay": 0.1,
+  "topic": "",
+  "payload": "GET_TEMP",
+  "payloadType": "str",
+  "x": 230,
+  "y": 200,
+  "wires": [
+   [
+    "da752f354312e050"
+   ]
+  ]
+ },
+ {
+  "id": "7cdae9264a79d779",
+  "type": "mqtt in",
+  "z": "52d3e910e6e8ef25",
+  "name": "",
+  "topic": "ESP32/COM/Status",
+  "qos": "1",
+  "datatype": "auto-detect",
+  "broker": "8860c2e7aa1a2b1d",
+  "nl": false,
+  "rap": true,
+  "rh": 0,
+  "inputs": 0,
+  "x": 250,
+  "y": 280,
+  "wires": [
+   [
+    "5278f5791a2078b1",
+    "nx_fn_cron_stop"
+   ]
+  ]
+ },
+ {
+  "id": "5278f5791a2078b1",
+  "type": "debug",
+  "z": "52d3e910e6e8ef25",
+  "name": "Status",
+  "active": true,
+  "tosidebar": true,
+  "console": false,
+  "tostatus": false,
+  "complete": "payload",
+  "targetType": "msg",
+  "statusVal": "",
+  "statusType": "auto",
+  "x": 430,
+  "y": 280,
+  "wires": []
+ },
+ {
+  "id": "665e611ece50e81e",
+  "type": "inject",
+  "z": "52d3e910e6e8ef25",
+  "name": "Aquecimento",
+  "props": [
+   {
+    "p": "payload"
+   },
+   {
+    "p": "topic",
+    "vt": "str"
+   }
+  ],
+  "repeat": "",
+  "crontab": "",
+  "once": false,
+  "onceDelay": 0.1,
+  "topic": "",
+  "payload": "AQUECIMENTO_ON",
+  "payloadType": "str",
+  "x": 250,
+  "y": 340,
+  "wires": [
+   [
+    "4f4e752f9751e484"
+   ]
+  ]
+ },
+ {
+  "id": "0d78d87e63e07b1e",
+  "type": "inject",
+  "z": "52d3e910e6e8ef25",
+  "name": "Refrigeração",
+  "props": [
+   {
+    "p": "payload"
+   },
+   {
+    "p": "topic",
+    "vt": "str"
+   }
+  ],
+  "repeat": "",
+  "crontab": "",
+  "once": false,
+  "onceDelay": 0.1,
+  "topic": "",
+  "payload": "REFRIGERACAO_ON",
+  "payloadType": "str",
+  "x": 250,
+  "y": 400,
+  "wires": [
+   [
+    "4f4e752f9751e484"
+   ]
+  ]
+ },
+ {
+  "id": "3e227fef73daeb19",
+  "type": "inject",
+  "z": "52d3e910e6e8ef25",
+  "name": "Desligar",
+  "props": [
+   {
+    "p": "payload"
+   },
+   {
+    "p": "topic",
+    "vt": "str"
+   }
+  ],
+  "repeat": "",
+  "crontab": "",
+  "once": false,
+  "onceDelay": 0.1,
+  "topic": "",
+  "payload": "SYSTEM_OFF",
+  "payloadType": "str",
+  "x": 240,
+  "y": 460,
+  "wires": [
+   [
+    "4f4e752f9751e484"
+   ]
+  ]
+ },
+ {
+  "id": "4f4e752f9751e484",
+  "type": "mqtt out",
+  "z": "52d3e910e6e8ef25",
+  "name": "Atuadores",
+  "topic": "ESP32/COM/Atuador",
+  "qos": "1",
+  "retain": "",
+  "respTopic": "",
+  "contentType": "",
+  "userProps": "",
+  "correl": "",
+  "expiry": "",
+  "broker": "8860c2e7aa1a2b1d",
+  "x": 510,
+  "y": 340,
+  "wires": []
+ },
+ {
+  "id": "8860c2e7aa1a2b1d",
+  "type": "mqtt-broker",
+  "name": "mosquitto esp32s3",
+  "broker": "192.168.0.105",
+  "port": 1883,
+  "clientid": "Node-red",
+  "autoConnect": true,
+  "usetls": false,
+  "protocolVersion": 4,
+  "keepalive": 60,
+  "cleansession": true,
+  "autoUnsubscribe": true,
+  "birthTopic": "",
+  "birthQos": "0",
+  "birthRetain": "false",
+  "birthPayload": "",
+  "birthMsg": {},
+  "closeTopic": "",
+  "closeQos": "0",
+  "closeRetain": "false",
+  "closePayload": "",
+  "closeMsg": {},
+  "willTopic": "",
+  "willQos": "0",
+  "willRetain": "false",
+  "willPayload": "",
+  "willMsg": {},
+  "userProps": "",
+  "sessionExpiry": ""
+ },
+ {
+  "id": "nx_ui_tab_nexus",
+  "type": "ui_tab",
+  "name": "NEXUS",
+  "icon": "dashboard",
+  "order": 1,
+  "disabled": false,
+  "hidden": false
+ },
+ {
+  "id": "nx_ui_grp_mqtt",
+  "type": "ui_group",
+  "name": "REDE MQTT",
+  "tab": "nx_ui_tab_nexus",
+  "order": 3,
+  "disp": true,
+  "width": "6",
+  "collapse": false,
+  "className": ""
+ },
+ {
+  "id": "nx_ui_base",
+  "type": "ui_base",
+  "theme": {
+   "name": "theme-dark",
+   "lightTheme": {
+    "default": "#0094CE",
+    "baseColor": "#0094CE",
+    "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+    "edited": false
+   },
+   "darkTheme": {
+    "default": "#097479",
+    "baseColor": "#097479",
+    "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+    "edited": false
+   },
+   "customTheme": {
+    "name": "Untitled Theme 1",
+    "default": "#4B7930",
+    "baseColor": "#4B7930",
+    "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+   },
+   "themeState": {}
+  },
+  "site": {
+   "name": "Node-RED Dashboard",
+   "hideToolbar": "false",
+   "allowSwipe": "false",
+   "lockMenu": "false",
+   "allowTempTheme": "true",
+   "dateFormat": "DD/MM/YYYY",
+   "sizes": {
+    "sx": 48,
+    "sy": 48,
+    "gx": 6,
+    "gy": 6,
+    "cx": 6,
+    "cy": 6,
+    "px": 0,
+    "py": 0
+   }
+  }
+ },
+ {
+  "id": "nx_btn_aquecer",
+  "type": "ui_button",
+  "z": "52d3e910e6e8ef25",
+  "name": "Aquecimento",
+  "group": "nx_ui_grp_mqtt",
+  "order": 1,
+  "width": 0,
+  "height": 0,
+  "passthru": false,
+  "label": "Aquecimento",
+  "tooltip": "",
+  "color": "",
+  "bgcolor": "#c0392b",
+  "className": "",
+  "icon": "fa-arrow-right",
+  "payload": "AQUECIMENTO_ON",
+  "payloadType": "str",
+  "topic": "",
+  "topicType": "str",
+  "x": 250,
+  "y": 560,
+  "wires": [
+   [
+    "nx_fn_cron_start"
+   ]
+  ]
+ },
+ {
+  "id": "nx_btn_refrigerar",
+  "type": "ui_button",
+  "z": "52d3e910e6e8ef25",
+  "name": "Refrigeração",
+  "group": "nx_ui_grp_mqtt",
+  "order": 2,
+  "width": 0,
+  "height": 0,
+  "passthru": false,
+  "label": "Refrigeração",
+  "tooltip": "",
+  "color": "",
+  "bgcolor": "#2980b9",
+  "className": "",
+  "icon": "fa-arrow-right",
+  "payload": "REFRIGERACAO_ON",
+  "payloadType": "str",
+  "topic": "",
+  "topicType": "str",
+  "x": 250,
+  "y": 620,
+  "wires": [
+   [
+    "nx_fn_cron_start"
+   ]
+  ]
+ },
+ {
+  "id": "nx_btn_desligar",
+  "type": "ui_button",
+  "z": "52d3e910e6e8ef25",
+  "name": "Desligar",
+  "group": "nx_ui_grp_mqtt",
+  "order": 3,
+  "width": 0,
+  "height": 0,
+  "passthru": false,
+  "label": "Desligar",
+  "tooltip": "",
+  "color": "",
+  "bgcolor": "#7f8c8d",
+  "className": "",
+  "icon": "fa-arrow-right",
+  "payload": "SYSTEM_OFF",
+  "payloadType": "str",
+  "topic": "",
+  "topicType": "str",
+  "x": 250,
+  "y": 680,
+  "wires": [
+   [
+    "nx_fn_cron_start"
+   ]
+  ]
+ },
+ {
+  "id": "nx_btn_get_temp",
+  "type": "ui_button",
+  "z": "52d3e910e6e8ef25",
+  "name": "Leitura temperatura",
+  "group": "nx_ui_grp_mqtt",
+  "order": 4,
+  "width": 0,
+  "height": 0,
+  "passthru": false,
+  "label": "Leitura temperatura",
+  "tooltip": "",
+  "color": "",
+  "bgcolor": "#27ae60",
+  "className": "",
+  "icon": "fa-thermometer-half",
+  "payload": "GET_TEMP",
+  "payloadType": "str",
+  "topic": "",
+  "topicType": "str",
+  "x": 260,
+  "y": 740,
+  "wires": [
+   [
+    "da752f354312e050"
+   ]
+  ]
+ },
+ {
+  "id": "nx_fn_cron_start",
+  "type": "function",
+  "z": "52d3e910e6e8ef25",
+  "name": "Inicia cronometro",
+  "func": "// Salva o momento exato em que o comando passou por aqui\nflow.set('t_start_3', Date.now());\n\n// Repassa a mensagem original sem alterações\nreturn msg;",
+  "outputs": 1,
+  "timeout": 0,
+  "noerr": 0,
+  "initialize": "",
+  "finalize": "",
+  "libs": [],
+  "x": 470,
+  "y": 620,
+  "wires": [
+   [
+    "4f4e752f9751e484"
+   ]
+  ]
+ },
+ {
+  "id": "nx_fn_cron_stop",
+  "type": "function",
+  "z": "52d3e910e6e8ef25",
+  "name": "Para Cronômetro e Mede (ms)",
+  "func": "// Recupera o tempo salvo na memória\nlet start = flow.get('t_start_3');\n\nif (start) {\n    let tempo = Date.now() - start;\n    flow.set('t_start_3', null);\n    let msgTempo = {\n        payload: tempo + \" ms\",\n        topic: \"Velocidade_Comunicacao\"\n    };\n    return [msg, msgTempo];\n}\nreturn [msg, null];",
+  "outputs": 2,
+  "timeout": 0,
+  "noerr": 0,
+  "initialize": "",
+  "finalize": "",
+  "libs": [],
+  "x": 500,
+  "y": 280,
+  "wires": [
+   [
+    "nx_ui_txt_status",
+    "nx_fn_state_web"
+   ],
+   [
+    "nx_ui_txt_delay"
+   ]
+  ]
+ },
+ {
+  "id": "nx_ui_txt_status",
+  "type": "ui_text",
+  "z": "52d3e910e6e8ef25",
+  "group": "nx_ui_grp_mqtt",
+  "order": 6,
+  "width": 0,
+  "height": 0,
+  "name": "Status atuador",
+  "label": "Status",
+  "format": "{{msg.payload}}",
+  "layout": "row-spread",
+  "className": "",
+  "style": false,
+  "font": "",
+  "fontSize": 16,
+  "color": "#000000",
+  "x": 760,
+  "y": 260,
+  "wires": []
+ },
+ {
+  "id": "nx_ui_txt_delay",
+  "type": "ui_text",
+  "z": "52d3e910e6e8ef25",
+  "group": "nx_ui_grp_mqtt",
+  "order": 7,
+  "width": 0,
+  "height": 0,
+  "name": "Delay",
+  "label": "Delay",
+  "format": "{{msg.payload}}",
+  "layout": "row-spread",
+  "className": "",
+  "style": false,
+  "font": "",
+  "fontSize": 16,
+  "color": "#000000",
+  "x": 750,
+  "y": 320,
+  "wires": []
+ },
+ {
+  "id": "nx_ui_txt_temp",
+  "type": "ui_text",
+  "z": "52d3e910e6e8ef25",
+  "group": "nx_ui_grp_mqtt",
+  "order": 5,
+  "width": 0,
+  "height": 0,
+  "name": "temperatura",
+  "label": "temperatura (°C)",
+  "format": "{{msg.payload}}",
+  "layout": "row-spread",
+  "className": "",
+  "style": false,
+  "font": "",
+  "fontSize": 16,
+  "color": "#000000",
+  "x": 770,
+  "y": 100,
+  "wires": []
+ },
+ {
+  "id": "nx_ui_chart_temp",
+  "type": "ui_chart",
+  "z": "52d3e910e6e8ef25",
+  "name": "chart",
+  "group": "nx_ui_grp_mqtt",
+  "order": 8,
+  "width": 0,
+  "height": 0,
+  "label": "Histórico de temperatura",
+  "chartType": "line",
+  "legend": "false",
+  "xformat": "HH:mm:ss",
+  "interpolate": "linear",
+  "nodata": "aguardando dados...",
+  "dot": false,
+  "ymin": "",
+  "ymax": "",
+  "removeOlder": 1,
+  "removeOlderPoints": "",
+  "removeOlderUnit": "3600",
+  "cutout": 0,
+  "useOneColor": false,
+  "useUTC": false,
+  "colors": [
+   "#1f77b4",
+   "#aec7e8",
+   "#ff7f0e",
+   "#2ca02c",
+   "#98df8a",
+   "#d62728",
+   "#ff9896",
+   "#9467bd",
+   "#c5b0d5"
+  ],
+  "outputs": 1,
+  "useDifferentColor": false,
+  "className": "",
+  "x": 750,
+  "y": 160,
+  "wires": [
+   []
+  ]
+ },
+ {
+  "id": "nx_fn_state_web",
+  "type": "function",
+  "z": "52d3e910e6e8ef25",
+  "name": "set MQTT state",
+  "func": "const protocolState = flow.get(\"protocolState\") || {};\n\nprotocolState.MQTT = {\n    ...(protocolState.MQTT || {}),\n    online: true,\n    status: String(msg.payload)\n};\n\nflow.set(\"protocolState\", protocolState);\nreturn msg;",
+  "outputs": 1,
+  "timeout": 0,
+  "noerr": 0,
+  "initialize": "",
+  "finalize": "",
+  "libs": [],
+  "x": 760,
+  "y": 380,
+  "wires": [
+   []
+  ]
+ }
+]
