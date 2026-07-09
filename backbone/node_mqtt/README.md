@@ -1,172 +1,126 @@
-# 🌐 Backbone — Integração (Node-RED como hub multi-protocolo)
+# Fluxo mqtt
+Antes de explicar os nós vamos explicar como a comunicação do node-red com o servidor de comunicação mqtt funciona, ao utilizar qualquer balão da mqtt é possivel selecionar e cadastrar o o servidor de interesse:
 
-[![Node-RED](https://img.shields.io/badge/Node--RED-5.0-red.svg)](https://nodered.org/)
-[![S7](https://img.shields.io/badge/PROFINET-node--red--contrib--s7-blue.svg)](#)
-[![HTTP](https://img.shields.io/badge/CAN-HTTP%20REST-green.svg)](#)
-[![MQTT](https://img.shields.io/badge/MQTT-cliente-orange.svg)](#)
-
-O backbone é o núcleo central de alta capacidade da rede (sua "espinha dorsal"), cuja função é agregar, rotear e escoar volumes de tráfego de dados entre diversas sub-redes menores, provedores regionais e data centers, garantindo a conectividade de longa distância e a resiliência de toda a topologia. Em nosso projeto usamos o **Node-red**, como  backbone, sendo ele responsavel pelo gerenciamento e fluxo de dados dos nossos dispositivos.
-
-# O que é o Node-red - https://nodered.org/
-
-O Node-RED é uma ferramenta de desenvolvimento de código aberto focada na programação baseada em fluxos (Flow-Based Programming), originalmente criada pela IBM para simplificar a interconexão de dispositivos de hardware, APIs e serviços online no ecossistema da Internet das Coisas (IoT). Através de uma interface gráfica executada diretamente no navegador, os usuários podem arrastar, soltar e interligar blocos funcionais chamados de "nós", o que reduz drasticamente a necessidade de codificação manual complexa para estabelecer fluxos de dados automatizados.
-
-A base estrutural do Node-RED repousa sobre o conceito de nós de entrada, processamento e saída, onde cada nó executa uma tarefa atômica e se comunica enviando mensagens padronizadas na forma de objetos JSON (JavaScript Object Notation). Toda a lógica visual construída pelo usuário, incluindo a disposição e o encadeamento desses nós, é convertida e salva nativamente em arquivos JSON de texto limpo, o que confere à plataforma uma extrema leveza, portabilidade e facilidade para exportação, importação e controle de versão de projetos de automação.
-
-Por baixo dessa interface visual, o Node-RED roda inteiramente sobre o Node.js, um ambiente de execução (runtime) JavaScript assíncrono e orientado a eventos, construído sobre o motor V8 do Google Chrome. A arquitetura de I/O (Entrada/Saída) não-bloqueante do Node.js permite que o Node-RED gerencie milhares de conexões e eventos simultâneos em tempo real com um consumo mínimo de memória e CPU, tornando-o altamente eficiente tanto para servidores robustos em nuvem quanto para gateways industriais de recursos limitados e sistemas embarcados.
-
-Na comunicação entre equipamentos distintos, o Node-RED atua como um middleware ou gateway inteligente, realizando a ingestão multiprotocolo de dados provenientes de hardwares que utilizam linguagens incompatíveis, como MQTT, Modbus, HTTP ou comunicação Serial. Após capturar esses dados brutos, a ferramenta realiza o parsing e a normalização das informações em tempo real e as roteia para seus respectivos destinos — sejam eles bancos de dados, painéis de monitoramento ou comandos de controle enviados de volta para dispositivos
-
-# Configuração de Rede
-
-Antes de explicar nosso fluxo de nós do node-red, segue a baixo nossa configuração de rede.
-Como gateway, o nosso via de dados para comunicação entre os dispositivos, utilizamos um roteador Tp-link com a configuração Access Point, a onde os dispotivos conectados via rede e os dispotivos via Wifi compartilham a mesma faixa de rede, aqui configuramos nosso ip gateway como 192.168.0.167.
-Nossa rede se Wifi foi nomeada exclusivamente para esse projeto: COM_N_26.1, sem senha, "COM" sigla para materia academia desse projeto, Comunicação de Dados, "N" de noturno, que é muito representativo e necessário exposição, pois o horário noturno é o unico que temos para dedicar a graduação devido necessidade de trabalhar durante o dia e "26.1", ano e semestre de desenvolvimento desse projeto, que até onde esperamos que seja o ultimo.
-
-Segue abaixo configuração interna do roteador:
-
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/Configura%C3%A7%C3%A3o%20Modem.png" alt=" Componentes" width="900">
-
-o Computador em que o node-red estiver instalado deve estar com a porta de conexão, RJ45 ou Wifi com o ip fixado em 192.168.0.100, conforme imagem:
-
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/Ip%20Broker.png" alt=" Componentes" width="400">
-
-# Fluxo Node-red Projeto Nexus
-Com a contextualização da configuração de rede realizada, vamos seguir com a nossa configuração de fluxo. Partimos do principio que todos os sistema de disposivos estão conectados na rede COM_N_26.1, com seus respectivos Ips conforme especificado em suas própias pastas desse repositório.
-
-Segue a visualização macro do nó do projeto:
-
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/Visualiza%C3%A7%C3%A3o%20Node%20Projeto%20Nexus.png" alt=" Componentes" width="900">
-> ⚠️ Indicadores vermelhos na imagem, são devido a aquisição de imagem ter sido com os dispositivos offline, para elaboração desse repositório.
-
-Na Imagem acima é possivel identificar 3 colunas de dados, respectivamente, Profinet, Can e Mqtt.
-O Node-red é uma plataforma muito versatil em sua aplicação conta com a possibilidade de adicionar bibliotecas que ajudam no desenvolvimento dos projetos, para nosso projeto, utilizamos 3 bibliotecas, a biblioteca nativa do node-red,com seu respectivo nome, a biblioteca plcindustry, exclusiva para comunicação com clp Siemens e a biblioteca node-red-dashboard, para configuração do nosso dashboard. Segue imagem da visualização na Aba Gerenciar Paleta das bibliotecas instaladas e utilizadas:
-
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/Generaliza%C3%A7%C3%A3o%20n%C3%B3s%20utilizados.png" width="900">
-> ⚠️ Na imagem a cima, os indicadores > XX nodes, indicam quantas nós para uso cada biblioteca tem.
-
-
-Sobre a quantidade de nós utilizados temos segue a relação: **Total Geral:** 116 elementos
-
-### Nós Nativos (Core Node-RED) - 78 nós
-* **22** `comment` (Comentários visuais)
-* **15** `function` (Lógica em JavaScript)
-* **7** `http in` (Recepção de requisições HTTP)
-* **7** `http response` (Respostas HTTP)
-* **7** `change` (Alteração de payloads)
-* **5** `trigger` (Gatilhos de tempo/eventos)
-* **4** `inject` (Entradas manuais/injetores)
-* **3** `http request` (Envio de requisições HTTP)
-* **2** `mqtt in` (Recepção de dados MQTT)
-* **2** `mqtt out` (Envio de dados MQTT)
-* **1** `json` (Conversão de dados)
-* **1** `tab` (Estrutura da aba do projeto)
-* **1** `mqtt-broker` (Configuração do servidor MQTT)
-* **1** `global-config` (Declaração de dependências dos módulos)
-
-### Interface Gráfica (`node-red-dashboard`) - 22 nós
-* **7** `ui_button` (Botões de ação)
-* **5** `ui_text` (Exibição de texto)
-* **3** `ui_group` (Agrupamento de interface)
-* **2** `ui_gauge` (Mostradores analógicos)
-* **1** `ui_slider` (Controle deslizante)
-* **1** `ui_numeric` (Entrada numérica)
-* **1** `ui_chart` (Gráfico de linha)
-* **1** `ui_spacer` (Espaçador de layout)
-* **1** `ui_tab` (Aba do dashboard)
-
-### Comunicação com CLP (`plcindustry` / S7) - 16 nós
-* **8** `s7 in` (Leitura de variáveis do CLP)
-* **7** `s7 out` (Escrita de variáveis no CLP)
-* **1** `s7 endpoint` (Configuração de conexão IP/Rack/Slot)
-
-## Explicação Nós
-
-### Campo Profinet
-Antes de explicar os nós vamos explicar como a comunicação do node-red com o CLP funciona, ao utilizar qualquer balão da biblioteca plcindustry é possivel selecionar e cadastrar o CLP de interesse, como explicação:
 Clique na opção "+":
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_como_cadastrar_disp_profinet.png" width="400">
 
-Insira os dados recpectivos do seu CLP siemens:
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/cadastro_mqtt.png" width="400">
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/st_config_disp.png" width="400">
+Insira os dados respectivos do seu servidor mqtt:
 
-Cadastre as variaveis de memória para uso no node-red do seu dispotivo:
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_cadastro_disp.png" width="400">
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_cadastro_variavel_profinet.png" width="400">
+Sobre os dados do servidor mqtt:
+`192.168.0.105` - é a configuração do caminho de endereço de ip do servidor mqtt.
+`:1883` - é a configuração da porta do servidor mqtt.
+`MQTT V3.1.1` - protocolo de uso do servidor mqtt
+ E  configuração do ID cliente `Node-red` configurado no servidor mqtt.
 
-Com isso ja explicado vamos para nosso Fluxo Profinet
+Com isso ja explicado vamos para nosso Fluxo mqtt
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_profinet.png" width="600">
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_profinet_2.png" width="600">
+ <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_mqtt.png" width="600">
+ <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_mqtt_2.png" width="600">
 
-Para explicar esse nó vamos generalizar e explicar cada tipo de nó aplicado:
+ Para explicar esse fluxo vamos generalizar e explicar cada tipo de nó aplicado:
+ 
+## Tipo 1 - Nó mqtt out
 
-#### Tipo 1 - Leitura de Variavel S7 - S7 in
-Nó para leitura de variáveis do CLP, realizado seleção do dispotivo de origem, variável de interesse e opções de leitura:
+Nó para envio de valores do servidor mqtt, realizado seleção do servidor de destino e o tópico de leitura:
+ <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_out_config.png" width="400">
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_in_profinet.png" width="400">
+Nesse fluxo possuimos 2 nós `mqtt out`, que possuem o mesmo servidor cadastrado, o que muda é seu topico de destino:
 
-No caso acima é o retorno do feedback da frequencia do inversor devolvida como um dado Float de 32-bits. Além do feeback da frequência do Inversor, esse nó da comando para parar o contador do nó tipo 6.
+| Tópico | Tipo | Função | 
+|------|----|----------------|
+| `ESP32S3/COM/Atuadores` | `string` |Solicitar Alteração do atuador do sistema| 
+| `ESP32S3/COM/get` | `string` | Solicitar aquisição de temperatura atual do sensor de temperatura | 
 
-#### Tipo 2 - Escrita de Variavel S7 - S7 out
-Nó para escrita de variáveis do CLP, realizado seleção do dispotivo de origem, variável de interesse:
+O Tópico `ESP32S3/COM/Atuadores` pode enviar os tipos de string `AQUECIMENTO_ON`,`REFRIGERACAO_ON`,`SYSTEM_OFF` que são tratados pelo servidor para alterar estado do atuador.
+O Tópico `ESP32S3/COM/get` pode enviar os tipos de string `GET_TEMP` que é tratado pelo servidor para solicitar aquisição da temperatura.
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/s7_out_profinet.png" width="400">
+## Tipo 2 - Nó mqtt in
 
-Nesse tipo foram selecionados as variaveis que recebem dados boleanos (true ou false), o que muda entre eles é o endereço de memória:
+Nó para recebimento de valores do servidor mqtt, realizado seleção do servidor de destino e o tópico de leitura:
+ <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_in_config.png" width="400">
+
+ Nesse fluxo possuimos 2 nós `mqtt out`, que possuem o mesmo servidor cadastrado, o que muda é seu topico de leitura:
+
+| Tópico | Tipo | Função | 
+|------|----|----------------|
+| `ESP32S3/COM/Status` | `string` | Atualização do valor de status dos atuadores | 
+| `ESP32S3/COM/temperatura` | `string` |Atualização do valor de temperatura| 
+
+O Tópico `ESP32S3/COM/Status` recebe toda atualização tratada pelo servidor mqtt do status dos atuadores que podem ser `Sistema aquecendo`,`Sistema resfriando` e `Sistema desligado` .
+O Tópico `ESP32S3/COM/temperatura` recebe toda atualização de temperatura registrada pelo servidor mqtt.
+
+## Tipo 3 - Nó s7 in
+
+Nó para leitura de variáveis do CLP, realizado seleção do dispositivo de origem, variável de interesse e opções de leitura:
+
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_s7_in_mqtt.png" width="400">
+
+A leitura de variavies do CLP, variaveis da IHM para atuação no servidor mqtt
+
+| Tópico | Registrador| Tipo | Função | 
+|------|----|----------------|---------|
+|`Liga_AQ`|`DB7,X0.0`|bool| Envia true para nó funciont 4 | 
+|`Liga_vent` |`DB7,X0.1`|bool|Envia true para nó funciont 3| 
+|`Desligar_vent_AQ`|`DB7,X0.2`|bool|Envia true para nó funciont 1| 
+
+Todos os nós s7 in, são sinalizadores de comando que são processados pelos nós functions conectados, verificar no tipo 8.
+
+## Tipo 4 - Nó s7 out
+
+Nó para escrita de variáveis do CLP, realizado seleção do dispositivo de origem, variável de interesse:
+
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_s7_out_mqtt.png" width="400">
+
+Nesse tipo foi selecionado a variável `FDK_temp` que recebem dados real, do nó function `String/Real`:
 
 | Nome | Endereço | Tipo | Uso |
 |------|----------|------|-----|
-| `START` | `DB4.DBX0.0` | bool | Liga o inversor |
-| `STOP` | `DB4.DBX0.1` | bool | Desliga o inversor |
-| `RESET_INV` | `DB4,x0.2` | bool | Reseta as falhas no inversor de frequência |
-| `HABILITA NODE RED` | `DB2,X10.1` | bool | Habilita o comando via node red |
+| `FDK_temp` | `DB7,REAL2` | real | registra valor de temperatura enviado pelo no function `String/Real`|
 
-Unico que recebe um valor diferente é o S7 out - SET_FREQ, que recebe um valor real para atualizar o valor de frequeência do Inversor:
+## Tipo 5 - Comunicação http
 
-| Nome | Endereço | Tipo | Uso |
-|------|----------|------|-----|
-| `ENTRADA_REF_FREQUENCIA` | `DB4,REAL2` | real | Seta frequência |
+#### Estrutura de leitura de informações
 
-#### Tipo 3 - Nó Trigger
+Para o node receber os dados do esp é necessário configurar 2 nós, `http in` e ` http response`:
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_n%C3%B3_trigger.png" width="400">
+####`http in`
 
-Nesse tipo é configurado que caso esse nó receba um dado de ativação, em sua saída terá um pulso de sáida "true" por 1 segundo, após esse tempo será um comando "false", foi configuraado dessa forma devido a lógica de funcionamento do CLP Siemens, como é possivel visualizar os nós trigger estão conectados com os nós que recebem dados boleanos, responsavel por ligar, desligar e resetar o inversor, caso esses nós recebessem continuamente os dados true ou false, isso afearia a logica do CLP, não senso possivel alterar os valores das variáveis por outros comandos.
-Todos os nós trigger estão configurados da mesma forma
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_http_mqtt_in.png" width="400">
 
-#### Tipo 4 - Function 2 - Conversor
+O fluxo do mqtt possui 3 pares de recebimento de informações da rede-can, como na imagem acima, todo `http in`  esta conectado em um `http response`, essa ligação é necessária para estabelecer comunicação. Os nós `http in` estão todos configurados de modo similar, todos com método "POST", suas diferenças estão na configuração do URL e na Label, cada URL é responsavel por receber um dado especificado pela programação do esp:
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_n%C3%B3_function_2.png" width="600">
+| Label | URL |Dado| 
+|------|----------|----------|
+| `Recebe Aquecer` | `/mqtt_aquecer` | string - Envia sinalizador para nó function 4|
+| `Recebe Resfriar` | `/mqtt_resfriar` |string - Envia sinalizador para nó function 3|
+| `Recebe desligar` | `/mqtt_desligar` |string - Envia sinalizador para nó function 1 |
 
-Como explicado no tipo 1, o dado do S7 in - REF_INV retorna um dado Float de 32-bits, esse function possui um script para converter esse dado para msg.payload para ser exibido no dashboard.
-```
-msg.payload = Number(msg.payload.toFixed(2));
-return msg;
-```
+####` http response`
 
-#### Tipo 5 - Toogle
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/CAN_http_response.png" width="300">
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_n%C3%B3_toogle.png" width="600">
+Os nós ` http response`, são necessários somente para completar o fluxo de comunicação com o esp, neles não são configurados nada, todos estão como na imagem a cima.
 
-Essa função tem como principio refinar o controle do node-rede e a IHM do CLP, ele é resposavel por alterar uma variavel interna do CLP que altera a prioridade do comando entre o CLP e o Node red
-```
-// Recupera o estado atual do contexto do fluxo (se não existir, começa como false)
-let estado = context.get('estado') || false;
+#### Estrutura de escrita de informações
 
-// Inverte o estado (se era true vira false, se era false vira true)
-estado = !estado;
+#####` http request`
 
-// Salva o novo estado de volta na memória
-context.set('estado', estado);
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_http_request_mqtt.png" width="400">
 
-// Envia o novo estado no payload
-msg.payload = estado;
-return msg;
-```
+O fluxo mqtt possui um nó `http request` , que é responsavel por receber a atualização dos status dos atuadores e temperatura dos nós `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura`, respectivamente . Em sua configuração o Método é POST, segue abaixo demais configurações:
+| Label | URL |Dado| 
+|------|----------|----------|
+| `requisição http` | `http://192.168.0.103/set_mqtt_sim` | string - recebe os valores em string da atualização do status dos atuadores e atualização de temperatura enviados pelos mqtt in|
+
+Sobre os URL:
+`http://192.168.0.103` - é a configuração do caminho http para o endereço de ip no ESP.
+`set_mqtt_sim`, variável interna do código do ESP CAN para atualização dos dados dos status dos atuadores e atualização de temperatura enviados pelos mqtt in.
+
 #### Tipo 6 - Cronômetro de Feedback de envio e retorno de mensagem
-Esse tipo, também presente nas demais colunas, é constituido de 2 nós o `Inicia cronometro` e `Para Cronômetro e Mede (ms)`. São dois nós dependentes, o nó `Inicia cronometro`,com uma saída, possui uma variavel que ao ser acionada incia um contador de tempo, nessa caso, quando o valor de frequência é alterado pelo dashboard, o nó `Para Cronômetro e Mede (ms)` para o contador de tempo e o converte para ms, possuí duas saída, uma para o codigo seguir seu caminho para o nó dashboard de gauge e outra para o nó dashbaord de texto.
+Esse tipo, também presente nas demais colunas, é constituido de 2 nós o `Inicia cronometro` e `Para Cronômetro e Mede (ms)`. São dois nós dependentes, o nó `Inicia cronometro`,com uma saída, possui uma variável que ao ser acionada inicia um contador de tempo, nessa caso, quando o valor de frequência é alterado pelo dashboard, o nó `Para Cronômetro e Mede (ms)` para o contador de tempo e o converte para ms, possuí duas saída, uma para o código seguir seu caminho para o nó dashboard de texto de temperatura e outra para o nó dashbaord de texto para valor em ms.
 
 Nó `Inicia cronometro`
 
@@ -174,7 +128,7 @@ Nó `Inicia cronometro`
 
 ```
 // Salva o momento exato em que o comando passou por aqui
-flow.set('t_start', Date.now());
+flow.set('t_start_3', Date.now());
 
 // Repassa a mensagem original sem alterações
 return msg;
@@ -186,14 +140,14 @@ Nó `Para Cronômetro e Mede (ms)`
 
 ```
 // Recupera o tempo salvo na memória
-let start = flow.get('t_start');
+let start = flow.get('t_start_3');
 
 if (start) {
     // Calcula a diferença entre o agora e o tempo inicial
     let tempo = Date.now() - start;
     
     // Limpa a memória para a próxima medição
-    flow.set('t_start', null); 
+    flow.set('t_start_3', null); 
     
     // Cria uma nova mensagem com o tempo calculado
     let msgTempo = { 
@@ -207,100 +161,114 @@ if (start) {
 
 // Se não houver tempo inicial, apenas passa a msg original
 return [msg, null];
+
+
+
 ```
 
-> ⚠️ **No código é possivel verificar a variável 't_start', como essas funções se repetem no código, é necessária alteração para não gerar conflito e falhar a sincronização dos contadores com seus respectivos inica e para, para isso foi diferenciado essa variavel para 't_start_2' e 't_start_3', esse dado deve ser alterado tanto no `Inicia cronometro` quanto `Para Cronômetro e Mede (ms)` para ficar sincronizado. obs: essa variável repete duas vezes no `Para Cronômetro e Mede (ms)`.
+> ⚠️ **No código é possivel verificar a variável 't_start', como essas funções se repetem no código, é necessária alteração para não gerar conflito e falhar a sincronização dos contadores com seus respectivos inica e para, para isso foi diferenciado essa variável para 't_start_2' e 't_start_3', esse dado deve ser alterado tanto no `Inicia cronometro` quanto `Para Cronômetro e Mede (ms)` para ficar sincronizado. obs: essa variável repete duas vezes no `Para Cronômetro e Mede (ms)`.
 
 #### Tipo 7 - Exportar dados para nexus-web
 
-Esse tipo se trata da exportação de dados para o site nexus-web, que possui 4 nós, um http in `GET /api/state`, um http response `http` e dois nós function `Return current state` e `set PROFINET state`
+Esse tipo se trata da exportação de dados para o site nexus-web, nesse fluxo possui somente um nó, `set CAN state`.
 
-Os nós http configuram o direcionamento no node para o site externo.
+`set MQTT state`
 
-`GET /api/state`
-
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_http_in_nexus_web.png" width="300">
-
-`http`
-
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_http_request_nexus_web.png" width="300">
-
-O nó function `set PROFINET state`, configura o parametro da frequência para exportação
-
-`set PROFINET state`
-
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_profinet_state_nexus_web.png" width="400">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_mqtt_state_nexus_web.png" width="400">
 
 ```
 const protocolState = flow.get("protocolState") || {};
 
-protocolState.PROFINET = {
-    ...(protocolState.PROFINET || {}),
+protocolState.MQTT = {
+    ...(protocolState.MQTT || {}),
     online: true,
-    frequencia: Number(msg.payload ?? 0)
+    status: String(msg.payload)
 };
 
 flow.set("protocolState", protocolState);
+return msg;
+```
+#### Tipo 8 - Nós function
+Esse tipo de nó possui varias funcões, tirando as funções agregadas aos tipos 6 e 7.
+
+##### `function 1` `function 3`  `function 4` - Function para envio de string para `mqtt out`
+Esses nós quando recebem sinalização de entrada dos nós `s7 in` e `http in` eles retornam as `msg.payload = "AQUECIMENTO_ON"` sendo que a mensagem alterna de `AQUECIMENTO_ON` no `function 4` ,`REFRIGERACAO_ON` no `function 3` ,`SYSTEM_OFF` e `function 1`.
+
+```
+// O nó s7 in envia true ou false no msg.payload
+
+if (msg.payload === true) {
+    msg.payload = "AQUECIMENTO_ON"; // Sua string para nível lógico alto (1)
+} else {
+    msg.payload = "AQUECIMENTO_ON";   // Sua string para nível lógico baixo (0)
+}
+
+// Opcional: Você pode mudar o tópico para identificar o status
+//msg.topic = "status_inversor";
 
 return msg;
 ```
+> ⚠️ As variáveis `msg.payload = "AQUECIMENTO_ON"` visivel no scrip da `function 4` é a variavel que se altera para `msg.payload = "REFRIGERACAO_ON"` e `msg.payload = "SYSTEM_OFF"` nos nós `function 3` `function 1`, respectivamente.
 
-O nó function `Return current state`, compila os dados extraidos, tanto da coluna profinet quanto da can e mqtt e os exporta para o link do nexus-web.
+##### `String/Real`
+Essa function é responsavel pela conversão dos dados de temperatatura enviados pelo nó mqtt in `ESP32S3/COM/temperatura` no formato string e encaminhar para o nó s7 out `FDK_temp`.
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_response_nexus_web.png" width="400">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_mqtt_state_nexus_web.png" width="400">
 
 ```
-const defaultState = {
-    deviceId: "NEXUS Central Node V2",
+// Supondo que msg.payload venha como "123.45" ou "123,45"
+let stringOriginal = msg.payload.toString();
 
-    PROFINET: {
-        online: true,
-        frequencia: 0,
-        estado: false,
-        habilitar: false,
-        resetar: false
-    },
-    CAN: {
-        online: true,
-        velocidade: 0,
-        marcha: 0,
-        erro: 0
-    },
-    MQTT: {
-        online: true,
-        temperatura: "---",
-        estado: "---"
-    }
+// Remove espaços e substitui vírgula por ponto, se houver
+let stringLimpa = stringOriginal.trim().replace(',', '.');
+
+// Converte para número Real (Float)
+let numeroReal = parseFloat(stringLimpa);
+
+// Verifica se a conversão foi válida para evitar enviar erros ao CLP
+if (!isNaN(numeroReal)) {
+    msg.payload = numeroReal;
+    msg.topic = "DB7,REAL2"; // Substitua pelo endereço exato da sua Tag REAL no CLP
+    return msg;
+} else {
+    node.error("Erro na conversão: O valor recebido não é uma String numérica válida. Recebido: " + stringOriginal);
+    return null; // Aborta o fluxo para não enviar lixo ao CLP
+}
+```
+#### Tipo 9 - Envio de dados para http request
+
+Esse nó function é responsável por receber os dados dos mqtt in `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura` e processa-los para serem direcionados para o nó `http request´ da rede CAN
+
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_envio_http_mqtt.png" width="400">
+
+```
+// 1. Inicializa os valores guardados na memória do Node-RED caso ainda estejam vazios
+let tempSalva = context.get('tempSalva') || 0.0;
+let statusSalvo = context.get('statusSalvo') || "Aguardando";
+
+// 2. Filtra o dado analisando diretamente a mensagem que entrou
+let conteudo = msg.payload.toString().trim();
+
+// Se o conteúdo for um número (ou começar com um número), veio da temperatura
+if (!isNaN(parseFloat(conteudo)) && !conteudo.includes("aquecer") && !conteudo.includes("refri")) {
+    tempSalva = parseFloat(conteudo);
+    context.set('tempSalva', tempSalva); // Salva na memória
+} 
+// Caso contrário, é o texto do status (ex: "Aquecendo", "Resfriando", "Aguardando")
+else {
+    statusSalvo = conteudo;
+    context.set('statusSalvo', statusSalvo); // Salva na memória
+}
+
+// 3. Monta o JSON unificado perfeito que o seu ESP32 espera receber
+msg.payload = {
+    temp: tempSalva,
+    status: statusSalvo
 };
-
-const saved = flow.get("protocolState") || {};
-const response = {
-    deviceId: saved.deviceId || defaultState.deviceId,
-    PROFINET: {
-        ...defaultState.PROFINET,
-        ...(saved.PROFINET || {})
-    },
-    CAN: {
-        ...defaultState.CAN,
-        ...(saved.CAN || {})
-    },
-    MQTT: {
-        ...defaultState.MQTT,
-        ...(saved.MQTT || {})
-    }
-};
-
-msg.headers = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "https://curricularium.infinityfreeapp.com"
-};
-
-msg.payload = JSON.stringify(response);
 
 return msg;
 ```
-#### Tipo 8 -  Nós de Dashboard
-
+#### Tipo 10 - Dashboard
 Antes de explicar os nós de dashboard, vamos esclarecer a configuração do dashboard, no nosso caso, foi realizado a criação de um dashbaord com 3 grupos, cada um desses grupos sendo um tipo de comunicação e na exibição estão expostos da mesma forma, espectivamente Profinet, CAN e MQTT.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_dashboard_groups.png" width="400">
@@ -309,30 +277,42 @@ Antes de explicar os nós de dashboard, vamos esclarecer a configuração do das
  
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/Dashboard.png" width="800">
 
-Voltando para os nós nessa secção, há 7 nós da biblioteca dashboard, 4 botões responsavel pelo acionionamento dos nós trigger (tipo 3) e toggle (tipo 5) para as entradas do clp, 1 nó numeric para atualizar os valores de frenquência para o clp e 2 nós de exibição de dados.
-
+Voltando para os nós desse fluxo, da biblioteca dashboard há 8 nós, 4 botões, 3 text e 1 chart
+.
 ##### Botões
 
-Os botões são configurados de forma simples, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE PROFINET do dashboard NEXUS, em icon e configurado um indicador gráfico retirado do site https://fontawesome.com/v4/icon/arrow-right, Label o Nome exibido no dashboard, opções opcionais n foram configuradas, e foi configurando para quando acionado emitir um payload  boleano "true". todos os botões dessa secção foram configurados da mesma forma, alterando somente o nome da label.
+Nos Nós botões são configurados de forma simples, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE MQTT do dashboard NEXUS, em icon e configurado um indicador gráfico retirado do site https://fontawesome.com/v4/icon/arrow-right, Label é Nome exibido no dashboard, opções opcionais não foram configuradas, e foi configuradp para quando acionado emitir um payload string que retornam as variávies de acionamento `AQUECIMENTO_ON` no botão `Aquecimento` ,`REFRIGERACAO_ON` no botão `Refrigeração` ,`SYSTEM_OFF` no botão `Desligar` e `GET_TEMP` no botão `Leitura temperatura`
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_button_profinet.png" width="400">
+|Botão Dashboard | msg.payload |
+|----------------|--------------|
+| `Aquecimento` | `AQUECIMENTO_ON` | 
+|`Refrigeração` | `REFRIGERACAO_ON` |
+|`Desligar` | `SYSTEM_OFF` |
+|`Leitura temperatura` | `GET_TEMP` |
 
-Labels presentes na configuração:
-| `Liga Inversor` | `Desliga Inversor` | `Reset Inversor` | `Acionamento PROFINET via Node` |
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_button_mqtt.png" width="800">
 
-##### Numeric
-No nó Numeric, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE PROFINET do dashboard NEXUS, foi configurado o Label `Ajuste de frequência`, o formato de valor `{{value}}` e as configurações do numeric, como o range de 0 a 60 e passo de 5. Esse nó quando alterado atualiza o valor da frequencia do inversor e também inicia o no contador do nó tipo 6.
+##### Text
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_slider_profinet.png" width="400">
+Nos nós text, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE MQTT do dashboard NEXUS, esse fluxo possui 3 nós text que recebem tem variaveis para exibição diferentes.
+
+|Label |tipo Valor | Origem do dado |
+|----------------|--------------|----------|
+| `temperatura` |{{msg.payload}} |Dado de temperatura encaminhado pelo nó mqtt in `ESP32S3/COM/temperatura`|
+| `Delay` |{{msg.payload}}| Dado de valor de tempo ms encaminhado pelo nó function `Para Cronômetro e Mede (ms)` |
+| `text` | {{msg.payload}} | Dado de Status dos atuadores encaminhado pelo nó mqtt in `ESP32S3/COM/Status`|
+
+ <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_text_mqtt.png" width="400">
  
-##### Gauge
+##### Chart
+O nó chart foi configurado para receber os dados do nó mqtt in ESP32S3/COM/temperatura e exibe os dados em gráfico com histórico de amostragem
 
-No nó Gauge, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE PROFINET do dashboard NEXUS, nele foi configurado o tipo Gauge, a Label `Frequência Inversor`, formato do valor `{{value}}`, Unidade em `Hz` e parametros graficos para o ponteiro e range.
+|Label | Origem do dado |
+|----------------|--------------|----------|
+| `chart` |Dado de temperatura encaminhado pelo nó mqtt in `ESP32S3/COM/temperatura`|
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_gauge_profinet.png" width="400">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_chart_mqtt.png" width="400">
 
- ##### Text
+
  
- No nó text, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE PROFINET do dashboard NEXUS, nele foi configurado a Label `Delay retorno` e o formato do valor `{{msg.payload}}`. esse nó recebe os dados do nó tipo 6, que o envia o valor em ms do cronometro.
 
- <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_text_profinet.png" width="400">
