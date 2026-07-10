@@ -33,7 +33,7 @@ Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outr
 
 Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://`dominio`.infinityfreeapp.com/upload.php ou somente `dominio`.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. No caso deste projeto, esse endereço significa que o website irá procurar o diretorio na porta default do Node-RED no proprio computador.
 
-**Estrutura de arquivos do Website.**
+## Estrutura de arquivos do Website
 
 Resumo geral dos arquivos e suas funcionalidades.
 
@@ -47,7 +47,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 | `/imagens` | Pasta que contem as imagens, icones, gifs, audio, etc, utilizados pelo website. |
 
 
-**Definições das Linguagens e arquivos utilizadas.**
+## Definições das Linguagens e arquivos utilizadas.
 
 `HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).<br>
 `CSS` : Formata a configuração padrão de objetos HTML.<br>
@@ -59,7 +59,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 
 para que Node-RED responda as requisições será necessario criar
 
-**Função principal Requisição GET `/api/sensor` **
+## Função principal Requisição GET `/api/sensor`
 
 <table>
   <tr>
@@ -123,6 +123,7 @@ Return current state
 <p align="center"><b>GET api/state</b></p>
 <br><br>
 
+## set PROFINET state
 
 ### 5	configurações para futuros semestres
 
@@ -131,7 +132,7 @@ Como o website está situado em um servidor de uma conta privada de um aluno, a 
 <p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="100%"></p>
 <p align="center"><b>Pagina de configuração</b></p>
 
-**Descrição geral dos arquivos**
+## Descrição geral dos arquivos
 Resumo geral dos arquivos e suas funcionalidades.
 
 | opção | Descrição |
@@ -142,7 +143,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 | `resource Usage` | Aba de uso de recursos do website. Cuidado para não ultrapassar os 50000 hits, que significa requisitar os **arquivos** ao host, Atualizar o website não requisitar os arquivos novamente mas CTRL + F5 e abri-lo em uma nova aba requisitam.  |
 | `Control Panel` | Configurações gerais do website. |
 
-**Banco de dados**
+## Banco de dados
 Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
 
 <p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="100%"></p>
