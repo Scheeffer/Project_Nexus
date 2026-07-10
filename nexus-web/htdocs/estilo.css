@@ -1,0 +1,166 @@
+
+body{
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+}
+@font-face{
+    font-family: "Oxanium-ExtraLight";  /* Bom*/
+    src: url(imagens/Oxanium-ExtraLight.woff2); /* Escolher fonte para customizar*/
+}
+
+
+/*   ATOMIC CLASSES   */
+.h-50  {height: 50%;  }
+.h-100 {height: 100%; }
+.d-flex{display: flex;}
+.d-grid{display: flex;}
+.f-row {flex-direction: row;     }
+.f-col {flex-direction: column;  }
+.align-c  {align-items: center;  }
+.align-end{align-items: flex-end;}
+.just-c   {justify-content: center;}
+.just-a  {justify-content: space-around;}
+
+
+header{
+    text-align: center;
+
+    height: 100px;
+    padding: 10px;
+    width: calc(100% - 20px);
+    background-image: linear-gradient(to right,white, rgb(104, 207, 94),rgb(84, 187, 74));
+    background-size: 100% 100%;
+    background-position: 25px center;
+    background-repeat: no-repeat;
+    font-family: "Oxanium-ExtraLight";
+    font-size: 3.5em;
+
+}
+.icon{
+    width: 100px;
+    border-radius: 10px;
+    border: 1px solid rgb(175, 175, 175);
+    background-image: url(imagens/IFSC.jpg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    margin-right: 50px;
+	transition: all 0.2s;
+} .icon:hover{
+	transform: scale(1.08) rotate(5deg);
+}
+
+.canvas{
+    align-items: center;
+    margin: 10px;
+    height: calc(100% - 20px - 120px);
+    width:  calc(100% - 20px);
+    border: 1px solid rgb(175, 175, 175);
+    background-color: rgb(245, 245, 245);
+    border-radius: 10px;
+}
+
+.canvas .controller{
+    justify-content: space-evenly;
+    width: 95%;
+    padding: 20px;
+}
+.operators{
+    height: 300px;
+    width: 400px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    border: 1px solid rgba(128, 128, 128, 0);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.281);
+	font-family: "Oxanium-ExtraLight";
+    background: url(imagens/loading.gif) 20px 50px / 90px 30px no-repeat;
+	transition: all 0.2s;
+ 
+}.operators:hover{
+	/* box-shadow: 0px 0px 20px rgba(84, 187, 150, 0.5); */
+    border: 1px solid gray;
+}
+.sensorON     { background: url(imagens/sensorON.png     ) 20px 20px / 100px 100px no-repeat;}
+.sensorOFF    { background: url(imagens/sensor.png       ) 20px 20px / 100px 100px no-repeat;}
+.PROFINET_ON  { background: url(imagens/actuator-on2.png ) 20px 20px / 100px 100px no-repeat;}	
+.PROFINET_OFF { background: url(imagens/actuator-off2.png) 20px 20px / 100px 100px no-repeat;}
+.CAN_ON       { background: url(imagens/can_icon_ON.png ) 20px 20px / 100px 100px no-repeat;}
+.CAN_OFF      { background: url(imagens/can_icon_off.png ) 20px 20px / 100px 100px no-repeat;}
+.MQTT_ON      { background: url(imagens/temp_icon_on2.png) 20px 20px / 80px 80px no-repeat;}
+.MQTT_OFF     { background: url(imagens/temp_icon_off.png) 20px 20px / 80px 80px no-repeat;}
+
+.sound_off{
+    background: url(imagens/sound_off.png) center / contain no-repeat;
+	height: 25px;
+	width: 25px;
+}.sound_on {background: url(imagens/sound_on.png) center / contain no-repeat;}
+
+.sensor{
+    background: url(imagens/LED_OFF.png) calc(100% - 10px) 10px / 40px  40px  no-repeat;
+    border-bottom: 2px solid rgb(185, 185, 185);
+    border-radius: 20px 20px 0 0;
+    transition: all 0.1s;
+}
+.sensorUpdate { background: url(imagens/LED_GREEN.png) calc(100% - 10px) 10px / 40px  40px  no-repeat;}
+.sensorError  { background: url(imagens/LED_RED.png  ) calc(100% - 10px) 10px / 40px  40px  no-repeat;}
+.sensorDisplay{ background: url(imagens/LED_BLUE.png ) calc(100% - 10px) 10px / 40px  40px  no-repeat;}
+
+.actuator{
+    border-radius: 0 0 20px 20px;
+    /* background: url(imagens/actuator-off.png) 20px center / 100px 100px no-repeat; */
+}
+
+.Display_data{
+    border: 1px solid gray;
+    background-color: #D0D0D0;
+    border-radius: 20px;
+    width: 70%;
+    height: 90%;
+}
+
+.switch{
+    height: 30px;
+    width: 50px;
+    border-radius: 5px;
+    background: rgb(216, 85, 85) url(imagens/switch.png) 5px center / 18px 18px no-repeat;
+    transition: all 0.2s;
+    border: none;
+    margin: 10px;
+}.ON{background: rgb(92, 131, 204) url(imagens/switch.png) 27px center / 18px 18px no-repeat;}
+
+
+
+@media (max-width: 1080px) {
+  
+	.controller{
+		flex-direction: column;
+		width: 100%;
+	}
+	header{
+		font-size: 1.6em;
+		height: 80px;
+	}
+    .icon{
+        width: 80px;
+    }
+	.canvas{
+		height: fit-content;
+	}
+	.operators{
+		margin-bottom: 20px;
+		width: 90%;
+        background: url(imagens/sensor.png) 20px 20px / 25% contain no-repeat;
+	}
+    .Display_data{
+        width: 80%;
+    }
+}
+@media (max-width: 650px) {
+    .header{
+		font-size: 1.2em;
+	}
+    .icon{
+        width: 80px;
+	}
+}
