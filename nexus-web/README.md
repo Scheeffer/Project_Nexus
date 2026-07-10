@@ -41,7 +41,8 @@ Para inserir os dados é necessário adicionar o diretório “/upload.php” a 
 
 ### Estrutura de arquivos do Website.
 
-Arquivos e suas funções:
+### Descrição geral dos arquivos
+Resumo geral dos arquivos e suas funcionalidades.
 
 | Arquivo | Descrição |
 | :---: | :--- |
@@ -58,16 +59,30 @@ Arquivos e suas funções:
 `HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).<br>
 `CSS` : Formata a configuração padrão de objetos HTML.<br>
 `javascript` : Linguagem de alto nivel responsavel pelo <br>
-`PHP` : linguagem de backend.<br>
-`MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações.<br>
+`PHP` : linguagem de backend, utilizadas nos servidores. Suporta HTML e Javascript em seu arquivo. Todo código php fica invisivel ao usuario, diferente do html<br>
+`MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações no mesmo.<br>
 
 
 ### 4	configurações para futuros semestres
 
-Como o website está situado em um servidor de uma conta privada de um aluno, a existencia do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um website 
+Como o website está situado em um servidor de uma conta privada de um aluno, a existencia futura do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um novo website e pderá acessar a pagina de configuração.
 
 <p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="500"></p>
 <p align="center"><b>Pagina de configuração</b></p>
+
+### Descrição geral dos arquivos
+Resumo geral dos arquivos e suas funcionalidades.
+
+| opção | Descrição |
+| :---: | :--- |
+| `Overview` | Dados gerais do website. |
+| `file manager` | local para armazenar e atualizar os arquivos do website dentro da pasta `htdocs`. |
+| `MySQL Databases` | Banco de dados MySQL onde seus dados serão criados/atualizados. |
+| `resource Usage` | Aba de uso de recursos do website. Cuidado para não ultrapassar os 50000 hits, que significa requisitar os **arquivos** ao host, Atualizar o website não requisitar os arquivos novamente mas CTRL + F5 e abri-lo em uma nova aba requisitam.  |
+| `Control Panel` | Configurações gerais do website. |
+
+### Banco de dados
+Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
 
 
 
