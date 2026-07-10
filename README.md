@@ -58,7 +58,7 @@ O Node-RED age como **hub multi-protocolo**: fala **S7/ISO-on-TCP** com o CLP (P
 |:-----:|:----------------|:------------|:-------|:--------|:-------------------|
 | **1** — Cainã & Matheus | **PROFINET** | CLP Siemens S7‑121xC (`192.168.0.1`) | IHM KTP700 Basic | Inversor SINAMICS G120C | **S7 / ISO‑on‑TCP** (node‑red‑contrib‑s7) |
 | **2** — Álvaro & Alexandre | **CAN** | ESP32 TWAI (`192.168.0.63`) | Potenciômetro (nó CAN substituto) | Display Dashboard E620 | **HTTP REST** (`/can`, `/set_nodered_*`) |
-| **3** — Lucas & Henzo | **MQTT** | PC com Mosquitto | Sensor de temperatura com ESP32S3 | Aquecimento + Refrigeração (GPIO18/19) com ESP32S3 | **MQTT** (`esp-mqtt`) |
+| **3** — Lucas & Henzo | **MQTT** | **ESP32 broker** — Mosquitto embarcado (`192.168.0.105:1883`) | Temperatura com **ESP32‑S3** (cliente MQTT) | Aquecimento + Refrigeração (GPIO18/19) com **ESP32 atuador** (cliente MQTT) | **MQTT** (Node‑RED como cliente do broker embarcado) |
 
 Cada célula tem sua documentação completa, diagramas e código nas pastas abaixo.
 
@@ -82,41 +82,42 @@ flowchart TB
 
     subgraph CELULA3["🟧 Célula 3 — MQTT (Lucas & Henzo)"]
         direction TB
-        S3["Sensor<br/>temperatura"] --- ESP3["ESP32<br/>(ESP-IDF, esp-mqtt)"]
-        A3["Atuador<br/>aquece/refrigera"] --- ESP3
+        S3["Sensor temperatura<br/>ESP32-S3 (cliente MQTT)"] -.-> BR3["🧠 ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
+        BR3 -.-> ESP3["ESP32 atuador (cliente MQTT)<br/>aquece GPIO18 / refrigera GPIO19"]
     end
 
     SW["🔀 Switch Ethernet<br/>(Backbone)"]
-    NR["📊 Node-RED<br/>hub S7 + HTTP + MQTT<br/>dashboard + Tabela Global"]
-    BROKER["🧠 Broker MQTT<br/>(Mosquitto) — a definir"]
+    NR["📊 Node-RED<br/>hub S7 + HTTP + MQTT<br/>dashboard + Tabela Global<br/>(cliente do broker da Célula 3)"]
 
     PLC -- "Aplicação: S7comm Apresentação: ISO-on-TCP  Transporte: TCP  Rede: IP  Enlace/Física: Ethernet" --> SW
     ESP2 -- "Aplicação: HTTP REST  Transporte: TCP  Rede:IP         Enlace/Física: WIFI802.11" --> SW
-    ESP3 -- "Aplicação:MQTT(v3.1)  Apresentação: MQTT PURO(port1883)           Sessão: TCP/IP  Transporte: TCP  Rede: IP  Enlace/Física: WIFI802.11" --> SW
+    BR3 -- "Aplicação: MQTT v3.1.1 (:1883)  Transporte: TCP  Rede: IP  Enlace/Física: WIFI 802.11" --> SW
     SW --- NR
-    SW --- BROKER
-    BROKER <--> NR
 
     classDef cell fill:#f7f7f7,stroke:#888,stroke-width:1px;
     classDef local fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
     classDef central fill:#fff3e0,stroke:#e65100,stroke-width:1px;
+    classDef broker fill:#ffe0b2,stroke:#e65100,stroke-width:2px;
     class CELULA1,CELULA2,CELULA3 cell;
-    class PLC,ESP2,ESP3 local;
-    class NR,BROKER central;
+    class PLC,ESP2,ESP3,S3 local;
+    class NR central;
+    class BR3 broker;
 ```
 
 ### Legenda do diagrama
 
 | Símbolo | Significado |
 |--------|-------------|
-| 🟩 Nós **verdes** (`PLC`, `ESP2`, `ESP3`) | **Controladores locais.** É aqui que roda o *algoritmo de controle autônomo* de cada célula. |
-| 🟧 Nós **laranja** (`Node-RED`, `Broker`) | **Nível central (o PC).** Roda *apenas* agregação, monitoramento, Tabela Global e *override* — **não** roda a malha de controle das células. |
+| 🟩 Nós **verdes** (`PLC`, `ESP2`, sensores/atuadores) | **Controladores locais** de cada célula. |
+| 🧠 Nó (`ESP32 broker`) | **Broker MQTT do sistema** — um ESP32 dedicado rodando **Mosquitto embarcado** (`192.168.0.105:1883`). Todo o tráfego MQTT (sensor, atuador e Node-RED) passa por ele. |
+| 🟧 Nó **laranja** (`Node-RED`) | **Nível central (PC, `192.168.0.100`).** Agregação, dashboard, Tabela Global e comando remoto. **É cliente MQTT do broker embarcado**, não o servidor. |
 | 🔀 `Switch` | Domínio de comutação do backbone Ethernet (full-duplex, sem colisão entre portas). |
+| Linha pontilhada dentro da Célula 3 | Tráfego **MQTT via Wi-Fi** entre os três ESP32 da célula (a "rede local" da célula 3 é o próprio MQTT). |
 | Rótulo das setas | Pilha de protocolos **camada por camada** (mapeamento OSI) que cada célula usa para subir ao backbone. |
 
+ - **Células 1 e 2:** a malha de controle roda no controlador local (CLP fecha a malha do inversor; ESP32 CAN opera o barramento CAN de forma autônoma).
+ - **Célula 3:** o broker embarcado dá autonomia de *comunicação* à célula (o MQTT local funciona sem o PC), a *decisão* de aquecer/refrigerar é **remota** — o ESP32 atuador só executa comandos recebidos via tópico (`AQUECIMENTO_ON` / `REFRIGERACAO_ON` / `SYSTEM_OFF`).
 
- - **A malha de controle de cada célula roda no próprio controlador local** (o nó verde): o CLP S7-1200 fecha a malha do inversor; o ESP32 CAN trata o nó CAN; o ESP32 MQTT decide `aquecer/refrigerar/desligar`. Isso satisfaz o critério **Autonomia da Célula** — a célula continua operando *mesmo se o backbone cair*.
- - **O PC (Node-RED + broker, nós laranja) NÃO fecha malha de controle.** Ele só (a) **lê** as variáveis espelhadas de todas as células, (b) mantém a **Tabela Global de Variáveis** como ponto único de tradução entre os três protocolos, e (c) permite **override manual** pelo dashboard. Se o PC for desligado, cada célula continua controlando seu processo localmente — perde-se apenas a *visibilidade global* e o *override* (controle de cada célula).
 
 ---
 
