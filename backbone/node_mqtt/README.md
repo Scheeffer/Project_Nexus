@@ -290,7 +290,9 @@ Nos Nós botões são configurados de forma simples, em group é diferenciado a 
 |`Desligar` | `SYSTEM_OFF` |
 |`Leitura temperatura` | `GET_TEMP` |
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_button_mqtt.png" width="800">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_button_mqtt.png" width="400">
+
+O botão `Leitura temperatura` é o gatinho para inicio do cronometro da function tipo 7, inicia cronometro.
 
 ##### Text
 
@@ -308,11 +310,19 @@ Nos nós text, em group é diferenciado a coluna que ficará posicionado, nesse 
 O nó chart foi configurado para receber os dados do nó mqtt in ESP32S3/COM/temperatura e exibe os dados em gráfico com histórico de amostragem
 
 |Label | Origem do dado |
-|----------------|--------------|----------|
+|----------------|--------------|
 | `chart` |Dado de temperatura encaminhado pelo nó mqtt in `ESP32S3/COM/temperatura`|
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_chart_mqtt.png" width="400">
 
+#### Tipo 11 - Inject
 
+O Nó Inject foi inserido afim de testar a comunicação de modo manual com o servidor mqtt, esse fluxo possui 4 nós Inject, cada um deles com a Label corresponte a mensagem enviada,
+O que muda de um para o outro é usa mensagem,  que varia conforme a mensagem: `AQUECIMENTO_ON`,`REFRIGERACAO_ON`,`SYSTEM_OFF` que estão com as labels, Aquecimento, Resfrigeração e Desligar, respectivamente
  
+<img width="457" height="561" alt="image" src="https://github.com/user-attachments/assets/e74cf6d9-3704-4f4a-acbb-67d569085abd" />
+
+o 4º nó `GET` possui divergência, que além de mandar a msg.payload `get`, o nó esta configurado para enviar a mensagem repetivamente a cada 1 segundo, sendo assim recebendo a atualização da temperatura a cada segundo.
+
+<img width="457" height="554" alt="image" src="https://github.com/user-attachments/assets/b41ab72a-d09c-4131-9b94-27398bf6510a" />
 
