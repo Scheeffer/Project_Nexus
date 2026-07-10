@@ -31,8 +31,7 @@ Deste modo sempre que um usuario entrar com a url do site ele será direcionado
 <p align="center"><b>Fluxograma</b></p>
 <br><br>
 
-Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://curricularium.infinityfreeapp.com/upload.php ou somente curricularium.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. 
-	No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state.
+Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://`dominio`.infinityfreeapp.com/upload.php ou somente `dominio`.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. No caso deste projeto, esse endereço significa que o website irá procurar o diretorio na porta default do Node-RED no proprio computador.
 
 ### Estrutura de arquivos do Website.
 
