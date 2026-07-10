@@ -9,7 +9,8 @@
 ## 1	Descrição do projeto
 
 Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
-## 2. Funcionamento
+
+## 2	Funcionamento
 
 o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url, por exemplo exemplo: www.google.com. Possui a função de disponibilizar os dados para o público geral, esses dados são requisitado periodicamente ao banco de dados, caso haja alguma alteração no mesmo, o site o receberá em alguns momentos.
 
@@ -20,7 +21,7 @@ em javascript em método post para um arquivo backend em php que rodará no serv
 <p align="center"><b>Fluxograma do website</b></p>
 <br><br>
 
-## 2	Estrutura de dados
+## 3	Estrutura de dados
 
 Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura automaticamente por um arquivo de nome index e quaisquer variações de extensão. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuári oem contraste ao upload.php que é responsavel pelo upload dos dados ao banco de dados do servidor.
 
@@ -32,9 +33,6 @@ Deste modo sempre que um usuario entrar com a url do site ele será direcionado
 
 Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://curricularium.infinityfreeapp.com/upload.php ou somente curricularium.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. 
 	No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state.
-
-
-
 
 ### Estrutura de arquivos do Website.
 
