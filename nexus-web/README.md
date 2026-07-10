@@ -18,7 +18,7 @@ o website possui duas entradas, a geral e a local. A entrada geral é aquela que
 <p align="center"><b>Configuração .htacess do servidor PHP local Apache</b></p>
 <br><br>
 
-A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents), pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo.xxx`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real . o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. 
+A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents), pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo.xxx`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real . o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. 
 
 <p align="center"> <img src="figs/url_fetch.png" alt="diagrama" width="100%"></p>
 <p align="center"><b>Endereço da requisição http</b></p>
@@ -31,7 +31,7 @@ A segunda entrada é a de upload de dados. Através de um sistema de armazername
 
 Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura automaticamente por um arquivo de nome index e quaisquer variações de extensão. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuári oem contraste ao upload.php que é responsavel pelo upload dos dados ao banco de dados do servidor.
 
-Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://`dominio`.infinityfreeapp.com/upload.php ou somente `dominio`.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. No caso deste projeto, esse endereço significa que o website irá procurar o diretorio na porta default do Node-RED no proprio computador.
+Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://`dominio`.infinityfreeapp.com/upload.php ou somente `dominio`.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. No caso deste projeto, esse endereço significa que o website irá procurar o diretorio na porta default do Node-RED no proprio computador.
 
 ### Estrutura de arquivos do Website.
 
@@ -41,7 +41,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 | :---: | :--- |
 | `index.php` | Disponibiliza um dashboard online através de requisições periodicas ao banco de dados do host. |
 | `upload.php` | Quando setado corretamente, fará o upload dos dados ao banco de dados do host. |
-| `controller.php` | Arquivo responsavel por gerenciar as requisições ao servidor local.  |
+| `controller.php` | Arquivo responsavel por gerenciar as ações ao banco de dados.  |
 | `backend.php` | Arquivo que contem classes responsaveis por conectar-se e realizar queries ao banco de dados. |
 | `estilo.css` | Arquivo responsavel por formatar a configuração estética HTML do website. |
 | `/imagens` | Pasta que contem as imagens, icones, gifs, audio, etc, utilizados pelo website. |
