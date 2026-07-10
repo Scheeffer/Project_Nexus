@@ -109,16 +109,15 @@ flowchart TB
 | Símbolo | Significado |
 |--------|-------------|
 | 🟩 Nós **verdes** (`PLC`, `ESP2`, sensores/atuadores) | **Controladores locais** de cada célula. |
-| 🧠 Nó **laranja escuro** (`ESP32 broker`) | **Broker MQTT do sistema** — um ESP32 dedicado rodando **Mosquitto embarcado** (`192.168.0.105:1883`). Todo o tráfego MQTT (sensor, atuador e Node-RED) passa por ele. |
+| 🧠 Nó (`ESP32 broker`) | **Broker MQTT do sistema** — um ESP32 dedicado rodando **Mosquitto embarcado** (`192.168.0.105:1883`). Todo o tráfego MQTT (sensor, atuador e Node-RED) passa por ele. |
 | 🟧 Nó **laranja** (`Node-RED`) | **Nível central (PC, `192.168.0.100`).** Agregação, dashboard, Tabela Global e comando remoto. **É cliente MQTT do broker embarcado**, não o servidor. |
 | 🔀 `Switch` | Domínio de comutação do backbone Ethernet (full-duplex, sem colisão entre portas). |
 | Linha pontilhada dentro da Célula 3 | Tráfego **MQTT via Wi-Fi** entre os três ESP32 da célula (a "rede local" da célula 3 é o próprio MQTT). |
 | Rótulo das setas | Pilha de protocolos **camada por camada** (mapeamento OSI) que cada célula usa para subir ao backbone. |
 
  - **Células 1 e 2:** a malha de controle roda no controlador local (CLP fecha a malha do inversor; ESP32 CAN opera o barramento CAN de forma autônoma).
- - **Célula 3 (estado atual do firmware):** o broker embarcado dá autonomia de *comunicação* à célula (o MQTT local funciona sem o PC), mas a *decisão* de aquecer/refrigerar hoje é **remota** — o ESP32 atuador só executa comandos recebidos via tópico (`AQUECIMENTO_ON` / `REFRIGERACAO_ON` / `SYSTEM_OFF`).
- - > ⚠️ **Gap conhecido (autonomia da Célula 3):** a lógica de controle local por histerese (bang-bang com setpoint no próprio ESP32) está **planejada, mas ainda não implementada** no firmware `ESP32_act`. Sem ela, se o comandante remoto cair, o atuador congela no último estado. Ver pendências em [`rede-mqtt/README.md`](./rede-mqtt/README.md).
- - **O PC (Node-RED) NÃO fecha malha de controle.** Ele (a) **lê** as variáveis espelhadas das células, (b) mantém a **Tabela Global de Variáveis** como ponto único de tradução entre os três protocolos, e (c) envia comandos pelo dashboard.
+ - **Célula 3:** o broker embarcado dá autonomia de *comunicação* à célula (o MQTT local funciona sem o PC), a *decisão* de aquecer/refrigerar é **remota** — o ESP32 atuador só executa comandos recebidos via tópico (`AQUECIMENTO_ON` / `REFRIGERACAO_ON` / `SYSTEM_OFF`).
+
 
 ---
 
