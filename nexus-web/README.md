@@ -6,11 +6,11 @@
 
 ---
 
-### 1	Descrição do projeto
+## 1	Descrição do projeto
 
 Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
 
-### 2	Funcionamento
+## 2	Funcionamento
 
 o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo os mais comum `index.xxx` como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
 
@@ -27,13 +27,13 @@ A segunda entrada é a de upload de dados. Através de um sistema de armazername
 <p align="center"><b>Fluxograma do website</b></p>
 <br><br>
 
-### 3	Estrutura de dados
+## 3	Estrutura de dados
 
 Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura automaticamente por um arquivo de nome index e quaisquer variações de extensão. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuári oem contraste ao upload.php que é responsavel pelo upload dos dados ao banco de dados do servidor.
 
 Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://`dominio`.infinityfreeapp.com/upload.php ou somente `dominio`.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. No caso deste projeto, esse endereço significa que o website irá procurar o diretorio na porta default do Node-RED no proprio computador.
 
-## Estrutura de arquivos do Website
+### Estrutura de arquivos do Website
 
 Resumo geral dos arquivos e suas funcionalidades.
 
@@ -47,7 +47,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 | `/imagens` | Pasta que contem as imagens, icones, gifs, audio, etc, utilizados pelo website. |
 
 
-## Definições das Linguagens e arquivos utilizadas.
+### Definições das Linguagens e arquivos utilizadas.
 
 `HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).<br>
 `CSS` : Formata a configuração padrão de objetos HTML.<br>
@@ -55,11 +55,11 @@ Resumo geral dos arquivos e suas funcionalidades.
 `PHP` : linguagem de backend, utilizadas nos servidores. Suporta HTML e Javascript em seu arquivo. Todo código php fica invisivel ao usuario, diferente do html<br>
 `MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações no mesmo.<br>
 
-### 5  Configuração Node-Red
+## 5  Configuração Node-Red
 
 para que Node-RED responda as requisições será necessario criar
 
-## Função principal Requisição GET `/api/sensor`
+### Função principal Requisição GET `/api/sensor`
 
 <table>
   <tr>
@@ -123,16 +123,16 @@ Return current state
 <p align="center"><b>GET api/state</b></p>
 <br><br>
 
-## set PROFINET state
+### set PROFINET state
 
-### 5	configurações para futuros semestres
+## 5	configurações para futuros semestres
 
 Como o website está situado em um servidor de uma conta privada de um aluno, a existencia futura do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um novo website e pderá acessar a pagina de configuração.
 
 <p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="100%"></p>
 <p align="center"><b>Pagina de configuração</b></p>
 
-## Descrição geral dos arquivos
+### Descrição geral dos arquivos
 Resumo geral dos arquivos e suas funcionalidades.
 
 | opção | Descrição |
@@ -143,7 +143,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 | `resource Usage` | Aba de uso de recursos do website. Cuidado para não ultrapassar os 50000 hits, que significa requisitar os **arquivos** ao host, Atualizar o website não requisitar os arquivos novamente mas CTRL + F5 e abri-lo em uma nova aba requisitam.  |
 | `Control Panel` | Configurações gerais do website. |
 
-## Banco de dados
+### Banco de dados
 Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
 
 <p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="100%"></p>
