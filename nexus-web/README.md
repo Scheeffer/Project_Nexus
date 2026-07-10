@@ -243,24 +243,24 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
       </code></pre>
       
       {
-        "DeviceID": "Nexus_Hub",
+        "deviceID": "Nexus_Hub",
         "PROFINET": {
           "online": true,
           "estado": false,
           "habilitar": false,
           "resetar": false,
-          "frequencia": 120
+          "frequencia": 0
         },
         "CAN": {
           "online": true,
-          "velocidade": 60,
-          "marcha": 2,
+          "velocidade": 0,
+          "marcha": 0,
           "erro": 0
         },
         "MQTT": {
           "online": true,
-          "temperatura": "25.0ºC",
-          "estado": "Aquecimento"
+          "temperatura": "---",
+          "estado": "---"
         }
       }       
   </tr>
