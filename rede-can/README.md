@@ -129,7 +129,7 @@ Este estado gerencia as ordens que chegam de fora, ou seja, comandos virtuais vi
 
 * **Aguardando:** O sistema fica escutando o barramento CAN.
 * **Processando:** Assim que o gateway injeta a mensagem com o **ID `0x100`** na rede (via node-red), o sistema captura o comando.
-* **Transmitindo_Remoto:** Ele replica e consolida essa velocidade vinda da internet para o motor/atuador e volta a aguardar novas instruções da rede.
+* **Transmitindo_Remoto:** Ele replica e consolida essa velocidade vinda da internet para o atuador e volta a aguardar novas instruções da rede.
 
 ```mermaid
 stateDiagram-v2
