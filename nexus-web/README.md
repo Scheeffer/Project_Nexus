@@ -62,7 +62,7 @@ node_get
 para que Node-RED responda as requisições será necessario criar
 
 ##Função da requisição GET `/api/sensor` 
-`function defaultState() 
+function defaultState() 
 {
     return {
         DeviceID: "Nexus_Hub",
@@ -92,7 +92,7 @@ let state = flow.get("protocolState") || defaultState();
 msg.headers = { "Content-Type": "application/json" };
 msg.payload = JSON.stringify(state);
 
-return msg;`
+return msg;
 
 ### 5	configurações para futuros semestres
 
