@@ -12,10 +12,13 @@ Para disponibilizar os resultados obtidos do Node central sem depender de um das
 
 ## 2	Funcionamento
 
-o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url, por exemplo exemplo: www.google.com. Possui a função de disponibilizar os dados para o público geral, esses dados são requisitado periodicamente ao banco de dados, caso haja alguma alteração no mesmo, o site o receberá em alguns momentos.
+o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo.
 
-A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta htdocs, pasta a qual irá retornar
-em javascript em método post para um arquivo backend em php que rodará no servidor, onde está localizado o banco de dados,
+<p align="center"> <img src="figs/htacess" alt="diagrama" width="500"></p>
+<p align="center"><b>Configuração .htacess</b></p>
+<br><br>
+
+A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta htdocs. Portanto selecionando a URL + `/arquivo.zzz`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. 
 
 <p align="center"> <img src="figs/Fluxograma.png" alt="diagrama" width="500"></p>
 <p align="center"><b>Fluxograma do website</b></p>
