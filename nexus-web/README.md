@@ -9,6 +9,7 @@
 ## 1	Descrição do projeto
 
 Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
+## 2. Funcionamento
 
 o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url, por exemplo exemplo: www.google.com. Possui a função de disponibilizar os dados para o público geral, esses dados são requisitado periodicamente ao banco de dados, caso haja alguma alteração no mesmo, o site o receberá em alguns momentos.
 
@@ -19,12 +20,7 @@ em javascript em método post para um arquivo backend em php que rodará no serv
 <p align="center"><b>Fluxograma do website</b></p>
 <br><br>
 
-O grande objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro) mapeado sob o identificador exclusivo CAN `, processar os pacotes para o cálculo de velocidade real em km/h e comandar um painel atuador de indicadores (Painel E620) via ID CAN `0x4D2`. O Gateway ESP32 também atua como **ponte** para o backbone (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. A grande vantagem desse design é garantir a operação offline e robusta da rede de campo CAN, enquanto permite a convergência com o sistema supervisório centralizado.
-
-### Variáveis Disponíveis ao Node-RED / Servidor HTTP
-.
-
-## 2. Estrutura de dados
+## 2	Estrutura de dados
 
 Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura automaticamente por um arquivo de nome index e quaisquer variações de extensão. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuári oem contraste ao upload.php que é responsavel pelo upload dos dados ao banco de dados do servidor.
 
@@ -40,7 +36,7 @@ Para inserir os dados é necessário adicionar o diretório “/upload.php” a 
 
 
 
-### 2	Estrutura de arquivos do Website.
+### Estrutura de arquivos do Website.
 
 Arquivos e suas funções:
 
@@ -63,7 +59,7 @@ Arquivos e suas funções:
 `MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações.<br>
 
 
-### 2	configurações para futuros semestres
+### 4	configurações para futuros semestres
 
 Como o website está situado em um servidor de uma conta privada de um aluno, a existencia do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um website 
 
