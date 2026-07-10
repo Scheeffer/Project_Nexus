@@ -121,6 +121,9 @@ Return current state
   </td>
   </tr>
 </table>
+<p align="center"> <img src="figs/api_state.png" alt="GET api/state" width="100%"></p>
+<p align="center"><b>GET api/state</b></p>
+<br><br>
 
 
 ### 5	configurações para futuros semestres
