@@ -68,39 +68,56 @@ para que Node-RED responda as requisições será necessario criar
     <td>
 
 <pre><code class="language-js">
-
+Return current state
 </code></pre>
-    function defaultState() 
-    {
-        return {
-            DeviceID: "Nexus_Hub",
-            PROFINET: {
-                online:      false,
-                estado:      false,
-                habilitar:   false,
-                resetar:     false,
-                frequencia:  0,
-            },
-            CAN: {
-                online:      false,
-                velocidade:  0,
-                marcha:      0,
-                erro:        0,
-            },
-            MQTT: {
-                online:      0,
-                temperatura: "---",
-                estado:      "---",
-            }
-        }
-    };
-    
-    let state = flow.get("protocolState") || defaultState();
-    
-    msg.headers = { "Content-Type": "application/json" };
-    msg.payload = JSON.stringify(state);
-    
-    return msg;
+    const defaultState = {
+      deviceId: "NEXUS Central Node V2",
+  
+      PROFINET: {
+          online: true,
+          frequencia: 0,
+          estado: false,
+          habilitar: false,
+          resetar: false
+      },
+      CAN: {
+          online: true,
+          velocidade: 0,
+          marcha: 0,
+          erro: 0
+      },
+      MQTT: {
+          online: true,
+          temperatura: "---",
+          estado: "---"
+      }
+  };
+
+  const saved = flow.get("protocolState") || {};
+  const response = {
+      deviceId: saved.deviceId || defaultState.deviceId,
+      PROFINET: {
+          ...defaultState.PROFINET,
+          ...(saved.PROFINET || {})
+      },
+      CAN: {
+          ...defaultState.CAN,
+          ...(saved.CAN || {})
+      },
+      MQTT: {
+          ...defaultState.MQTT,
+          ...(saved.MQTT || {})
+      }
+  };
+  
+  msg.headers = {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "https://curricularium.infinityfreeapp.com"
+  };
+  
+  msg.payload = JSON.stringify(response);
+  
+  return msg;
   </td>
   </tr>
 </table>
