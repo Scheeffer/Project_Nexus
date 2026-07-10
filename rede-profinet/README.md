@@ -181,24 +181,24 @@ Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https:/
 
 Tela IHM geral
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/geral_ihm.jpeg" alt=" Componentes" width="300">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/geral_ihm.jpeg" alt=" Componentes" width="500">
 
 
 Tela IHM Rede Profinet 
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/profinet_ihm.jpeg" alt=" Componentes" width="300">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/profinet_ihm.jpeg" alt=" Componentes" width="500">
 
 
 Tela IHM Rede CAN
 
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/can_ihm.jpeg" alt=" Componentes" width="300">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/can_ihm.jpeg" alt=" Componentes" width="500">
 
 
 Tela IHM Rede MQTT 
 
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/mqtt_ihm.jpeg" alt=" Componentes" width="300">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/mqtt_ihm.jpeg" alt=" Componentes" width="500">
 
 
 
