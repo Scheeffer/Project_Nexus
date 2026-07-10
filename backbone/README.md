@@ -83,8 +83,8 @@ Sobre a quantidade de nós utilizados temos segue a relação: **Total Geral:** 
 
 Nas pastas desse repositório terá a explicação detalhada de cada coluna e seus nós.
 
-- 📁 [**Rede PROFINET**](./node_profinet/README.md)
-- 📁 [**Rede CAN**](./node_can/README.md) 
-- 📁 [**Rede MQTT**](./node_mqtt/README.md) 
+- 📁 [**Rede PROFINET**](./node_profinet/README)
+- 📁 [**Rede CAN**](./node_can/README) 
+- 📁 [**Rede MQTT**](./node_mqtt/README) 
 
 
