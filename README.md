@@ -74,54 +74,46 @@ Cada célula tem sua documentação completa, diagramas e código nas pastas aba
 flowchart TB
     subgraph CELULA1[" Célula 1 — PROFINET (Cainã & Matheus)"]
         direction TB
-        S1["Sensor / IHM<rd/>KTP700 Basic"] --- PLC["CLP Siemens<br/>S7-1200"]
+        S1["Sensor / IHM<br/>KTP700 Basic"] --- PLC["CLP Siemens<br/>S7-1200"]
         A1["Atuador<br/>Inversor G120C"] --- PLC
     end
-
     subgraph CELULA2[" Célula 2 — CAN (Álvaro & Alexandre)"]
         direction TB
         S2["Sensor<br/>Potenciômetro (nó CAN)"] --- ESP2["ESP32<br/>TWAI/CAN"]
         A2["Atuador<br/>Display E620"] --- ESP2
     end
-
     subgraph CELULA3[" Célula 3 — MQTT (Lucas & Henzo)"]
         direction TB
         S3["Sensor temperatura<br/>ESP32-S3 (cliente MQTT)"] -.-> BR3[" ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
-        A3["ESP32 atuador (cliente MQTT)<br/>aquece GPIO18 / refrigera GPIO19"] -.-> BR3[" ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
+        A3["ESP32 atuador (cliente MQTT)<br/>aquece GPIO18 / refrigera GPIO19"] -.-> BR3
     end
-
     SW["🔀 Switch Ethernet<br/>(Backbone)"]
     NR["📊 Node-RED<br/>hub S7 + HTTP + MQTT<br/>dashboard + Tabela Global<br/>(cliente do broker da Célula 3)"]
-
     PLC -- "Aplicação: S7comm Apresentação: ISO-on-TCP  Transporte: TCP  Rede: IP  Enlace/Física: Ethernet" --> SW
     ESP2 -- "Aplicação: HTTP REST  Transporte: TCP  Rede:IP         Enlace/Física: WIFI802.11" --> SW
     BR3 -- "Aplicação: MQTT v3.1.1 (:1883)  Transporte: TCP  Rede: IP  Enlace/Física: WIFI 802.11" --> SW
     SW --- NR
 
-    classDef cell fill:#ffffff,stroke:#888,stroke-width:1px;
-    classDef local fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
-    classDef central fill:#fff3e0,stroke:#e65100,stroke-width:1px;
-    classDef broker fill:#ffe0b2,stroke:#e65100,stroke-width:2px;
+    classDef cell   fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef bloco  fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef central fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+    classDef broker  fill:#ffffff,stroke:#000000,stroke-width:1px,color:#000000;
+
     class CELULA1,CELULA2,CELULA3 cell;
-    class PLC,ESP2,ESP3,S3 local;
-    class NR central;
+    class S1,PLC,A1,S2,ESP2,A2,S3,A3 bloco;
     class BR3 broker;
+    class SW,NR central;
+
+    linkStyle 0,1,2,3,4,5 stroke:#000000,stroke-width:1.5px;
 ```
 
 ### Legenda do diagrama
 
-| Símbolo | Significado |
-|--------|-------------|
-| 🟩 Nós **verdes** (`PLC`, `ESP2`, sensores/atuadores) | **Controladores locais** de cada célula. |
-|  Nó Broker MQTT(`ESP32 broker`) | **Broker da rede MQTT** — um ESP32 dedicado rodando **Mosquitto embarcado** (`192.168.0.105:1883`). Todo o tráfego MQTT saindo da célula(sensor, atuador e e fluxo que vai pro Node-RED) passa por ele. |
-| 🟧 Nó **laranja** (`Node-RED`) | **Nível central (PC, `192.168.0.100`).** Agregação, dashboard, Tabela Global e comando remoto. **É cliente MQTT do broker embarcado**, não o servidor. |
-| 🔀 `Switch` | Domínio de comutação do backbone Ethernet (full-duplex, sem colisão entre portas). |
-| Linha pontilhada dentro da Célula 3 | Tráfego **MQTT via Wi-Fi** entre os três ESP32 da célula (a "rede local" da célula 3 é o próprio MQTT). |
-| Rótulo das setas | Pilha de protocolos **camada por camada** (mapeamento OSI) que cada célula usa para subir ao backbone. |
-
- - **Células 1 e 2:** a malha de controle roda no controlador local (CLP fecha a malha do inversor; ESP32 CAN opera o barramento CAN de forma autônoma).
- - **Célula 3:** o broker embarcado dá autonomia de *comunicação* à célula (o MQTT local funciona sem o PC), a *decisão* de aquecer/refrigerar é **remota** — o ESP32 atuador só executa comandos recebidos via tópico (`AQUECIMENTO_ON` / `REFRIGERACAO_ON` / `SYSTEM_OFF`).
-
+| Símbolo | Descrição | Composição da Célula |
+|--------|-------------|---------|
+| Célula 1 | Rede PROFINET  | Sensor: IHM - Atuador: Inversora de Frequência |
+| Célula 2 | Rede CAN | Sensor: Potenciômetro - Atuador: Display E620 |
+| Célula 3 | Rede MQTT | Sensor: DS18B20(Temperatura) - Atuador: Carga resistiva para aquecimento e Ventilação para resfriamento |
 
 ---
 
