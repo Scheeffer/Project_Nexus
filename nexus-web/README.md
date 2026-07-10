@@ -35,7 +35,6 @@ Para inserir os dados é necessário adicionar o diretório “/upload.php” a 
 
 ### Estrutura de arquivos do Website.
 
-### Descrição geral dos arquivos
 Resumo geral dos arquivos e suas funcionalidades.
 
 | Arquivo | Descrição |
