@@ -59,7 +59,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 
 para que Node-RED responda as requisições será necessario criar
 
-## Função da requisição GET `/api/sensor` 
+**Função principal Requisição GET `/api/sensor` **
 
 <table>
   <tr>
@@ -131,7 +131,7 @@ Como o website está situado em um servidor de uma conta privada de um aluno, a 
 <p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="100%"></p>
 <p align="center"><b>Pagina de configuração</b></p>
 
-### Descrição geral dos arquivos
+## Descrição geral dos arquivos
 Resumo geral dos arquivos e suas funcionalidades.
 
 | opção | Descrição |
