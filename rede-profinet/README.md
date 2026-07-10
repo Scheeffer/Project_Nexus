@@ -152,7 +152,8 @@ Para implementar este projeto foi realizado um diagrama elétrico multifilar ond
 
 Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/diagramas/Diagrama_Multifilar.pdf).
 
-clp_profinet
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/clp_profinet.jpeg" alt=" Componentes" width="300">
+
 
 
 ## 6. Componentes e Modelos
@@ -177,4 +178,36 @@ clp_profinet
 ---
 
 ## 7. TELAS IHM 
+
+Tela IHM geral
+
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/geral_ihm.jpeg" alt=" Componentes" width="300">
+
+
+Tela IHM Rede Profinet 
+
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/profinet_ihm.jpeg" alt=" Componentes" width="300">
+
+
+Tela IHM Rede CAN
+
+
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/can_ihm.jpeg" alt=" Componentes" width="300">
+
+
+Tela IHM Rede MQTT 
+
+
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/mqtt_ihm.jpeg" alt=" Componentes" width="300">
+
+
+
+
+
+
+
+
+
+
+
 ```
