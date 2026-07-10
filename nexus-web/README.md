@@ -20,7 +20,7 @@ o website possui duas entradas, a geral e a local. A entrada geral é aquela que
 
 A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents), pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo.xxx`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real . o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. 
 
-<p align="center"> <img src="figs/url_fetch.png" alt="diagrama" width="500"></p>
+<p align="center"> <img src="figs/url_fetch.png" alt="diagrama" width="100%"></p>
 <p align="center"><b>Endereço da requisição http</b></p>
 
 <p align="center"> <img src="figs/Fluxograma.png" alt="diagrama" width="500"></p>
@@ -61,7 +61,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 
 Como o website está situado em um servidor de uma conta privada de um aluno, a existencia futura do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um novo website e pderá acessar a pagina de configuração.
 
-<p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="500"></p>
+<p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="100%"></p>
 <p align="center"><b>Pagina de configuração</b></p>
 
 ### Descrição geral dos arquivos
@@ -78,13 +78,13 @@ Resumo geral dos arquivos e suas funcionalidades.
 ### Banco de dados
 Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
 
-<p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="500"></p>
+<p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="100%"></p>
 <p align="center"><b>Fluxograma</b></p>
 <br><br>
 
 Esses dados são obtidos na aba `MySQL Databases` discutida na tabela logo acima.
 
-<p align="center"> <img src="figs/database_details.png" alt="Fluxograma" width="500"></p>
+<p align="center"> <img src="figs/database_details.png" alt="Fluxograma" width="100%"></p>
 <p align="center"><b>Fluxograma</b></p>
 <br><br>
 
