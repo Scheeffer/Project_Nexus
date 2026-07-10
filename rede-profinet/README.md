@@ -152,7 +152,7 @@ Para implementar este projeto foi realizado um diagrama elétrico multifilar ond
 
 Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/diagramas/Diagrama_Multifilar.pdf).
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/clp_profinet.jpeg" alt=" Componentes" width="300">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/clp_profinet.jpeg" alt=" Componentes" width="500">
 
 
 
