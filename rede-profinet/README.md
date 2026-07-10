@@ -152,6 +152,8 @@ Para implementar este projeto foi realizado um diagrama elétrico multifilar ond
 
 Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/diagramas/Diagrama_Multifilar.pdf).
 
+clp_profinet
+
 
 ## 6. Componentes e Modelos
 | Componente | Especificação | Fornecedor| Link | Manual |
@@ -173,4 +175,6 @@ Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https:/
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/IHM%20Interno.png" alt="IHM" width="300">
 ---
+
+## 7. TELAS IHM 
 ```
