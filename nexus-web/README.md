@@ -64,65 +64,130 @@ para que Node-RED responda as requisições será necessario criar
 <table>
   <tr>
     <td>
-
-<pre><code class="language-js">
-Return current state
-</code></pre>
-    const defaultState = {
-      deviceId: "NEXUS Central Node V2",
-  
-      PROFINET: {
-          online: true,
-          frequencia: 0,
-          estado: false,
-          habilitar: false,
-          resetar: false
-      },
-      CAN: {
-          online: true,
-          velocidade: 0,
-          marcha: 0,
-          erro: 0
-      },
-      MQTT: {
-          online: true,
-          temperatura: "---",
-          estado: "---"
-      }
-  };
-
-  const saved = flow.get("protocolState") || {};
-  const response = {
-      deviceId: saved.deviceId || defaultState.deviceId,
-      PROFINET: {
-          ...defaultState.PROFINET,
-          ...(saved.PROFINET || {})
-      },
-      CAN: {
-          ...defaultState.CAN,
-          ...(saved.CAN || {})
-      },
-      MQTT: {
-          ...defaultState.MQTT,
-          ...(saved.MQTT || {})
-      }
-  };
-  
-  msg.headers = {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "https://curricularium.infinityfreeapp.com"
-  };
-  
-  msg.payload = JSON.stringify(response);
-  
-  return msg;
-  </td>
+      <pre><code class="language-js">
+      Return current state
+      </code></pre>
+      
+          const defaultState = {
+            deviceId: "NEXUS Central Node V2",
+        
+            PROFINET: {
+                online: true,
+                frequencia: 0,
+                estado: false,
+                habilitar: false,
+                resetar: false
+            },
+            CAN: {
+                online: true,
+                velocidade: 0,
+                marcha: 0,
+                erro: 0
+            },
+            MQTT: {
+                online: true,
+                temperatura: "---",
+                estado: "---"
+            }
+        };
+      
+        const saved = flow.get("protocolState") || {};
+        const response = {
+            deviceId: saved.deviceId || defaultState.deviceId,
+            PROFINET: {
+                ...defaultState.PROFINET,
+                ...(saved.PROFINET || {})
+            },
+            CAN: {
+                ...defaultState.CAN,
+                ...(saved.CAN || {})
+            },
+            MQTT: {
+                ...defaultState.MQTT,
+                ...(saved.MQTT || {})
+            }
+        };
+        
+        msg.headers = {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "https://curricularium.infinityfreeapp.com"
+        };
+        
+        msg.payload = JSON.stringify(response);
+        
+        return msg;
+      </td>
   </tr>
 </table>
 <p align="center"> <img src="figs/api_state.png" alt="GET api/state" width="100%"></p>
 <p align="center"><b>GET api/state</b></p>
 <br><br>
 
+### set PROFINET state
+<table>
+  <tr>
+    <td>
+      <pre><code class="language-js">
+      Save PROFINET state object
+      </code></pre>
+      
+        const protocolState = flow.get("protocolState") || {};
+
+        protocolState.PROFINET = {
+            ...(protocolState.PROFINET || {}),
+            online: true,
+            frequencia: Number(msg.payload ?? 0)
+        };      
+        flow.set("protocolState", protocolState);      
+        return msg;         
+  </tr>
+</table>
+<p align="center"> <img src="figs/set_profinet.png" alt="GET api/state" width="100%"></p>
+<p align="center"><b>GET api/state</b></p>
+<br><br>
+
+### set CAN state
+<table>
+  <tr>
+    <td>
+      <pre><code class="language-js">
+      Save CAN state object
+      </code></pre>
+      
+        let body = msg.payload;
+
+        if (typeof body === "string") {
+            try {
+                body = JSON.parse(body);
+            } catch (err) {
+                node.warn("Invalid CAN JSON");
+                return msg;
+            }
+        }
+        
+        const can = body.adc && typeof body.adc === "object"
+            ? body.adc
+            : body;
+        
+        const protocolState = flow.get("protocolState") || {};
+        
+        protocolState.CAN = {
+            online: true,
+            velocidade: Number(can.velocidade ?? can.velocity ?? protocolState.CAN?.velocidade ?? 0),
+            marcha:     Number(can.marcha ?? can.gear ?? protocolState.CAN?.marcha ?? 0),
+            erro:       Number(can.erro ?? can.error ?? protocolState.CAN?.erro ?? 0)
+        };
+        
+        flow.set("protocolState", protocolState);
+        
+        return msg;
+         
+  </tr>
+</table>
+<p align="center"> <img src="figs/set_profinet.png" alt="GET api/state" width="100%"></p>
+<p align="center"><b>GET api/state</b></p>
+<br><br>
+### set PROFINET state
 ### set PROFINET state
 
 ## 5	configurações para futuros semestres
