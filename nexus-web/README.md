@@ -62,37 +62,49 @@ node_get
 para que Node-RED responda as requisições será necessario criar
 
 ##Função da requisição GET `/api/sensor` 
-function defaultState() 
-{
-    return {
-        DeviceID: "Nexus_Hub",
-        PROFINET: {
-            online:      false,
-            estado:      false,
-            habilitar:   false,
-            resetar:     false,
-            frequencia:  0,
-        },
-        CAN: {
-            online:      false,
-            velocidade:  0,
-            marcha:      0,
-            erro:        0,
-        },
-        MQTT: {
-            online:      0,
-            temperatura: "---",
-            estado:      "---",
+
+<table>
+  <tr>
+    <td>
+
+<pre><code class="language-js">
+
+</code></pre>
+    function defaultState() 
+    {
+        return {
+            DeviceID: "Nexus_Hub",
+            PROFINET: {
+                online:      false,
+                estado:      false,
+                habilitar:   false,
+                resetar:     false,
+                frequencia:  0,
+            },
+            CAN: {
+                online:      false,
+                velocidade:  0,
+                marcha:      0,
+                erro:        0,
+            },
+            MQTT: {
+                online:      0,
+                temperatura: "---",
+                estado:      "---",
+            }
         }
-    }
-};
+    };
+    
+    let state = flow.get("protocolState") || defaultState();
+    
+    msg.headers = { "Content-Type": "application/json" };
+    msg.payload = JSON.stringify(state);
+    
+    return msg;
+  </td>
+  </tr>
+</table>
 
-let state = flow.get("protocolState") || defaultState();
-
-msg.headers = { "Content-Type": "application/json" };
-msg.payload = JSON.stringify(state);
-
-return msg;
 
 ### 5	configurações para futuros semestres
 
