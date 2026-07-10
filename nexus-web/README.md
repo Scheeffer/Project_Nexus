@@ -55,8 +55,46 @@ Resumo geral dos arquivos e suas funcionalidades.
 `PHP` : linguagem de backend, utilizadas nos servidores. Suporta HTML e Javascript em seu arquivo. Todo código php fica invisivel ao usuario, diferente do html<br>
 `MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações no mesmo.<br>
 
+node_get
 
-### 4	configurações para futuros semestres
+### 5	Configuração Node-Red
+
+para que Node-RED responda as requisições será necessario criar
+
+| Função da requisição GET `/api/sensor` |
+| :---: |
+| function defaultState() 
+{
+    return {
+        DeviceID: "Nexus_Hub",
+        PROFINET: {
+            online:      false,
+            estado:      false,
+            habilitar:   false,
+            resetar:     false,
+            frequencia:  0,
+        },
+        CAN: {
+            online:      false,
+            velocidade:  0,
+            marcha:      0,
+            erro:        0,
+        },
+        MQTT: {
+            online:      0,
+            temperatura: "---",
+            estado:      "---",
+        }
+    }
+};
+
+let state = flow.get("protocolState") || defaultState();
+
+msg.headers = { "Content-Type": "application/json" };
+msg.payload = JSON.stringify(state);
+
+return msg; |
+### 5	configurações para futuros semestres
 
 Como o website está situado em um servidor de uma conta privada de um aluno, a existencia futura do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um novo website e pderá acessar a pagina de configuração.
 
