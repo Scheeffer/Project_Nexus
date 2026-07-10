@@ -131,7 +131,7 @@ Como o website está situado em um servidor de uma conta privada de um aluno, a 
 <p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="100%"></p>
 <p align="center"><b>Pagina de configuração</b></p>
 
-## Descrição geral dos arquivos
+**Descrição geral dos arquivos**
 Resumo geral dos arquivos e suas funcionalidades.
 
 | opção | Descrição |
@@ -142,7 +142,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 | `resource Usage` | Aba de uso de recursos do website. Cuidado para não ultrapassar os 50000 hits, que significa requisitar os **arquivos** ao host, Atualizar o website não requisitar os arquivos novamente mas CTRL + F5 e abri-lo em uma nova aba requisitam.  |
 | `Control Panel` | Configurações gerais do website. |
 
-## Banco de dados
+**Banco de dados**
 Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
 
 <p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="100%"></p>
