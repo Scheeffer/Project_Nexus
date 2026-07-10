@@ -122,7 +122,7 @@ Ao ligar ou resetar o sistema (`Power On / Reset`), ele inicia automaticamente n
 
 * **Monitorando:** O sistema fica em repouso lendo continuamente o potenciômetro físico.
 * **Atualizando:** Se o operador girar o botão e a leitura mudar mais de **2.5%**, o sistema sai do repouso para registrar a nova posição.
-* **Transmitindo_Local:** Ele envia essa nova velocidade(km/h) para o barramento CAN através do **ID `0x4D2`** (a cada 50 ms) e volta a monitorar o botão físico.
+* **Transmitindo_Local:** Ele envia essa nova velocidade(km/h) para o barramento CAN através do **ID `0x4D2`** (a cada 50 ms) e volta a monitorar o potenciometro.
 
 ### 2. MODO_REMOTO (Controle via Rede / Node-RED)
 Este estado gerencia as ordens que chegam de fora, ou seja, comandos virtuais vindos do Node-RED:
