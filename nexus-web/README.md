@@ -42,7 +42,7 @@ Para inserir os dados é necessário adicionar o diretório “/upload.php” a 
 
 ### 2	Estrutura de arquivos do Website.
 
-Estrutura de arquivos do Website.
+Arquivos e suas funções:
 
 | Arquivo | Descrição |
 | :---: | :--- |
@@ -61,6 +61,15 @@ Estrutura de arquivos do Website.
 `javascript` : Linguagem de alto nivel responsavel pelo <br>
 `PHP` : linguagem de backend.<br>
 `MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações.<br>
+
+
+### 2	configurações para futuros semestres
+
+Como o websit está situado em um servidor de uma conta privada, isto é, de uma cont de um aluno. Será necessario criar uma conta e escolher um dominio para que o website seja acessado.
+
+
+
+
 
 
 
