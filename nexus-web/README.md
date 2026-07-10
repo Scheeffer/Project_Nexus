@@ -6,11 +6,11 @@
 
 ---
 
-## 1	Descrição do projeto
+### 1	Descrição do projeto
 
 Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
 
-## 2	Funcionamento
+### 2	Funcionamento
 
 o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo os mais comum `index.xxx` como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
 
@@ -27,7 +27,7 @@ A segunda entrada é a de upload de dados. Através de um sistema de armazername
 <p align="center"><b>Fluxograma do website</b></p>
 <br><br>
 
-## 3	Estrutura de dados
+### 3	Estrutura de dados
 
 Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura automaticamente por um arquivo de nome index e quaisquer variações de extensão. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuári oem contraste ao upload.php que é responsavel pelo upload dos dados ao banco de dados do servidor.
 
@@ -144,7 +144,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 | `resource Usage` | Aba de uso de recursos do website. Cuidado para não ultrapassar os 50000 hits, que significa requisitar os **arquivos** ao host, Atualizar o website não requisitar os arquivos novamente mas CTRL + F5 e abri-lo em uma nova aba requisitam.  |
 | `Control Panel` | Configurações gerais do website. |
 
-### Banco de dados
+## Banco de dados
 Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
 
 <p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="100%"></p>
