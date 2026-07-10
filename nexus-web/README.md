@@ -92,7 +92,7 @@ let state = flow.get("protocolState") || defaultState();
 msg.headers = { "Content-Type": "application/json" };
 msg.payload = JSON.stringify(state);
 
-return msg;` |
+return msg;`
 
 ### 5	configurações para futuros semestres
 
