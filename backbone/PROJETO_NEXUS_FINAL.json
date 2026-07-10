@@ -1,0 +1,2412 @@
+[
+    {
+        "id": "9541cc6b5d3ecb2c",
+        "type": "tab",
+        "label": "PROJETO_NEXUS",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c879c6a18ce01ad8",
+        "type": "trigger",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "op1": "true",
+        "op2": "false",
+        "op1type": "bool",
+        "op2type": "bool",
+        "duration": "1",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "false",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 500,
+        "y": 480,
+        "wires": [
+            [
+                "37fefd10244de09d"
+            ]
+        ]
+    },
+    {
+        "id": "f3194f518beb24e6",
+        "type": "trigger",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "op1": "true",
+        "op2": "false",
+        "op1type": "bool",
+        "op2type": "bool",
+        "duration": "1",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "false",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 500,
+        "y": 580,
+        "wires": [
+            [
+                "1a430a413d2691b8"
+            ]
+        ]
+    },
+    {
+        "id": "6a603c55888b1e6e",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "toogle",
+        "func": "// Recupera o estado atual do contexto do fluxo (se não existir, começa como false)\nlet estado = context.get('estado') || false;\n\n// Inverte o estado (se era true vira false, se era false vira true)\nestado = !estado;\n\n// Salva o novo estado de volta na memória\ncontext.set('estado', estado);\n\n// Envia o novo estado no payload\nmsg.payload = estado;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 780,
+        "wires": [
+            [
+                "ab0330a9cbfca96b"
+            ]
+        ]
+    },
+    {
+        "id": "4ddbcd04a049b273",
+        "type": "trigger",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "op1": "true",
+        "op2": "false",
+        "op1type": "bool",
+        "op2type": "bool",
+        "duration": "1",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "false",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 500,
+        "y": 680,
+        "wires": [
+            [
+                "f51390808c6831d1"
+            ]
+        ]
+    },
+    {
+        "id": "7d0f823e28bb8e23",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Feedback da Frequencia do Inversor ",
+        "info": "",
+        "x": 260,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "2d2ed2d7515bce35",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Mostrador analogico ",
+        "info": "",
+        "x": 770,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "b6423015758856e4",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Botão liga_node",
+        "info": "",
+        "x": 180,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "5909286471512a2b",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Seta ligar inversor",
+        "info": "",
+        "x": 770,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "164508f741c1d767",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Botão desliga_node",
+        "info": "",
+        "x": 190,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "cea2af9c829977f1",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Seta desligar inversor",
+        "info": "",
+        "x": 760,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "d9ce22ed23d601ea",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Botão seta modo_node",
+        "info": "",
+        "x": 200,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "2c80ba6abdfa28ad",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Seta o modo via node red, se = 1",
+        "info": "",
+        "x": 730,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "5a2565bc56e6de36",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Entrada de variaveis PROFINET",
+        "info": "",
+        "x": 490,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "24eeb11bd488f94d",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Botão seta o valor da frequencia_inversor_node",
+        "info": "",
+        "x": 280,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "9e566d07031896c1",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Seta o valor da frequencia do inversor",
+        "info": "",
+        "x": 710,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "fd0e5d54b4858914",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Botão de Reset de falhas Inversor ",
+        "info": "",
+        "x": 240,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "e20052a5e74064a6",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Reseta o Inversor",
+        "info": "",
+        "x": 770,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "9136ad556142cc5a",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "REDE PROFINET",
+        "info": "",
+        "x": 490,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "ba3b48abaa5871ca",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Variaveis de saida Rede PROFINET",
+        "info": "",
+        "x": 460,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a3e478baa7a404b3",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "http in",
+        "url": "/can",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 1050,
+        "y": 180,
+        "wires": [
+            [
+                "62fe5f116580d83f"
+            ]
+        ]
+    },
+    {
+        "id": "62fe5f116580d83f",
+        "type": "json",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "property": "payload.adc",
+        "action": "",
+        "pretty": true,
+        "x": 1210,
+        "y": 180,
+        "wires": [
+            [
+                "0a42472864e6d4e8",
+                "eefedf09ca057ba5",
+                "1d7857cbab326985",
+                "8f8fd1d4394576fc"
+            ]
+        ]
+    },
+    {
+        "id": "0a42472864e6d4e8",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1410,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "eefedf09ca057ba5",
+        "type": "change",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "TEMP",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.velocidade",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1390,
+        "y": 260,
+        "wires": [
+            [
+                "12fe422a6e272390",
+                "34a69ef76ffe73e9"
+            ]
+        ]
+    },
+    {
+        "id": "b0407210664255f9",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Leitura Variaveis ESP CAN",
+        "info": "",
+        "x": 1390,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "8638d3cc2eccd6b9",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Ligar Inversor CLP pelo CAN",
+        "info": "",
+        "x": 1360,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "048c7ce314032f1d",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Ajusta a Freq do Inversor CLP apartir do ESP",
+        "info": "",
+        "x": 1410,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "c2a3f21284afdc0c",
+        "type": "mqtt in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "topic": "ESP32/COM/Status",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "de197de0b67f2b4a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 2010,
+        "y": 1040,
+        "wires": [
+            [
+                "66804df3509cdb44",
+                "8e8341c4ecb7356a",
+                "dd8cab3ad88ac171"
+            ]
+        ]
+    },
+    {
+        "id": "9661786e5d178816",
+        "type": "inject",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Aquecimento",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "AQUECIMENTO_ON",
+        "payloadType": "str",
+        "x": 2390,
+        "y": 120,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "c6226f0785d3693b",
+        "type": "inject",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Refrigeração",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "REFRIGERACAO_ON",
+        "payloadType": "str",
+        "x": 2410,
+        "y": 300,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "b4f4d940c8063c5a",
+        "type": "inject",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Desligar",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "SYSTEM_OFF",
+        "payloadType": "str",
+        "x": 2400,
+        "y": 460,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "202cc892615302bc",
+        "type": "mqtt out",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Atuadores",
+        "topic": "ESP32/COM/Atuador",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de197de0b67f2b4a",
+        "x": 2690,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "f83dbf5f36930536",
+        "type": "mqtt in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Envio Temperatura",
+        "topic": "ESP32S3/COM/temperatura",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "de197de0b67f2b4a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 2010,
+        "y": 940,
+        "wires": [
+            [
+                "8341304867cc0e4a",
+                "145b7ad97be0d4f4",
+                "8e8341c4ecb7356a",
+                "324a85b7d33d2aa9",
+                "f0a471c6ba7cc1f6"
+            ]
+        ]
+    },
+    {
+        "id": "2f117eef8bbea099",
+        "type": "mqtt out",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Solicitar temperatura",
+        "topic": "ESP32S3/COM/get",
+        "qos": "0",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "de197de0b67f2b4a",
+        "x": 2580,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "fe92ab1e59461dc5",
+        "type": "inject",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "GET",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "GET_TEMP",
+        "payloadType": "str",
+        "x": 2170,
+        "y": 660,
+        "wires": [
+            [
+                "2f117eef8bbea099"
+            ]
+        ]
+    },
+    {
+        "id": "ee6a6dc776f78a36",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Ligar CLP via ESP - CAN",
+        "url": "/ligar",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 1150,
+        "y": 840,
+        "wires": [
+            [
+                "a11a1fde49015e28",
+                "1a4bf9bc4e263269"
+            ]
+        ]
+    },
+    {
+        "id": "a11a1fde49015e28",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1370,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "1a4bf9bc4e263269",
+        "type": "change",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "str",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1410,
+        "y": 820,
+        "wires": [
+            [
+                "848d070e042ab373"
+            ]
+        ]
+    },
+    {
+        "id": "0e3d2155053c6b4f",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Desligar CLP via ESP - CAN",
+        "url": "/desligar",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 1160,
+        "y": 1040,
+        "wires": [
+            [
+                "31a7e6bfaba4dc45",
+                "7145d87cb4b7de37"
+            ]
+        ]
+    },
+    {
+        "id": "31a7e6bfaba4dc45",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1390,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "7145d87cb4b7de37",
+        "type": "change",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "str",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1430,
+        "y": 1040,
+        "wires": [
+            [
+                "48a5b31ea0dd17e0"
+            ]
+        ]
+    },
+    {
+        "id": "48a5b31ea0dd17e0",
+        "type": "trigger",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "op1": "true",
+        "op2": "false",
+        "op1type": "bool",
+        "op2type": "bool",
+        "duration": "1",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "false",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1620,
+        "y": 1040,
+        "wires": [
+            [
+                "c250810e5b20a288"
+            ]
+        ]
+    },
+    {
+        "id": "848d070e042ab373",
+        "type": "trigger",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "op1": "true",
+        "op2": "false",
+        "op1type": "bool",
+        "op2type": "bool",
+        "duration": "1",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "s",
+        "reset": "false",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 1600,
+        "y": 820,
+        "wires": [
+            [
+                "0cccb588bc2cb0ec"
+            ]
+        ]
+    },
+    {
+        "id": "c0f62557f138d6de",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "url": "/slider",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 1110,
+        "y": 1200,
+        "wires": [
+            [
+                "498d61992f8efbdd",
+                "4b14274428721210"
+            ]
+        ]
+    },
+    {
+        "id": "498d61992f8efbdd",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1370,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "4b14274428721210",
+        "type": "change",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$number(payload)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1410,
+        "y": 1160,
+        "wires": [
+            [
+                "221bdd6583288c74"
+            ]
+        ]
+    },
+    {
+        "id": "b0ad5c72aa6a2b7b",
+        "type": "http request",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.103/set_nodered_freq",
+        "tls": "",
+        "persist": true,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": ""
+            }
+        ],
+        "x": 1600,
+        "y": 1360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "70659f1e8bc52cb1",
+        "type": "http request",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Envia para o esp32",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.103/set_nodered_value",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1630,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "70dfdd2faa132416",
+        "type": "change",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$string(payload)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "headers.Content-Type",
+                "pt": "msg",
+                "to": "text/plain",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1360,
+        "y": 660,
+        "wires": [
+            [
+                "70659f1e8bc52cb1"
+            ]
+        ]
+    },
+    {
+        "id": "66750225cefda53a",
+        "type": "change",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$string(payload)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "headers.Content-Type",
+                "pt": "msg",
+                "to": "text/plain",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1340,
+        "y": 1360,
+        "wires": [
+            [
+                "b0ad5c72aa6a2b7b"
+            ]
+        ]
+    },
+    {
+        "id": "a8c0f721ef455f51",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "function 2",
+        "func": "\nmsg.payload = Number(msg.payload.toFixed(2));\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 260,
+        "wires": [
+            [
+                "500a5cb0d34b9195",
+                "88d5784c582ed753"
+            ]
+        ]
+    },
+    {
+        "id": "dd8816af548b9d94",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "REDE CAN",
+        "info": "",
+        "x": 1390,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "3af0b51247a1fefa",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Dashboard",
+        "info": "",
+        "x": 1840,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "b6c40eba567606df",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "IHM_CLP",
+        "info": "",
+        "x": 1620,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "172e7f77fd43b6b6",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "SET Velocidade CAN",
+        "info": "",
+        "x": 1360,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "bc0a3a444bd3d761",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Dashboard",
+        "info": "",
+        "x": 1080,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "b1be42356d363601",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "IHM_CLP",
+        "info": "",
+        "x": 1080,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "26f31742b487a733",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Desligar Inversor CLP pelo CAN",
+        "info": "",
+        "x": 1370,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "390208331bff35e5",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Feedback Frequencia Inversor CLP",
+        "info": "",
+        "x": 1380,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "69bf149947903fcc",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "REDE MQTT",
+        "info": "",
+        "x": 2390,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "145b7ad97be0d4f4",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "String/Real",
+        "func": "// Supondo que msg.payload venha como \"123.45\" ou \"123,45\"\nlet stringOriginal = msg.payload.toString();\n\n// Remove espaços e substitui vírgula por ponto, se houver\nlet stringLimpa = stringOriginal.trim().replace(',', '.');\n\n// Converte para número Real (Float)\nlet numeroReal = parseFloat(stringLimpa);\n\n// Verifica se a conversão foi válida para evitar enviar erros ao CLP\nif (!isNaN(numeroReal)) {\n    msg.payload = numeroReal;\n    msg.topic = \"DB7,REAL2\"; // Substitua pelo endereço exato da sua Tag REAL no CLP\n    return msg;\n} else {\n    node.error(\"Erro na conversão: O valor recebido não é uma String numérica válida. Recebido: \" + stringOriginal);\n    return null; // Aborta o fluxo para não enviar lixo ao CLP\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2330,
+        "y": 940,
+        "wires": [
+            [
+                "549452f0b052537f"
+            ]
+        ]
+    },
+    {
+        "id": "741298d0e071c0c0",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "function 1",
+        "func": "// O nó s7 in envia true ou false no msg.payload\n\nif (msg.payload === true) {\n    msg.payload = \"SYSTEM_OFF\"; // Sua string para nível lógico alto (1)\n} else {\n    msg.payload = \"SYSTEM_OFF\";   // Sua string para nível lógico baixo (0)\n}\n\n// Opcional: Você pode mudar o tópico para identificar o status\n//msg.topic = \"status_inversor\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2400,
+        "y": 540,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "22531c7bb798227e",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "function 3",
+        "func": "// O nó s7 in envia true ou false no msg.payload\n\nif (msg.payload === true) {\n    msg.payload = \"REFRIGERACAO_ON\"; // Sua string para nível lógico alto (1)\n} else {\n    msg.payload = \"REFRIGERACAO_ON\";   // Sua string para nível lógico baixo (0)\n}\n\n// Opcional: Você pode mudar o tópico para identificar o status\n//msg.topic = \"status_inversor\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2420,
+        "y": 380,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "a20fb42e9796280b",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "function 4",
+        "func": "// O nó s7 in envia true ou false no msg.payload\n\nif (msg.payload === true) {\n    msg.payload = \"AQUECIMENTO_ON\"; // Sua string para nível lógico alto (1)\n} else {\n    msg.payload = \"AQUECIMENTO_ON\";   // Sua string para nível lógico baixo (0)\n}\n\n// Opcional: Você pode mudar o tópico para identificar o status\n//msg.topic = \"status_inversor\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2400,
+        "y": 200,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "ac8c357db514681b",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Atuação",
+        "info": "",
+        "x": 2400,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "c0a5ad4584945af9",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Leitura",
+        "info": "",
+        "x": 2370,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "d50eba086ca7165b",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Recebe Aquecer",
+        "url": "/mqtt_aquecer",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 2200,
+        "y": 260,
+        "wires": [
+            [
+                "dfcdf3049a753ab6",
+                "a20fb42e9796280b"
+            ]
+        ]
+    },
+    {
+        "id": "dfcdf3049a753ab6",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 2030,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "921b03db5b5917c1",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Recebe desligar",
+        "url": "/mqtt_desligar",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 2180,
+        "y": 600,
+        "wires": [
+            [
+                "741298d0e071c0c0",
+                "27633e925bdc9f6c"
+            ]
+        ]
+    },
+    {
+        "id": "27633e925bdc9f6c",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 2030,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "697ac17d5f968dd1",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Recebe Resfriar",
+        "url": "/mqtt_resfriar",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 2180,
+        "y": 440,
+        "wires": [
+            [
+                "22531c7bb798227e",
+                "d6ab9205fab4f166"
+            ]
+        ]
+    },
+    {
+        "id": "d6ab9205fab4f166",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 2030,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "6fc59dc711931ed2",
+        "type": "http request",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.103/set_mqtt_sim",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 2620,
+        "y": 1040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8e8341c4ecb7356a",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "envio de temp",
+        "func": "// 1. Inicializa os valores guardados na memória do Node-RED caso ainda estejam vazios\nlet tempSalva = context.get('tempSalva') || 0.0;\nlet statusSalvo = context.get('statusSalvo') || \"Aguardando\";\n\n// 2. Filtra o dado analisando diretamente a mensagem que entrou\nlet conteudo = msg.payload.toString().trim();\n\n// Se o conteúdo for um número (ou começar com um número), veio da temperatura\nif (!isNaN(parseFloat(conteudo)) && !conteudo.includes(\"aquecer\") && !conteudo.includes(\"refri\")) {\n    tempSalva = parseFloat(conteudo);\n    context.set('tempSalva', tempSalva); // Salva na memória\n} \n// Caso contrário, é o texto do status (ex: \"Aquecendo\", \"Resfriando\", \"Aguardando\")\nelse {\n    statusSalvo = conteudo;\n    context.set('statusSalvo', statusSalvo); // Salva na memória\n}\n\n// 3. Monta o JSON unificado perfeito que o seu ESP32 espera receber\nmsg.payload = {\n    temp: tempSalva,\n    status: statusSalvo\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2340,
+        "y": 1040,
+        "wires": [
+            [
+                "6fc59dc711931ed2"
+            ]
+        ]
+    },
+    {
+        "id": "9c2a39de45b3047c",
+        "type": "s7 in",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "mode": "single",
+        "variable": "REF_INV",
+        "diff": true,
+        "name": "",
+        "x": 180,
+        "y": 260,
+        "wires": [
+            [
+                "a8c0f721ef455f51"
+            ]
+        ]
+    },
+    {
+        "id": "445ad5853168c9b5",
+        "type": "s7 in",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "mode": "single",
+        "variable": "SET_VEL",
+        "diff": true,
+        "name": "SET_VEL",
+        "x": 1080,
+        "y": 660,
+        "wires": [
+            [
+                "70dfdd2faa132416"
+            ]
+        ]
+    },
+    {
+        "id": "75180720ef5da9d4",
+        "type": "s7 in",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "mode": "single",
+        "variable": "REF_INV",
+        "diff": true,
+        "name": "",
+        "x": 1100,
+        "y": 1360,
+        "wires": [
+            [
+                "66750225cefda53a"
+            ]
+        ]
+    },
+    {
+        "id": "a81eb04166e9d727",
+        "type": "s7 in",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "mode": "single",
+        "variable": "Liga_AQ",
+        "diff": true,
+        "name": "",
+        "x": 2080,
+        "y": 200,
+        "wires": [
+            [
+                "a20fb42e9796280b"
+            ]
+        ]
+    },
+    {
+        "id": "8aceb9b87167e7c5",
+        "type": "s7 in",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "mode": "single",
+        "variable": "Liga_Vent",
+        "diff": true,
+        "name": "",
+        "x": 2080,
+        "y": 380,
+        "wires": [
+            [
+                "22531c7bb798227e"
+            ]
+        ]
+    },
+    {
+        "id": "9686dd4d13c23ae7",
+        "type": "s7 in",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "mode": "single",
+        "variable": "Desliga_Vent_AQ",
+        "diff": true,
+        "name": "",
+        "x": 2110,
+        "y": 540,
+        "wires": [
+            [
+                "741298d0e071c0c0"
+            ]
+        ]
+    },
+    {
+        "id": "37fefd10244de09d",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "START",
+        "name": "",
+        "x": 800,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "1a430a413d2691b8",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "STOP",
+        "name": "",
+        "x": 810,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "ab0330a9cbfca96b",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "HABILITA_NODE_RED",
+        "name": "HABILITA NODE RED",
+        "x": 760,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "f73e7c7ec17e3c45",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "ENTRADA_REF_FREQUENCIA",
+        "name": "SET_FREQ",
+        "x": 790,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "f51390808c6831d1",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "RESET_INV",
+        "name": "",
+        "x": 790,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "0cccb588bc2cb0ec",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "START",
+        "name": "",
+        "x": 1780,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "c250810e5b20a288",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "STOP",
+        "name": "",
+        "x": 1790,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "12fe422a6e272390",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "FDK_VEL",
+        "name": "FDK_VEL",
+        "x": 1620,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "221bdd6583288c74",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "ENTRADA_REF_FREQUENCIA",
+        "name": "SET_FREQ",
+        "x": 1670,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "549452f0b052537f",
+        "type": "s7 out",
+        "z": "9541cc6b5d3ecb2c",
+        "endpoint": "17840e047034380a",
+        "variable": "FDK_temp",
+        "name": "",
+        "x": 2630,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "3676149e0a9f047d",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "d1619c336683d1dc",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "label": "Liga Inversor",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 170,
+        "y": 480,
+        "wires": [
+            [
+                "c879c6a18ce01ad8"
+            ]
+        ]
+    },
+    {
+        "id": "d56788ead58153e6",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "d1619c336683d1dc",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Desliga Inversor",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 580,
+        "wires": [
+            [
+                "f3194f518beb24e6"
+            ]
+        ]
+    },
+    {
+        "id": "8e887dc06bad03ad",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "d1619c336683d1dc",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Acionamento PROFINET via Node",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 240,
+        "y": 780,
+        "wires": [
+            [
+                "6a603c55888b1e6e"
+            ]
+        ]
+    },
+    {
+        "id": "f8644cabafc6c8dd",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "d1619c336683d1dc",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Reset Inversor",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "true",
+        "payloadType": "bool",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 180,
+        "y": 680,
+        "wires": [
+            [
+                "4ddbcd04a049b273"
+            ]
+        ]
+    },
+    {
+        "id": "998c41e56213d76c",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "8bc412e949141574",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Aquecimento",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "AQUECIMENTO_ON",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 2390,
+        "y": 160,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "ddac3e7477ac959b",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "8bc412e949141574",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Refrigeração",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "REFRIGERACAO_ON",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 2410,
+        "y": 340,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "a99608eee86d5f03",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "8bc412e949141574",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Desligar",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "SYSTEM_OFF",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 2400,
+        "y": 500,
+        "wires": [
+            [
+                "202cc892615302bc"
+            ]
+        ]
+    },
+    {
+        "id": "53f560591e28fa57",
+        "type": "ui_button",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "8bc412e949141574",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Leitura temperatura",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-arrow-right",
+        "payload": "GET_TEMP",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 2130,
+        "y": 700,
+        "wires": [
+            [
+                "4f174746bd6fd631"
+            ]
+        ]
+    },
+    {
+        "id": "51540a7ba1a171f7",
+        "type": "ui_slider",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "label": "SET Velocidade ",
+        "tooltip": "Ajuste de velocidade via Node-red",
+        "group": "9033793fc9ba394f",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "className": "",
+        "x": 1100,
+        "y": 560,
+        "wires": [
+            [
+                "5c5ce7288d659ae7"
+            ]
+        ]
+    },
+    {
+        "id": "e3e69464334cab01",
+        "type": "ui_numeric",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "label": "Ajuste Frequência",
+        "tooltip": "",
+        "group": "d1619c336683d1dc",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "wrap": false,
+        "passthru": true,
+        "topic": "topic",
+        "topicType": "msg",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "60",
+        "step": "5",
+        "className": "",
+        "x": 190,
+        "y": 880,
+        "wires": [
+            [
+                "d53317a0e4f9dddc"
+            ]
+        ]
+    },
+    {
+        "id": "66804df3509cdb44",
+        "type": "ui_text",
+        "z": "9541cc6b5d3ecb2c",
+        "group": "8bc412e949141574",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 2310,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "c2346fa89c50fef0",
+        "type": "ui_text",
+        "z": "9541cc6b5d3ecb2c",
+        "group": "8bc412e949141574",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "temperatura",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 2630,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "6443901f41ffc715",
+        "type": "ui_gauge",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "d1619c336683d1dc",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Frequência Inversor",
+        "label": "Hz",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "60",
+        "colors": [
+            "#44ff00",
+            "#f4f40b",
+            "#f50000"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 840,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "16194145735ff98a",
+        "type": "ui_gauge",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "9033793fc9ba394f",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Velocidade",
+        "label": "Km/h",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1850,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "8341304867cc0e4a",
+        "type": "ui_chart",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "group": "8bc412e949141574",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "label": "chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 2310,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "57018ff9ee31f760",
+        "type": "comment",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Tensão do sensor",
+        "info": "",
+        "x": 1650,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1d7857cbab326985",
+        "type": "change",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "TENSAO",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.tensao",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1400,
+        "y": 380,
+        "wires": [
+            [
+                "0e143855fa8c986a"
+            ]
+        ]
+    },
+    {
+        "id": "0e143855fa8c986a",
+        "type": "ui_text",
+        "z": "9541cc6b5d3ecb2c",
+        "group": "9033793fc9ba394f",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Tensão(Volts):",
+        "format": "{{value}}",
+        "layout": "row-left",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1640,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "500a5cb0d34b9195",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Para Cronômetro e Mede (ms)",
+        "func": "// Recupera o tempo salvo na memória\nlet start = flow.get('t_start');\n\nif (start) {\n    // Calcula a diferença entre o agora e o tempo inicial\n    let tempo = Date.now() - start;\n    \n    // Limpa a memória para a próxima medição\n    flow.set('t_start', null); \n    \n    // Cria uma nova mensagem com o tempo calculado\n    let msgTempo = { \n        payload: tempo + \" ms\", \n        topic: \"Velocidade_Comunicacao\" \n    };\n    \n    // Envia a msg original na Saída 1 e o tempo na Saída 2\n    return [msg, msgTempo];\n}\n\n// Se não houver tempo inicial, apenas passa a msg original\nreturn [msg, null];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 260,
+        "wires": [
+            [
+                "6443901f41ffc715"
+            ],
+            [
+                "302422587030e5a4"
+            ]
+        ]
+    },
+    {
+        "id": "d53317a0e4f9dddc",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Inicia cronometro",
+        "func": "// Salva o momento exato em que o comando passou por aqui\nflow.set('t_start', Date.now());\n\n// Repassa a mensagem original sem alterações\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 880,
+        "wires": [
+            [
+                "f73e7c7ec17e3c45"
+            ]
+        ]
+    },
+    {
+        "id": "302422587030e5a4",
+        "type": "ui_text",
+        "z": "9541cc6b5d3ecb2c",
+        "group": "d1619c336683d1dc",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Delay retorno",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 820,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "5c5ce7288d659ae7",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Inica cronometro",
+        "func": "// Salva o momento exato em que o comando passou por aqui\nflow.set('t_start_2', Date.now());\n\n// Repassa a mensagem original sem alterações\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1370,
+        "y": 560,
+        "wires": [
+            [
+                "70659f1e8bc52cb1"
+            ]
+        ]
+    },
+    {
+        "id": "34a69ef76ffe73e9",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Para Cronômetro e Mede (ms)",
+        "func": "// Recupera o tempo salvo na memória\nlet start = flow.get('t_start_2');\n\nif (start) {\n    // Calcula a diferença entre o agora e o tempo inicial\n    let tempo = Date.now() - start;\n    \n    // Limpa a memória para a próxima medição\n    flow.set('t_start_2', null); \n    \n    // Cria uma nova mensagem com o tempo calculado\n    let msgTempo = { \n        payload: tempo + \" ms\", \n        topic: \"Velocidade_Comunicacao\" \n    };\n    \n    // Envia a msg original na Saída 1 e o tempo na Saída 2\n    return [msg, msgTempo];\n}\n\n// Se não houver tempo inicial, apenas passa a msg original\nreturn [msg, null];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1610,
+        "y": 160,
+        "wires": [
+            [
+                "16194145735ff98a"
+            ],
+            [
+                "36d96bcb6b342a81"
+            ]
+        ]
+    },
+    {
+        "id": "36d96bcb6b342a81",
+        "type": "ui_text",
+        "z": "9541cc6b5d3ecb2c",
+        "group": "9033793fc9ba394f",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Delay",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1830,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "324a85b7d33d2aa9",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Para Cronômetro e Mede (ms)",
+        "func": "// Recupera o tempo salvo na memória\nlet start = flow.get('t_start_3');\n\nif (start) {\n    // Calcula a diferença entre o agora e o tempo inicial\n    let tempo = Date.now() - start;\n    \n    // Limpa a memória para a próxima medição\n    flow.set('t_start_3', null); \n    \n    // Cria uma nova mensagem com o tempo calculado\n    let msgTempo = { \n        payload: tempo + \" ms\", \n        topic: \"Velocidade_Comunicacao\" \n    };\n    \n    // Envia a msg original na Saída 1 e o tempo na Saída 2\n    return [msg, msgTempo];\n}\n\n// Se não houver tempo inicial, apenas passa a msg original\nreturn [msg, null];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2390,
+        "y": 880,
+        "wires": [
+            [
+                "c2346fa89c50fef0"
+            ],
+            [
+                "a350421e2f3c9d95"
+            ]
+        ]
+    },
+    {
+        "id": "4f174746bd6fd631",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Inica cronometro",
+        "func": "// Salva o momento exato em que o comando passou por aqui\nflow.set('t_start_3', Date.now());\n\n// Repassa a mensagem original sem alterações\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2350,
+        "y": 700,
+        "wires": [
+            [
+                "2f117eef8bbea099"
+            ]
+        ]
+    },
+    {
+        "id": "a350421e2f3c9d95",
+        "type": "ui_text",
+        "z": "9541cc6b5d3ecb2c",
+        "group": "8bc412e949141574",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Delay",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 2610,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "ac8f796bbe5d2230",
+        "type": "http in",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "GET /api/state",
+        "url": "/api/state",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 270,
+        "y": 1000,
+        "wires": [
+            [
+                "a017047ef4a20908"
+            ]
+        ]
+    },
+    {
+        "id": "a017047ef4a20908",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "Return current state",
+        "func": "const defaultState = {\n    deviceId: \"NEXUS Central Node V2\",\n\n    PROFINET: {\n        online: true,\n        frequencia: 0,\n        estado: false,\n        habilitar: false,\n        resetar: false\n    },\n    CAN: {\n        online: true,\n        velocidade: 0,\n        marcha: 0,\n        erro: 0\n    },\n    MQTT: {\n        online: true,\n        temperatura: \"---\",\n        estado: \"---\"\n    }\n};\n\nconst saved = flow.get(\"protocolState\") || {};\nconst response = {\n    deviceId: saved.deviceId || defaultState.deviceId,\n    PROFINET: {\n        ...defaultState.PROFINET,\n        ...(saved.PROFINET || {})\n    },\n    CAN: {\n        ...defaultState.CAN,\n        ...(saved.CAN || {})\n    },\n    MQTT: {\n        ...defaultState.MQTT,\n        ...(saved.MQTT || {})\n    }\n};\n\nmsg.headers = {\n    \"Content-Type\": \"application/json\",\n    \"Access-Control-Allow-Origin\": \"https://curricularium.infinityfreeapp.com\"\n};\n\nmsg.payload = JSON.stringify(response);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 1000,
+        "wires": [
+            [
+                "1073848f764f823f"
+            ]
+        ]
+    },
+    {
+        "id": "1073848f764f823f",
+        "type": "http response",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 710,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "88d5784c582ed753",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "set PROFINET state",
+        "func": "const protocolState = flow.get(\"protocolState\") || {};\n\nprotocolState.PROFINET = {\n    ...(protocolState.PROFINET || {}),\n    online: true,\n    frequencia: Number(msg.payload ?? 0)\n};\n\nflow.set(\"protocolState\", protocolState);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8f8fd1d4394576fc",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "set CAN state",
+        "func": "let body = msg.payload;\n\nif (typeof body === \"string\") {\n    try {\n        body = JSON.parse(body);\n    } catch (err) {\n        node.warn(\"Invalid CAN JSON\");\n        return msg;\n    }\n}\n\nconst can = body.adc && typeof body.adc === \"object\"\n    ? body.adc\n    : body;\n\nconst protocolState = flow.get(\"protocolState\") || {};\n\nprotocolState.CAN = {\n    online: true,\n    velocidade: Number(can.velocidade ?? can.velocity ?? protocolState.CAN?.velocidade ?? 0),\n    marcha:     Number(can.marcha ?? can.gear ?? protocolState.CAN?.marcha ?? 0),\n    erro:       Number(can.erro ?? can.error ?? protocolState.CAN?.erro ?? 0)\n};\n\nflow.set(\"protocolState\", protocolState);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1420,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dd8cab3ad88ac171",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "set MQTT status",
+        "func": "const protocolState = flow.get(\"protocolState\") || {};\n\nprotocolState.MQTT = {\n    ...(protocolState.MQTT || {}),\n    online: true,\n    status: String(msg.payload)\n};\n\nflow.set(\"protocolState\", protocolState);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2340,
+        "y": 1000,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f0a471c6ba7cc1f6",
+        "type": "function",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "set MQTT temperatura",
+        "func": "const protocolState = flow.get(\"protocolState\") || {};\n\nprotocolState.MQTT = {\n    ...(protocolState.MQTT || {}),\n    online: true,\n    temperatura: Number(msg.payload)\n};\n\nflow.set(\"protocolState\", protocolState);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2360,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d93f6f9b66bdf44a",
+        "type": "ui_spacer",
+        "z": "9541cc6b5d3ecb2c",
+        "name": "spacer",
+        "group": "9033793fc9ba394f",
+        "order": 2,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "de197de0b67f2b4a",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.0.105",
+        "port": 1883,
+        "clientid": "Node-red",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": "1000",
+        "cleansession": true,
+        "autoUnsubscribe": false,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "17840e047034380a",
+        "type": "s7 endpoint",
+        "transport": "iso-on-tcp",
+        "address": "192.168.0.1",
+        "port": "102",
+        "rack": "0",
+        "slot": "1",
+        "localtsaphi": "01",
+        "localtsaplo": "00",
+        "remotetsaphi": "01",
+        "remotetsaplo": "00",
+        "connmode": "rack-slot",
+        "adapterauto": true,
+        "adapterport": "",
+        "busaddr": 2,
+        "adapteraddr": "0",
+        "cycletime": "1000",
+        "timeout": "2500",
+        "verbose": "default",
+        "name": "S71217C",
+        "vartable": [
+            {
+                "addr": "DB4,X0.0",
+                "name": "START"
+            },
+            {
+                "addr": "DB4,X0.1",
+                "name": "STOP"
+            },
+            {
+                "addr": "DB2,REAL6",
+                "name": "REF_INV"
+            },
+            {
+                "addr": "DB4,REAL2",
+                "name": "ENTRADA_REF_FREQUENCIA"
+            },
+            {
+                "addr": "DB2,X10.1",
+                "name": "HABILITA_NODE_RED"
+            },
+            {
+                "addr": "DB4,X0.2",
+                "name": "RESET_INV"
+            },
+            {
+                "addr": "DB6,REAL4",
+                "name": "FDK_VEL"
+            },
+            {
+                "addr": "DB6,REAL0",
+                "name": "SET_VEL"
+            },
+            {
+                "addr": "DB7,X0.0",
+                "name": "Liga_AQ"
+            },
+            {
+                "addr": "DB7,X0.1",
+                "name": "Liga_Vent"
+            },
+            {
+                "addr": "DB7,X0.2",
+                "name": "Desliga_Vent_AQ"
+            },
+            {
+                "addr": "DB7,REAL2",
+                "name": "FDK_temp"
+            }
+        ]
+    },
+    {
+        "id": "d1619c336683d1dc",
+        "type": "ui_group",
+        "name": "REDE PROFINET",
+        "tab": "8138d49ef6d427e9",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "8bc412e949141574",
+        "type": "ui_group",
+        "name": "REDE MQTT",
+        "tab": "8138d49ef6d427e9",
+        "order": 3,
+        "disp": true,
+        "width": 6,
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "9033793fc9ba394f",
+        "type": "ui_group",
+        "name": "REDE CAN",
+        "tab": "8138d49ef6d427e9",
+        "order": 2,
+        "disp": true,
+        "width": 6,
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "8138d49ef6d427e9",
+        "type": "ui_tab",
+        "name": "NEXUS",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "d9f9235d987bc69e",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "plcindustry": "2.1.1",
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
