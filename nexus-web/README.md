@@ -72,6 +72,11 @@ Como o website está situado em um servidor de uma conta privada de um aluno, a 
 
 
 
+https://sylphina.com.br/alvaro
+https://sylphina.com.br/alvaro/upload.php
+
+
+
 
 
 
