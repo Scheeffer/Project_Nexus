@@ -61,9 +61,8 @@ node_get
 
 para que Node-RED responda as requisições será necessario criar
 
-| Função da requisição GET `/api/sensor` |
-| :---: |
-| `function defaultState() 
+##Função da requisição GET `/api/sensor` 
+`function defaultState() 
 {
     return {
         DeviceID: "Nexus_Hub",
@@ -94,6 +93,7 @@ msg.headers = { "Content-Type": "application/json" };
 msg.payload = JSON.stringify(state);
 
 return msg;` |
+
 ### 5	configurações para futuros semestres
 
 Como o website está situado em um servidor de uma conta privada de um aluno, a existencia futura do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um novo website e pderá acessar a pagina de configuração.
