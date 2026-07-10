@@ -87,7 +87,7 @@ Esses dados são obtidos na aba `MySQL Databases` discutida na tabela logo acima
 <p align="center"><b>Fluxograma</b></p>
 <br><br>
 
-Com Esses parametros configurados você podera acessar o banco de dados local a partir do website.
+Com Esses parametros configurados você podera acessar o banco de dados local a partir do website. Se futuros projetos forem similares ao utilizados, é possivel importar as configurações do banco de dados pelo MyPHPadmin utilizando o arquivo `database_export.sql`.
 
 https://sylphina.com.br/alvaro
 https://sylphina.com.br/alvaro/upload.php
