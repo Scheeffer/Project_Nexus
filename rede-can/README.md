@@ -223,4 +223,94 @@ Se o CANA também fizesse o papel de servidor web, o core do processador seria f
   <img src="figs/interface.png" alt="HARDWARE - Célula 2" width="750">
 </p>
 
+---
+
+## 8. Arquitetura de Comunicação: Firmware <-> Backbone (Node-RED)
+
+O sistema utiliza o microcontrolador **CANB** como um **Gateway**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o Node-RED ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
+
+---
+
+## Topologia de Rede e Configurações de IP
+
+Para que a comunicação ocorra com firmware do CANB, a configuração de IPs estão com os seguintes parâmetros:
+
+* **Ponto de Acesso (Wi-Fi):** `WIFI_SSID "COM_N_26.1"`
+* **Endereço IP do Node-RED:** `192.168.0.100` (Porta padrão: `1880`)
+* **Endereço Base da URL:** `http://192.168.0.100:1880`
+
+---
+
+## 2. Configurações e Rotas do Firmware (CANB)
+
+O código C do CANB gerencia dois fluxos de rotas HTTP: as **rotas de saída** (onde o ESP32 é o cliente HTTP e envia dados ao Node-RED) e as **rotas de entrada** (onde o ESP32 é o servidor Web e o Node-RED envia comandos).
+
+### A. Rotas de Saída (ESP32 -> Node-RED)
+Sempre que o barramento CAN recebe o frame de telemetria `0x4D2` ou a interface local sofre interação, o ESP32 dispara pacotes via `esp_http_client`:
+
+| Rota no Node-RED | Tipo | Payload/Formato | comandos no Firmware |
+| :--- | :--- | :--- | :--- |
+| `/can` | `POST` | `{"valor_can": uint16, "velocidade": float, "tensao": float}` | Disparado a cada 50ms na `CAN_Task` ao receber o ID `0x4D2`. |
+| `/slider` | `POST` | Texto puro (ex: `"45"`) | Quando o operador altera o Slider diretamente na página HTML do ESP32. - PROFINET|
+| `/ligar` / `/desligar` | `POST` | Texto puro (`"true"`) | Cliques nos botões industriais da página HTML. - PROFINET |
+| `/mqtt_aquecer` / `/mqtt_resfriar` | `POST` | `{"status": true}` | Cliques no painel de controle de temperatura da página HTML. - MQTT|
+
+### B. Rotas de Entrada (Node-RED -> ESP32)
+O servidor Web nativo do ESP32 (`esp_http_server`) registra URIs específicas para escutar o Node-RED:
+
+* **`/set_nodered_value` (POST):** Recebe um valor inteiro enviado pelo Slider do Node-RED Dashboard. O handler armazena em `g_node_red_slider` e injeta imediatamente o frame **ID `0x100`** na rede CAN para alterar a velocidade do motor.
+* **`/set_nodered_freq` (POST):** Atualiza a variável global `g_node_red_freq` para exibição de referência na interface HTML - PROFINET(Seta a a frequência do inversor).
+* **`/set_mqtt_sim` (POST):** Recebe strings em formato JSON vindas da lógica MQTT do Node-RED (ex: `{"temp": 24.5, "status": "Aquecendo"}`). O firmware usa `strstr()` e `atof()` para processar o texto e atualizar as variáveis `g_mqtt_temperatura` e `g_mqtt_status` - MQTT(seta os estados do atuador MQTT).
+
+---
+
+## 3. Configurações dos Nós no Node-RED
+
+No painel do Node-RED, os fluxos são configurados seguindo regras estritas de tipos de dados para evitar falhas de processamento.
+
+### A. Nós de Entrada (HTTP In Nodes)
+Para escutar o ESP32, é utilizado nós do tipo **`http in`**:
+* **Método:** `POST`
+* **URL:** `/can` (ou as respectivas rotas de telemetria descritas acima).
+* **Nó `json` subsequente:** É obrigatório conectar a saída do nó `http in` a um nó `json` para converter a string HTTP recebida em um objeto Javascript manipulável (`msg.payload.velocidade`).
+
+### B. Nós de Saída (HTTP Request Nodes)
+Para enviar dados ou devolver comandos para as rotas do ESP32, é utilizado nós do tipo **`http request`**:
+* **Método:** `POST`
+* **URL:** `http://192.168.0.X/set_nodered_value` (substitua pelo IP dinâmico ou estático que o ESP32 Gateway assumiu na rede).
+
+---
+## Biblioteca do módulo CAN MCP2515
+
+O **MCP2515** é um controlador CAN autônomo da Microchip. No projeto, ele atua como a ponte física e lógica que permite aos microcontroladores ESP32 comunicarem-se através do barramento industrial CAN a **250 Kbps**.
+
+### 1. Por que utilizá-lo?
+O ESP32 não possui uma camada física CAN integrada (transceiver), necessitando de uma controladora externa conectada via SPI.
+
+mcp2515.h: Biblioteca que abstrai os registradores internos do circuito integrado MCP2515. Ela configura a velocidade da rede (250 Kbps), os filtros de mensagens, máscaras de recebimento e gerencia as interrupções de hardware do barramento.
+
+can.h: Define as estruturas de dados universais do frame CAN utilizadas no seu projeto (como a estrutura struct can_frame, que empacota o can_id, o tamanho do dado can_dlc e o vetor de dados data[8]).
+
+### 2. Funcionamento no Firmware
+Durante a inicialização (`app_main`), o firmware configura o chip em três etapas:
+1. `MCP2515_reset()`: Limpa os buffers e define o modo de configuração.
+2. `MCP2515_setBitrate()`: Sincroniza a rede em **250 Kbps** com base no cristal de 8 MHz do módulo.
+3. `MCP2515_setNormalMode()`: Ativa o chip para operar na rede.
+
+### 3. Pinagem Física (Conexão SPI)
+
+Ambas as placas utilizam o barramento `SPI2_HOST` do ESP32:
+
+* **MISO:** GPIO 19
+* **MOSI:** GPIO 23
+* **SCK:** GPIO 18
+* **CS (Chip Select):** GPIO 5
+
+> ⚠️ **Nota:** As linhas **CANH** e **CANL** interconectam as duas placas, exigindo um resistor de terminação de **120 Ohms** nos extremos da rede para evitar reflexão de sinal.
+* **REFERÊNCIA DO GITHUB:** [BIBLIOTECA MCP2515](https://github.com/Microver-Electronics/mcp2515-esp32-idf)
+---
+## 🔗 Código Fonte do Projeto
+Código completo do projeto:
+* **FIRMWARE CAN:** [Project_Nexus - Firmware Rede CAN](https://github.com/Scheeffer/Project_Nexus/tree/main/rede-can/firmware)
+
 
