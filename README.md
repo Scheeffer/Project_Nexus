@@ -24,6 +24,10 @@
 </div>
 
 ---
+Descrição da animação:
+
+É possível visualizar nesta animação um exemplo de operação do NEXUS.
+Ao iniciar o processo, é possível visualizar as 3 redes se comunicando com o dashboard no NodeRed via switch. Cada rede envia e recebe seus parametros passando por um switch. No dashbboard do computador do backbone é possível ver a temperatura do sensor da Célula 3 (MQTT). Onde é enviado um comando de aquecer, o comando é transportado pela rede até a Célula 3, liga o atuador e começa a aquecer a planta. O sensor envia o parâmetro de volta, e desativa o aquecimento ao chegar nas condições especificadas (O valor inicial de 18,2°C foi modificado para 21,4°C ao decorrer da execução).
 
 ## 1. Contexto
 
@@ -68,22 +72,22 @@ Cada célula tem sua documentação completa, diagramas e código nas pastas aba
 
 ```mermaid
 flowchart TB
-    subgraph CELULA1["🟦 Célula 1 — PROFINET (Cainã & Matheus)"]
+    subgraph CELULA1[" Célula 1 — PROFINET (Cainã & Matheus)"]
         direction TB
-        S1["Sensor / IHM<br/>KTP700 Basic"] --- PLC["CLP Siemens<br/>S7-1200"]
+        S1["Sensor / IHM<rd/>KTP700 Basic"] --- PLC["CLP Siemens<br/>S7-1200"]
         A1["Atuador<br/>Inversor G120C"] --- PLC
     end
 
-    subgraph CELULA2["🟩 Célula 2 — CAN (Álvaro & Alexandre)"]
+    subgraph CELULA2[" Célula 2 — CAN (Álvaro & Alexandre)"]
         direction TB
         S2["Sensor<br/>Potenciômetro (nó CAN)"] --- ESP2["ESP32<br/>TWAI/CAN"]
         A2["Atuador<br/>Display E620"] --- ESP2
     end
 
-    subgraph CELULA3["🟧 Célula 3 — MQTT (Lucas & Henzo)"]
+    subgraph CELULA3[" Célula 3 — MQTT (Lucas & Henzo)"]
         direction TB
-        S3["Sensor temperatura<br/>ESP32-S3 (cliente MQTT)"] -.-> BR3["🧠 ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
-        BR3 -.-> ESP3["ESP32 atuador (cliente MQTT)<br/>aquece GPIO18 / refrigera GPIO19"]
+        S3["Sensor temperatura<br/>ESP32-S3 (cliente MQTT)"] -.-> BR3[" ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
+        A3["ESP32 atuador (cliente MQTT)<br/>aquece GPIO18 / refrigera GPIO19"] -.-> BR3[" ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
     end
 
     SW["🔀 Switch Ethernet<br/>(Backbone)"]
@@ -94,7 +98,7 @@ flowchart TB
     BR3 -- "Aplicação: MQTT v3.1.1 (:1883)  Transporte: TCP  Rede: IP  Enlace/Física: WIFI 802.11" --> SW
     SW --- NR
 
-    classDef cell fill:#f7f7f7,stroke:#888,stroke-width:1px;
+    classDef cell fill:#ffffff,stroke:#888,stroke-width:1px;
     classDef local fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
     classDef central fill:#fff3e0,stroke:#e65100,stroke-width:1px;
     classDef broker fill:#ffe0b2,stroke:#e65100,stroke-width:2px;
@@ -109,7 +113,7 @@ flowchart TB
 | Símbolo | Significado |
 |--------|-------------|
 | 🟩 Nós **verdes** (`PLC`, `ESP2`, sensores/atuadores) | **Controladores locais** de cada célula. |
-| 🧠 Nó (`ESP32 broker`) | **Broker MQTT do sistema** — um ESP32 dedicado rodando **Mosquitto embarcado** (`192.168.0.105:1883`). Todo o tráfego MQTT (sensor, atuador e Node-RED) passa por ele. |
+|  Nó Broker MQTT(`ESP32 broker`) | **Broker da rede MQTT** — um ESP32 dedicado rodando **Mosquitto embarcado** (`192.168.0.105:1883`). Todo o tráfego MQTT saindo da célula(sensor, atuador e e fluxo que vai pro Node-RED) passa por ele. |
 | 🟧 Nó **laranja** (`Node-RED`) | **Nível central (PC, `192.168.0.100`).** Agregação, dashboard, Tabela Global e comando remoto. **É cliente MQTT do broker embarcado**, não o servidor. |
 | 🔀 `Switch` | Domínio de comutação do backbone Ethernet (full-duplex, sem colisão entre portas). |
 | Linha pontilhada dentro da Célula 3 | Tráfego **MQTT via Wi-Fi** entre os três ESP32 da célula (a "rede local" da célula 3 é o próprio MQTT). |
