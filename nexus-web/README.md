@@ -57,7 +57,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 
 ## 5  Configuração Node-Red
 
-para que Node-RED responda as requisições será necessario criar
+para que Node-RED responda as requisições foi criado funções em paralelo com o código do Node-RED central para extrair dados do fluxo de comunicação
 
 ### Função principal Requisição GET `/api/sensor`
 
@@ -65,7 +65,7 @@ para que Node-RED responda as requisições será necessario criar
   <tr>
     <td>
       <pre><code class="language-js">
-      Return current state
+      Return current object state on http request
       </code></pre>
       
           const defaultState = {
@@ -229,6 +229,38 @@ para que Node-RED responda as requisições será necessario criar
 </table>
 <p align="center"> <img src="figs/set_mqtt.png" alt="GET api/state" width="100%"></p>
 <br><br>
+
+### objeto JSON esperado
+<table>
+  <tr>
+    <td>
+      <pre><code class="language-js">
+      JSON object
+      </code></pre>
+      
+      {
+        "DeviceID": "Nexus_Hub",
+        "PROFINET": {
+          "online": true,
+          "estado": false,
+          "habilitar": false,
+          "resetar": false,
+          "frequencia": 120
+        },
+        "CAN": {
+          "online": true,
+          "velocidade": 60,
+          "marcha": 2,
+          "erro": 0
+        },
+        "MQTT": {
+          "online": true,
+          "temperatura": "25.0ºC",
+          "estado": "Aquecimento"
+        }
+      }       
+  </tr>
+</table>
 
 ## 5	configurações para futuros semestres
 
