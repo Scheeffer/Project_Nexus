@@ -46,11 +46,11 @@ Arquivos e suas funções:
 
 | Arquivo | Descrição |
 | :---: | :--- |
-| `index.php` | Disponibiliza um dashboard online através de requisições periodicas, geridas pelo arquivo controller.php, ao banco de dados do host. |
-| `upload.php` | Quando setado corretamente, fará o upload dos dados, geridas pelo arquivo controller.php, ao banco de dados do host. |
-| `controller.php` | Arquivo o qual decide que ações tomar a depender da requisição mandada para o mesmo.  |
-| `backend.php` | Arquivo que contem classes responsaveis por conectar-se ao banco de dados do host e para realizar query ao banco de dados. |
-| `estilo.css` | Arquivo responsavel por formatar a estética HTML do website. |
+| `index.php` | Disponibiliza um dashboard online através de requisições periodicas ao banco de dados do host. |
+| `upload.php` | Quando setado corretamente, fará o upload dos dados ao banco de dados do host. |
+| `controller.php` | Arquivo responsavel por gerenciar as requisições ao servidor local.  |
+| `backend.php` | Arquivo que contem classes responsaveis por conectar-se e realizar queries ao banco de dados. |
+| `estilo.css` | Arquivo responsavel por formatar a configuração estética HTML do website. |
 | `/imagens` | Pasta que contem as imagens, icones, gifs, audio, etc, utilizados pelo website. |
 
 
@@ -65,7 +65,10 @@ Arquivos e suas funções:
 
 ### 2	configurações para futuros semestres
 
-Como o websit está situado em um servidor de uma conta privada, isto é, de uma cont de um aluno. Será necessario criar uma conta e escolher um dominio para que o website seja acessado.
+Como o website está situado em um servidor de uma conta privada de um aluno, a existencia do website e do dominio é incerta. Para utilizar e dar continuidade a está raiz do projeto será necessario criar um novo website. para isto você poderá utilizar o mesmo host de website utilizado neste projeto, o InfinityFree. Após criar uma nova conta e escolher um nome para o dominio você terá um website 
+
+<p align="center"> <img src="figs/config_page.png" alt="Fluxograma" width="500"></p>
+<p align="center"><b>Pagina de configuração</b></p>
 
 
 
