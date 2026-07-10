@@ -31,12 +31,6 @@ A segunda entrada é a de upload de dados. Através de um sistema de armazername
 
 Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura automaticamente por um arquivo de nome index e quaisquer variações de extensão. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuári oem contraste ao upload.php que é responsavel pelo upload dos dados ao banco de dados do servidor.
 
-Deste modo sempre que um usuario entrar com a url do site ele será direcionado
-
-<p align="center"> <img src="figs/fluxograma.png" alt="Fluxograma" width="500"></p>
-<p align="center"><b>Fluxograma</b></p>
-<br><br>
-
 Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://`dominio`.infinityfreeapp.com/upload.php ou somente `dominio`.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1800, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. No caso deste projeto, esse endereço significa que o website irá procurar o diretorio na porta default do Node-RED no proprio computador.
 
 ### Estrutura de arquivos do Website.
@@ -84,7 +78,17 @@ Resumo geral dos arquivos e suas funcionalidades.
 ### Banco de dados
 Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
 
+<p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="500"></p>
+<p align="center"><b>Fluxograma</b></p>
+<br><br>
 
+Esses dados são obtidos na aba `MySQL Databases` discutida na tabela logo acima.
+
+<p align="center"> <img src="figs/database_details.png" alt="Fluxograma" width="500"></p>
+<p align="center"><b>Fluxograma</b></p>
+<br><br>
+
+Com Esses parametros configurados você podera acessar o banco de dados local a partir do website.
 
 https://sylphina.com.br/alvaro
 https://sylphina.com.br/alvaro/upload.php
