@@ -120,7 +120,6 @@ para que Node-RED responda as requisições será necessario criar
   </tr>
 </table>
 <p align="center"> <img src="figs/api_state.png" alt="GET api/state" width="100%"></p>
-<p align="center"><b>GET api/state</b></p>
 <br><br>
 
 ### set PROFINET state
@@ -143,7 +142,6 @@ para que Node-RED responda as requisições será necessario criar
   </tr>
 </table>
 <p align="center"> <img src="figs/set_profinet.png" alt="GET api/state" width="100%"></p>
-<p align="center"><b>GET api/state</b></p>
 <br><br>
 
 ### set CAN state
@@ -185,10 +183,52 @@ para que Node-RED responda as requisições será necessario criar
   </tr>
 </table>
 <p align="center"> <img src="figs/set_profinet.png" alt="GET api/state" width="100%"></p>
-<p align="center"><b>GET api/state</b></p>
 <br><br>
-### set PROFINET state
-### set PROFINET state
+
+### set MQTT state temperatura
+<table>
+  <tr>
+    <td>
+      <pre><code class="language-js">
+      Save PROFINET state object
+      </code></pre>
+      
+        const protocolState = flow.get("protocolState") || {};
+
+        protocolState.MQTT = {
+            ...(protocolState.MQTT || {}),
+            online: true,
+            temperatura: Number(msg.payload)
+        };
+        
+        flow.set("protocolState", protocolState);
+        
+        return msg;        
+  </tr>
+</table>
+
+### set PROFINET status
+<table>
+  <tr>
+    <td>
+      <pre><code class="language-js">
+      Save PROFINET state object
+      </code></pre>
+      
+        const protocolState = flow.get("protocolState") || {};
+
+        protocolState.MQTT = {
+            ...(protocolState.MQTT || {}),
+            online: true,
+            status: String(msg.payload)
+        };
+        
+        flow.set("protocolState", protocolState);
+        return msg;      
+  </tr>
+</table>
+<p align="center"> <img src="figs/set_mqtt.png" alt="GET api/state" width="100%"></p>
+<br><br>
 
 ## 5	configurações para futuros semestres
 
