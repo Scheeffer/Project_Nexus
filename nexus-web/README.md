@@ -10,6 +10,10 @@
 
 Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
 
+<p align="center"> <img src="figs/website.png" alt="diagrama" width="500"></p>
+<p align="center"><b>Website</b></p>
+<br><br>
+
 ## 2	Funcionamento
 
 o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo os mais comum `index.xxx` como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
