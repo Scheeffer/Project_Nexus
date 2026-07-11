@@ -1,4 +1,11 @@
-# Rede MQTT — Célula 3 (Lucas & Henzo)
+# 🟧 Rede MQTT — Célula 3 (Lucas & Henzo)
+
+[![Protocolo](https://img.shields.io/badge/protocolo-MQTT%20v3.1.1-orange.svg)](https://mqtt.org/)
+[![Broker](https://img.shields.io/badge/broker-Mosquitto%20embarcado%20(ESP32)-red.svg)](https://components.espressif.com/components/espressif/mosquitto)
+[![MCU](https://img.shields.io/badge/MCU-2%C3%97%20ESP32%20%2B%201%C3%97%20ESP32--S3-blueviolet.svg)](#)
+[![Framework](https://img.shields.io/badge/framework-ESP--IDF-yellow.svg)](https://idf.espressif.com/)
+
+
 
 ---
 
@@ -6,13 +13,13 @@
 
 A célula MQTT é composta por **três ESP32 com papéis distintos**. A "rede local" da célula **é o próprio MQTT**: os nós não se falam diretamente — tudo passa pelo broker.
 
-| Nó | Papel | IP |
-|----|----------|-------|
-|  **Broker** | ESP32 rodando **Mosquitto embarcado** (componente `espressif/mosquitto` ^2.0.20), escutando `0.0.0.0:1883`. É o **servidor MQTT de todo o sistema NEXUS** — o Node-RED se conecta aqui como cliente. | `192.168.0.105` |
-|  **Sensor** | Lê a temperatura e publica em `ESP32S3/COM/temperatura`; responde a solicitações em `ESP32S3/COM/get`. | — |
-|  **Atuador** | Cliente `esp-mqtt` (ESP-IDF via PlatformIO, `esp32doit-devkit-v1`). Assina o tópico de comando e aciona **GPIO18 (aquecimento)** / **GPIO19 (refrigeração)**. | — |
+| Nó | Firmware | Papel | IP |
+|----|----------|-------|-----|
+| 🧠 **Broker** | `firmware/embedded_brocker.rar` | ESP32 rodando **Mosquitto embarcado** (componente `espressif/mosquitto` ^2.0.20), escutando `0.0.0.0:1883`. É o **servidor MQTT de todo o sistema NEXUS** — o Node-RED se conecta aqui como cliente. | `192.168.0.105` |
+| 🌡️ **Sensor** | ESP32-S3 | Lê a temperatura e publica em `ESP32S3/COM/temperatura`; responde a solicitações em `ESP32S3/COM/get`. | — |
+| 🔥❄️ **Atuador** | `firmware/ESP32_act.rar` | Cliente `esp-mqtt` (ESP-IDF via PlatformIO, `esp32doit-devkit-v1`). Assina o tópico de comando e aciona **GPIO18 (aquecimento)** / **GPIO19 (refrigeração)**. | — |
 
-Todos os nós conectam-se à rede Wi-Fi do projeto **`COM_N_26.1`**
+Todos os nós conectam-se à rede Wi-Fi do projeto **`COM_N_26.1`** (aberta, sem senha — decisão documentada no [`backbone/README.md`](../backbone/README.md)).
 
 ```mermaid
 flowchart LR
@@ -25,9 +32,9 @@ flowchart LR
     ACT -. "sub ESP32/COM/Atuador<br/>pub ESP32/COM/Status" .-> BR
     NR -. "pub comandos · sub telemetria" .-> BR
 
-    classDef broker fill:#ffffff,stroke:#e65100,stroke-width:2px;
-    classDef cliente fill:#ffffff,stroke:#2e7d32,stroke-width:1px;
-    classDef central fill:#ffffff,stroke:#e65100,stroke-width:1px;
+    classDef broker fill:#ffe0b2,stroke:#e65100,stroke-width:2px;
+    classDef cliente fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
+    classDef central fill:#fff3e0,stroke:#e65100,stroke-width:1px;
     class BR broker;
     class S3,ACT cliente;
     class NR central;
