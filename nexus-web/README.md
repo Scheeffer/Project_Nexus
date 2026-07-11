@@ -63,7 +63,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 
 para que Node-RED responda as requisições foi criado funções em paralelo com o código do Node-RED central para extrair dados do fluxo de comunicação
 
-### Função principal Requisição GET `/api/sensor`
+### Função principal Requisição GET `/api/state`
 
 <table>
   <tr>
@@ -132,7 +132,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
   <tr>
     <td>
       <pre><code class="language-js">
-      Save PROFINET state object
+      Save PROFINET state object        
       </code></pre>
       
         const protocolState = flow.get("protocolState") || {};
@@ -195,7 +195,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
   <tr>
     <td>
       <pre><code class="language-js">
-      Save PROFINET state object
+      Save MQTT state object
       </code></pre>
       
         const protocolState = flow.get("protocolState") || {};
@@ -212,7 +212,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
   </tr>
 </table>
 
-### set PROFINET status
+### set MQTT state estado
 <table>
   <tr>
     <td>
@@ -301,6 +301,8 @@ Esses dados são obtidos na aba `MySQL Databases` discutida na tabela logo acima
 Com Esses parametros configurados você podera acessar o banco de dados local a partir do website e configurar tabela e coluna necessarias para o projeto. Se futuros projetos forem similares ao utilizados neste semestre 2026/1, é possivel importar as configurações do banco de dados pelo MyPHPadmin utilizando o arquivo `database_export.sql`.
 
 Uma possivel alteração futura ara esta raiz do projeto seria tornar o website completamente independente do Node central, de modo que o Node, ou um segundo website local, envie e receba  requisições através de IP's ou dominios, realizando uma troca de dados mais complexa com o website. Esta topologia não é melhor ou pior, mas deve ser levado em conta as necessidades gerais do projeto.
+
+Não houve tempo para checar se o protocolo está online no flow do Node-RED central e salva-lo no objeto que vai para o Website. O site é versátil neste quesito e sinaliza através de icones, texto, cores e até sinal de audio, quando o botão estiver ativo, para retratar visualmente o estado da conexão do protocolo. Contudo, esse não foi um problema demasiado grande pois se tudo estiver funcionando raramente haverá a necessidade deste dinamicismo. Mas que fique documentado e em mente para proximo semestres que está opção já está programada no site, só requer que o Node-RED central atualize o estado online do protocolo.
 
 https://sylphina.com.br/alvaro   <br>
 https://sylphina.com.br/alvaro/upload.php

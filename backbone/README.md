@@ -11,6 +11,9 @@ Um **gateway** (ou porta de ligação) é um nó de rede projetado especificamen
 
 No contexto do **Projeto Nexus**, o computador que executa o **Node-RED** atua estritamente como um **Gateway Industrial / IoT**, exercendo essa função através dos seguintes mecanismos:
 
+<img width="1024" height="704" alt="image" src="https://github.com/user-attachments/assets/7e2c9a9d-5287-447a-9df7-fcb3148fa117" />
+
+
 * **Tradução Multiprotocolo:** O sistema interliga equipamentos de naturezas totalmente diferentes. Ele realiza a ingestão de dados de CLPs Siemens via **PROFINET** (através da biblioteca S7), de dispositivos na rede **CAN** e de sensores sem fios via **MQTT**. O Node-RED traduz e normaliza estes dados brutos incompatíveis num formato universal padronizado (objetos JSON).
 * **Intermediação Centralizada (Middleware):** O computador configurado com o IP fixo `192.168.0.100` funciona como o ponto focal da rede `COM_N_26.1`. Os dispositivos finais não comunicam diretamente entre si; em vez disso, enviam as informações para este nó central, que faz a gestão e a ponte de dados entre as sub-redes.
 * **Processamento e Roteamento de Aplicação:** Ao contrário de um elemento de infraestrutura pura (como um switch ou um backbone), que apenas transporta os pacotes de dados, o Node-RED abre e processa o conteúdo das mensagens. Ele aplica lógica de controlo (através dos nós `function` e `change`) e encaminha a informação processada para o destino final — seja alimentando a interface gráfica (Dashboard) ou enviando comandos de volta para os atuadores em campo.
