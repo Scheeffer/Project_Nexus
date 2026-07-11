@@ -120,7 +120,8 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
         msg.payload = JSON.stringify(response);
         
         return msg;
-      </td>
+        
+  </td>
   </tr>
 </table>
 <p align="center"> <img src="figs/api_state.png" alt="GET api/state" width="100%"></p>
