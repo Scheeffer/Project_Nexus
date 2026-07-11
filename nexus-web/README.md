@@ -133,6 +133,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
     <td>
       <pre><code class="language-js">
       Save PROFINET state object
+        const protocolState = 2;
       </code></pre>
       
         const protocolState = flow.get("protocolState") || {};
