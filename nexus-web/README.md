@@ -63,7 +63,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 
 para que Node-RED responda as requisições foi criado funções em paralelo com o código do Node-RED central para extrair dados do fluxo de comunicação
 
-### Função principal Requisição GET `/api/sensor`
+### Função principal Requisição GET `/api/state`
 
 <table>
   <tr>
