@@ -59,7 +59,7 @@ Resumo geral dos arquivos e suas funcionalidades.
 `PHP` : linguagem de backend, utilizadas nos servidores. Suporta HTML e Javascript em seu arquivo. Todo código php fica invisivel ao usuario, diferente do html<br>
 `MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações no mesmo.<br>
 
-## 5  Configuração Node-Red
+## 4  Configuração Node-Red
 
 para que Node-RED responda as requisições foi criado funções em paralelo com o código do Node-RED central para extrair dados do fluxo de comunicação
 
