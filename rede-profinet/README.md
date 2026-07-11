@@ -201,25 +201,25 @@ Na imagem abaixo temos o quadro de automação visto por dentro, com as conexõe
 
 ## 7. TELAS IHM 
 
-###Tela IHM geral
+### Tela IHM geral
 
-Nesta tela temos os botões para escolha de qual rede queremos controlar ou monitorar. 
+Nesta tela temos os botões para escolha de qual rede queremos controlar ou monitorar. Também temos o botão de escolha se a operação será via IHM ou via Node-Red, para poder operar via node-red temos que setar no dashboard do node-red e na IHM. 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/geral_ihm.jpeg" alt=" Componentes" width="500">
 
 
-Tela IHM Rede Profinet 
+### Tela IHM Rede Profinet 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/profinet_ihm.jpeg" alt=" Componentes" width="500">
 
 
-Tela IHM Rede CAN
+### Tela IHM Rede CAN
 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/can_ihm.jpeg" alt=" Componentes" width="500">
 
 
-Tela IHM Rede MQTT 
+### Tela IHM Rede MQTT 
 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/mqtt_ihm.jpeg" alt=" Componentes" width="500">
