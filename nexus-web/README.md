@@ -187,7 +187,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
          
   </tr>
 </table>
-<p align="center"> <img src="figs/set_profinet.png" alt="GET api/state" width="100%"></p>
+<p align="center"> <img src="figs/set_can.png" alt="GET api/state" width="100%"></p>
 <br><br>
 
 ### set MQTT state temperatura
@@ -235,7 +235,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
 <p align="center"> <img src="figs/set_mqtt.png" alt="GET api/state" width="100%"></p>
 <br><br>
 
-### objeto JSON esperado
+### objeto JSON esperado no Website
 <table>
   <tr>
     <td>
