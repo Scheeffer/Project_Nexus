@@ -25,9 +25,9 @@ flowchart LR
     ACT -. "sub ESP32/COM/Atuador<br/>pub ESP32/COM/Status" .-> BR
     NR -. "pub comandos · sub telemetria" .-> BR
 
-    classDef broker fill:#ffe0b2,stroke:#e65100,stroke-width:2px;
-    classDef cliente fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
-    classDef central fill:#fff3e0,stroke:#e65100,stroke-width:1px;
+    classDef broker fill:#ffffff,stroke:#e65100,stroke-width:2px;
+    classDef cliente fill:#ffffff,stroke:#2e7d32,stroke-width:1px;
+    classDef central fill:#ffffff,stroke:#e65100,stroke-width:1px;
     class BR broker;
     class S3,ACT cliente;
     class NR central;
