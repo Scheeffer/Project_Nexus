@@ -1,7 +1,5 @@
 # 🟦 Rede PROFINET — Célula 1 (Cainã & Matheus)
 
-[![Protocolo](https://img.shields.io/badge/protocolo-PROFINET-blue.svg)](https://www.profibus.com/)
-[![CLP](https://img.shields.io/badge/CLP-Siemens%20S7--1217C-teal.svg)](#)
 
 ---
 
