@@ -16,7 +16,7 @@ Para disponibilizar os resultados obtidos do Node central sem depender de um das
 
 ## 2	Funcionamento
 
-o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo os mais comum `index.xxx` como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
+o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo o mais comum `index`, como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
 
 <p align="center"> <img src="figs/htaccess.png" alt="diagrama" width="500"></p>
 <p align="center"><b>Configuração .htacess do servidor PHP local Apache</b></p>
@@ -55,11 +55,11 @@ Resumo geral dos arquivos e suas funcionalidades.
 
 `HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).<br>
 `CSS` : Formata a configuração padrão de objetos HTML.<br>
-`javascript` : Linguagem de alto nivel responsavel pelo <br>
+`javascript` : Linguagem de responsavel pelo tornar o website responsive, desde alterar icones/css até realizar requisições htttp. <br>
 `PHP` : linguagem de backend, utilizadas nos servidores. Suporta HTML e Javascript em seu arquivo. Todo código php fica invisivel ao usuario, diferente do html<br>
 `MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações no mesmo.<br>
 
-## 5  Configuração Node-Red
+## 4  Configuração Node-Red
 
 para que Node-RED responda as requisições foi criado funções em paralelo com o código do Node-RED central para extrair dados do fluxo de comunicação
 
@@ -120,7 +120,8 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
         msg.payload = JSON.stringify(response);
         
         return msg;
-      </td>
+        
+  </td>
   </tr>
 </table>
 <p align="center"> <img src="figs/api_state.png" alt="GET api/state" width="100%"></p>
@@ -186,7 +187,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
          
   </tr>
 </table>
-<p align="center"> <img src="figs/set_profinet.png" alt="GET api/state" width="100%"></p>
+<p align="center"> <img src="figs/set_can.png" alt="GET api/state" width="100%"></p>
 <br><br>
 
 ### set MQTT state temperatura
@@ -234,7 +235,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
 <p align="center"> <img src="figs/set_mqtt.png" alt="GET api/state" width="100%"></p>
 <br><br>
 
-### objeto JSON esperado
+### objeto JSON esperado no Website
 <table>
   <tr>
     <td>
@@ -298,6 +299,8 @@ Esses dados são obtidos na aba `MySQL Databases` discutida na tabela logo acima
 <br><br>
 
 Com Esses parametros configurados você podera acessar o banco de dados local a partir do website e configurar tabela e coluna necessarias para o projeto. Se futuros projetos forem similares ao utilizados neste semestre 2026/1, é possivel importar as configurações do banco de dados pelo MyPHPadmin utilizando o arquivo `database_export.sql`.
+
+Uma possivel alteração futura ara esta raiz do projeto seria tornar o website completamente independente do Node central, de modo que o Node, ou um segundo website local, envie e receba  requisições através de IP's ou dominios, realizando uma troca de dados mais complexa com o website. Esta topologia não é melhor ou pior, mas deve ser levado em conta as necessidades gerais do projeto.
 
 https://sylphina.com.br/alvaro   <br>
 https://sylphina.com.br/alvaro/upload.php

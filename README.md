@@ -3,15 +3,7 @@
 
 # 🛰️ NEXUS — Sistema de Automação de Multiredes
 
-**Backbone Ethernet integrando três células de produção com protocolos industriais distintos**
-
-[![Disciplina](https://img.shields.io/badge/disciplina-Comunica%C3%A7%C3%A3o%20de%20Dados-blue.svg)](#)
-[![Instituição](https://img.shields.io/badge/IFSC-DAELN-green.svg)](https://www.ifsc.edu.br/)
-[![Protocolos](https://img.shields.io/badge/protocolos-PROFINET%20%7C%20CAN%20%7C%20MQTT-orange.svg)](#)
-[![Backbone](https://img.shields.io/badge/backbone-Node--RED%20%2B%20MQTT-red.svg)](#)
-[![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow.svg)](#)
-[![Entrega](https://img.shields.io/badge/entrega-26%2F06%2F2026-informational.svg)](#)
-[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
+**Três células de produção de protoclos distintos, conectados através de um gateway especializado**
 
 </div>
 
@@ -27,7 +19,7 @@
 Descrição da animação:
 
 É possível visualizar nesta animação um exemplo de operação do NEXUS.
-Ao iniciar o processo, é possível visualizar as 3 redes se comunicando com o dashboard no NodeRed via switch. Cada rede envia e recebe seus parametros passando por um switch. No dashbboard do computador do backbone é possível ver a temperatura do sensor da Célula 3 (MQTT). Onde é enviado um comando de aquecer, o comando é transportado pela rede até a Célula 3, liga o atuador e começa a aquecer a planta. O sensor envia o parâmetro de volta, e desativa o aquecimento ao chegar nas condições especificadas (O valor inicial de 18,2°C foi modificado para 21,4°C ao decorrer da execução).
+Ao iniciar o processo, é possível visualizar as 3 redes se comunicando com o dashboard no NodeRed via switch. Cada rede envia e recebe seus parametros passando por um switch. No dashbboard do computador do gateway é possível ver a temperatura do sensor da Célula 3 (MQTT). Onde é enviado um comando de aquecer, o comando é transportado pela rede até a Célula 3, liga o atuador e começa a aquecer a planta. O sensor envia o parâmetro de volta, e desativa o aquecimento ao chegar nas condições especificadas (O valor inicial de 18,2°C foi modificado para 21,4°C ao decorrer da execução).
 
 ## 1. Contexto
 
@@ -50,9 +42,11 @@ O critério central é a **interoperabilidade**: ao final, *o status de qualquer
 O sistema é dividido em **três células de produção**, cada uma com três nós, construído por uma dupla e operando um **protocolo industrial diferente** na camada local. Cada nó é responsável por:
 
 1. **Autonomia local** — ler o próprio sensor e comandar o próprio atuador *sem depender da rede externa*.
-2. **Visibilidade global** — espelhar suas variáveis no backbone para que as outras células leiam/escrevam.
+2. **Visibilidade global** — espelhar suas variáveis no gateway para que as outras células leiam/escrevam.
 
-O Node-RED age como **hub multi-protocolo**: fala **S7/ISO-on-TCP** com o CLP (PROFINET), **HTTP REST** com o ESP32 da célula CAN, e **MQTT** com o ESP32 da célula MQTT. A "língua geral" não é um protocolo único no fio — é a **Tabela Global de Variáveis** consolidada dentro do Node-RED, que será apresentado mais a frente.
+O Node-RED age como **hub multi-protocolo**: Implementado em todas as redes e no gateway, ele fala **S7/ISO-on-TCP** com o CLP (PROFINET), **HTTP REST** com o ESP32 da célula CAN, e **MQTT** com o ESP32 da célula MQTT. A "língua geral" não é um protocolo único no fio — é a **Tabela Global de Variáveis** consolidada dentro do Node-RED.
+
+Tabela Global de váriaveis: Status do sensor, comando do atuador, diagnóstico online, o Node-RED mantém essas informções para traduzir entre PROFINET, CAN e MQTT e tornar qualquer sensor/atuador acessível por qualquer célula.
 
 ---
 
@@ -65,7 +59,7 @@ O Node-RED age como **hub multi-protocolo**: fala **S7/ISO-on-TCP** com o CLP (P
 | **3** — Lucas & Henzo | **MQTT** | **ESP32 broker** — Mosquitto embarcado (`192.168.0.105:1883`) | Temperatura com **ESP32‑S3** (cliente MQTT) | Aquecimento + Refrigeração (GPIO18/19) com **ESP32 atuador** (cliente MQTT) | **MQTT** (Node‑RED como cliente do broker embarcado) |
 
 Cada célula tem sua documentação completa, diagramas e código nas pastas abaixo.
-
+*IP Fixo:* Foi utilizado um IP Fixo, para evitar conflito entre as redes e e para que os sensores/atuadores possam direcionar para apenas um IP em cada célula.
 ---
 
 ## 4. Diagrama de blocos geral do sistema
@@ -112,8 +106,8 @@ flowchart TB
 | Símbolo | Descrição | Composição da Célula |
 |--------|-------------|---------|
 | Célula 1 | Rede PROFINET  | Sensor: IHM - Atuador: Inversora de Frequência |
-| Célula 2 | Rede CAN | Sensor: Potenciômetro - Atuador: Display E620 |
-| Célula 3 | Rede MQTT | Sensor: DS18B20(Temperatura) - Atuador: Carga resistiva para aquecimento e Ventilação para resfriamento |
+| Célula 2 | Rede CAN | Sensor: Potenciômetro microcontrolado - Atuador: Display E620 |
+| Célula 3 | Rede MQTT | Sensor: DS18B20(Temperatura) + Microcontrolador - Atuador: Carga resistiva para aquecimento e Ventilação para resfriamento |
 
 ---
 
@@ -137,6 +131,3 @@ flowchart TB
 
 ---
 
-## 7. Licença
-
-Distribuído sob a licença [MIT](LICENSE).
