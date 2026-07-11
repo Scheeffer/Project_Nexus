@@ -1,46 +1,32 @@
-# 🟧 Rede MQTT — Célula 3 (Lucas & Henzo)
+# Diagrama de blocos — Célula MQTT (Dupla 3: Lucas & Henzo)
 
-[![Protocolo](https://img.shields.io/badge/protocolo-MQTT%20v3.1.1-orange.svg)](https://mqtt.org/)
-[![Broker](https://img.shields.io/badge/broker-Mosquitto%20embarcado%20(ESP32)-red.svg)](https://components.espressif.com/components/espressif/mosquitto)
-[![MCU](https://img.shields.io/badge/MCU-2%C3%97%20ESP32%20%2B%201%C3%97%20ESP32--S3-blueviolet.svg)](#)
-[![Framework](https://img.shields.io/badge/framework-ESP--IDF-yellow.svg)](https://idf.espressif.com/)
-
-
-
----
-
-## 1. Arquitetura da célula MQTT
-
-A célula MQTT é composta por **três ESP32 com papéis distintos**. A "rede local" da célula **é o próprio MQTT**: os nós não se falam diretamente — tudo passa pelo broker.
-
-| Nó | Firmware | Papel | IP |
-|----|----------|-------|-----|
-| 🧠 **Broker** | `firmware/embedded_brocker.rar` | ESP32 rodando **Mosquitto embarcado** (componente `espressif/mosquitto` ^2.0.20), escutando `0.0.0.0:1883`. É o **servidor MQTT de todo o sistema NEXUS** — o Node-RED se conecta aqui como cliente. | `192.168.0.105` |
-| 🌡️ **Sensor** | ESP32-S3 | Lê a temperatura e publica em `ESP32S3/COM/temperatura`; responde a solicitações em `ESP32S3/COM/get`. | — |
-| 🔥❄️ **Atuador** | `firmware/ESP32_act.rar` | Cliente `esp-mqtt` (ESP-IDF via PlatformIO, `esp32doit-devkit-v1`). Assina o tópico de comando e aciona **GPIO18 (aquecimento)** / **GPIO19 (refrigeração)**. | — |
-
-Todos os nós conectam-se à rede Wi-Fi do projeto **`COM_N_26.1`** (aberta, sem senha — decisão documentada no [`backbone/README.md`](../backbone/README.md)).
+----
 
 ```mermaid
 flowchart LR
-    S3["🌡️ ESP32-S3<br/>sensor de temperatura<br/>(cliente MQTT)"]
-    BR["🧠 ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
-    ACT["🔥❄️ ESP32 atuador<br/>(cliente esp-mqtt)<br/>GPIO18 aquece · GPIO19 refrigera"]
-    NR["📊 Node-RED (PC, 192.168.0.100)<br/>dashboard + Tabela Global<br/>(cliente MQTT)"]
+ 
+    S3[" ESP32-S3<br/>sensor de temperatura <br/> DS18B20<br/>(cliente MQTT)"]
+    BR[" ESP32 broker<br/>Mosquitto embarcado<br/>IP Fixo:192.168.0.105:1883"]
+    ACT[" ESP32 atuador<br/>(cliente esp-mqtt)<br/>GPIO18 aquece <br/> GPIO23 refrigera"]
+    NR[" Node-RED <br/>dashboard + Tabela Global <br/> Gateway"]
 
     S3 -. "pub ESP32S3/COM/temperatura<br/>sub ESP32S3/COM/get" .-> BR
     ACT -. "sub ESP32/COM/Atuador<br/>pub ESP32/COM/Status" .-> BR
-    NR -. "pub comandos · sub telemetria" .-> BR
+    BR -. "pub comandos · sub telemetria" .-> NR
 
-    classDef broker fill:#ffe0b2,stroke:#e65100,stroke-width:2px;
-    classDef cliente fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
-    classDef central fill:#fff3e0,stroke:#e65100,stroke-width:1px;
+    classDef broker fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+    classDef cliente fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
+    classDef central fill:#ffffff,stroke:#000000,stroke-width:2px,color:#000000;
     class BR broker;
     class S3,ACT cliente;
     class NR central;
 ```
-
-**Leitura do diagrama:** todas as linhas são **MQTT sobre TCP/IP via Wi-Fi** (pontilhado = meio não guiado). Não há ligação física direta sensor→atuador: o acoplamento entre eles acontece **por tópicos**, mediado pelo broker. Isso é a topologia estrela característica do MQTT — e o motivo pelo qual a célula continua trocando dados internamente mesmo se o PC/Node-RED sair do ar (o broker não está no PC).
+| Elemento | Significado |
+|---|---|
+| **Sensoriamento** | DS18B20 (1-Wire) → ESP32-S3, que publica a leitura e responde a solicitações de leitura sob demanda. |
+| **Broker da célula** | ESP32 dedicado rodando Mosquitto embarcado — é o servidor MQTT de toda a célula. |
+| **Atuação** | ESP32 atuador assina o comando do broker e aciona os dois relés, acionando o aquecimento ou refrigeração. |
+| **Node-RED** | Cliente externo do broker — não faz parte fisicamente da célula, mas é quem opera/monitora via dashboard. |
 
 ---
 
