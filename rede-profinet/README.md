@@ -188,14 +188,22 @@ Na imagem abaixo temos o quadro de automação montado com todos os equipamentos
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/Componentes%20internos.png" alt=" Componentes" width="300">
 
+
+Na imagem abaixo temos o quadro de automação visto por fora e a tela da IHM ligada na tela geral de controle das redes.
+
+
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/IHM%20Externo.png" alt="IHM" width="300">
+
+Na imagem abaixo temos o quadro de automação visto por dentro, com as conexões de alimentação e da rede profinet.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/IHM%20Interno.png" alt="IHM" width="300">
 ---
 
 ## 7. TELAS IHM 
 
-Tela IHM geral
+###Tela IHM geral
+
+Nesta tela temos os botões para escolha de qual rede queremos controlar ou monitorar. 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/geral_ihm.jpeg" alt=" Componentes" width="500">
 
