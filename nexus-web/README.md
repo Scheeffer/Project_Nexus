@@ -302,6 +302,8 @@ Com Esses parametros configurados você podera acessar o banco de dados local a 
 
 Uma possivel alteração futura ara esta raiz do projeto seria tornar o website completamente independente do Node central, de modo que o Node, ou um segundo website local, envie e receba  requisições através de IP's ou dominios, realizando uma troca de dados mais complexa com o website. Esta topologia não é melhor ou pior, mas deve ser levado em conta as necessidades gerais do projeto.
 
+Não houve tempo para checar se o protocolo está online no flow do Node-RED central e salva-lo no objeto que vai para o Website. O site é versátil neste quesito e sinaliza através de icones, texto, cores e até sinal de audio, quando o botão estiver ativo, para retratar visualmente o estado da conexão do protocolo. Contudo, esse não foi um problema demasiado grande pois se tudo estiver funcionando raramente haverá a necessidade deste dinamicismo. Mas que fique documentado e em mente para proximo semestres que está opção já está programada no site, só requer que o Node-RED central atualize o estado online do protocolo.
+
 https://sylphina.com.br/alvaro   <br>
 https://sylphina.com.br/alvaro/upload.php
 
