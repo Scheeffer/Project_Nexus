@@ -106,8 +106,8 @@ flowchart TB
 | Símbolo | Descrição | Composição da Célula |
 |--------|-------------|---------|
 | Célula 1 | Rede PROFINET  | Sensor: IHM - Atuador: Inversora de Frequência |
-| Célula 2 | Rede CAN | Sensor: Potenciômetro - Atuador: Display E620 |
-| Célula 3 | Rede MQTT | Sensor: DS18B20(Temperatura) - Atuador: Carga resistiva para aquecimento e Ventilação para resfriamento |
+| Célula 2 | Rede CAN | Sensor: Potenciômetro microcontrolado - Atuador: Display E620 |
+| Célula 3 | Rede MQTT | Sensor: DS18B20(Temperatura) + Microcontrolador - Atuador: Carga resistiva para aquecimento e Ventilação para resfriamento |
 
 ---
 
@@ -131,6 +131,3 @@ flowchart TB
 
 ---
 
-## 7. Licença
-
-Distribuído sob a licença [MIT](LICENSE).
