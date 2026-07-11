@@ -103,6 +103,6 @@ Abaixo, segue a relação da quantidade de nós utilizados. **Total Geral:** 116
 
 Nas pastas deste repositório, você encontrará a explicação detalhada de cada coluna e de seus respectivos nós.
 
-- 📁 [**Rede PROFINET**](./node_profinet/NODE_PROOFINET.md)
+- 📁 [**Rede PROFINET**](./node_profinet/NODE_PROFINET.md)
 - 📁 [**Rede CAN**](./node_can/NODE_CAN.md) 
 - 📁 [**Rede MQTT**](./node_mqtt/NODE_MQTT.md)
