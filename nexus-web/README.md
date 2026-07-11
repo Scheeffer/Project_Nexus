@@ -195,7 +195,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
   <tr>
     <td>
       <pre><code class="language-js">
-      Save PROFINET state object
+      Save MQTT state object
       </code></pre>
       
         const protocolState = flow.get("protocolState") || {};
@@ -212,7 +212,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
   </tr>
 </table>
 
-### set PROFINET status
+### set MQTT state estado
 <table>
   <tr>
     <td>
