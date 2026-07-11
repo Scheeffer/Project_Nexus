@@ -16,7 +16,7 @@ Para disponibilizar os resultados obtidos do Node central sem depender de um das
 
 ## 2	Funcionamento
 
-o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo os mais comum `index.xxx` como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
+o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo o mais comum `index`, como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
 
 <p align="center"> <img src="figs/htaccess.png" alt="diagrama" width="500"></p>
 <p align="center"><b>Configuração .htacess do servidor PHP local Apache</b></p>
@@ -299,6 +299,8 @@ Esses dados são obtidos na aba `MySQL Databases` discutida na tabela logo acima
 <br><br>
 
 Com Esses parametros configurados você podera acessar o banco de dados local a partir do website e configurar tabela e coluna necessarias para o projeto. Se futuros projetos forem similares ao utilizados neste semestre 2026/1, é possivel importar as configurações do banco de dados pelo MyPHPadmin utilizando o arquivo `database_export.sql`.
+
+Uma possivel alteração futura ara esta raiz do projeto seria tornar o website completamente independente do Node central, de modo que o Node, ou um segundo website local, envie e receba  requisições através de IP's ou dominios, realizando uma troca de dados mais complexa com o website. Esta topologia não é melhor ou pior, mas deve ser levado em conta as necessidades gerais do projeto.
 
 https://sylphina.com.br/alvaro   <br>
 https://sylphina.com.br/alvaro/upload.php
