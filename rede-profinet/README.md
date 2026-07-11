@@ -100,6 +100,9 @@ stateDiagram-v2
 
 ## 4. Diagrama de Sequência
 
+O **Diagrama de Sequência** apresentado mostra a sequencia de comandos necessários para acionar o inversor na perspectiva de um usuário usando a IHM via rede Profinet. A cada interação do usuário uma etapa do diagrama é atualizada seguindo o fluxo com possibilidade de ligar, desligar e resetar o inversor em caso de falha.  
+
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -152,6 +155,8 @@ Para implementar este projeto foi realizado um diagrama elétrico multifilar ond
 
 Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/diagramas/Diagrama_Multifilar.pdf).
 
+Na imagem abaixo podemos analisar as conexões profinet realizadas dentro do Tia Portal.
+
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/clp_profinet.jpeg" alt=" Componentes" width="500">
 
 
@@ -168,6 +173,17 @@ Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https:/
 | Fonte de alimentação | 24V VCC 2,5A  | EATON|<a href="https://www.mercadolivre.com.br/fonte-chaveada-24v-25a-psee2g1ac24dc60wsc-phoenix/up/MLBU2744053218#polycard_client=search-desktop&be_origin=backend&search_layout=grid&position=7&type=product&tracking_id=3575352c-2871-414b-bc9d-7d146c6c67a3&wid=MLB5173451578&sid=search" target="_blank">Link</a> 
 ---
 
+Na imagem abaixo temos o quadro de automação montado com todos os equipamentos necessários para fazer as conexões da rede profinet.
+
+* **CLP - S7-1217C** 
+* **Switch** com 8 pontos de conexão
+* **Inversor G120C** 
+* **Fonte de alimentação** 24V 2,5A
+* **Borne Fusível** com elemento fusível de 1A
+* **Disjuntor trifásico** geral de 10A
+* **Disjuntor motor** para o inversor regulado em 6,3A 
+* **Disjuntor monofásico** de 6A para a fonte 24V
+* **Bloco de distribuição** verde para o aterramento; azul para o neutro; cinza para o GND e vermelho para o 24VCC.
 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/Componentes%20internos.png" alt=" Componentes" width="300">
