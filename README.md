@@ -114,6 +114,7 @@ flowchart TB
 ## 5. Sumário / Navegação
 
 - 📁 [**Backbone (Node-RED + Broker)**](./backbone/README.md) — switch, broker MQTT, dashboard, tabela global
+- 📁 [**Nexus Web**](./nexus-web/README.md) — Dashboard online, banco de dados
 - 📁 [**Rede PROFINET**](./rede-profinet/README.md) — Dupla 1
 - 📁 [**Rede CAN**](./rede-can/README.md) — Dupla 2
 - 📁 [**Rede MQTT**](./rede-mqtt/README.md) — Dupla 3
