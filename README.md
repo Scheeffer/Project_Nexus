@@ -126,7 +126,7 @@ flowchart TB
 | Dupla | Integrantes | Responsabilidade |
 |:-----:|:------------|:-----------------|
 | 1 | Cainã, Matheus | Rede PROFINET + **hospedagem do broker/Node-RED** |
-| 2 | Álvaro, Alexandre | Rede CAN |
+| 2 | Álvaro, Alexandre | Rede CAN  + **Website** |
 | 3 | Lucas, Henzo | Rede MQTT |
 
 ---
