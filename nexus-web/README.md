@@ -278,7 +278,7 @@ A CORS (Cross Origin Resource Sharing) é um mecanismo de segurança do browser 
         CORs policy Node-RED setting.js configuration
       </code></pre>
       
-            httpNodeCors: {
+      httpNodeCors: {
           origin: "https://curricularium.infinityfreeapp.com",
           methods: "GET,POST,OPTIONS",
           allowedHeaders: ["Content-Type"]
