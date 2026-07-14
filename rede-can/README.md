@@ -64,7 +64,7 @@ O sistema é composto por duas placas ESP32 interligadas por um barramento CAN (
 <p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
 <br><br>
 
-Obs: Os termos CAN_A (CANA) e CAN_B (CANB) são nomenclaturas de projeto adotadas para organização, desenvolvimento. Na prática, não existem dois protocolos CAN diferentes no sistema: ambos os microcontroladores operam e conversam de forma idêntica no mesmo barramento CAN físico padrão. A diferenciação serve apenas para identificar qual software e quais funções cada hardware assume na rede.
+Obs: Os termos CAN_A (CANA) e CAN_B (CANB) são nomenclaturas de projeto adotadas para organização, desenvolvimento. Na prática, não existem dois protocolos CAN diferentes no sistema: ambos os microcontroladores operam e conversam de forma idêntica no mesmo barramento CAN físico padrão. A diferenciação serve apenas para identificar qual software e quais funções cada hardware assume na rede. As conexões CANH (CAN High) e CANL (CAN Low) são os dois fios físicos condutores que formam a linha física de transmissão de dados (o barramento) em uma rede CAN.
 
 1. CANA (Atuador e Sensor Físico)
 O CANA lê continuamente um potenciômetro físico via ADC e monitora o barramento CAN. Ele opera sob duas regras de evento:
