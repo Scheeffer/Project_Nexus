@@ -140,8 +140,107 @@ A interoperabilidade cross-protocolo acontece no mesmo flow: comandos vindos do 
 
 ---
 
-## 6. Pendências
+## 6. Problemas de Bancada
 
+Quedas de conexão do Node-RED com o Broker
+
+**Status:** resolvido em bancada (14/07/2026)
+**Onde:** célula MQTT — broker embarcado no ESP32
+
+---
+
+## 6.1. Problema
+
+Durante os testes de integração, a conexão entre o Node-RED e o broker MQTT
+caía de forma repetida: conectava, ficava ativa por alguns segundos, caía,
+reconectava e caía de novo — em ciclo, sem parar.
+
+No início suspeitamos de problema de rede (Wi-Fi ou conflito de IP). Mas o
+Wi-Fi estava estável e o ping para o broker (`192.168.0.105`) respondia
+normalmente durante as quedas. Ou seja, a rede estava boa — o problema estava
+na forma como o Node-RED se identificava para o broker.
+
+## 6.2. Causa
+
+Todo cliente que conecta em um broker MQTT precisa se identificar com um
+**Client ID** — um nome que serve para o broker distinguir uma conexão da
+outra. É parecido com um nome de usuário: o broker usa esse ID para saber quem
+é quem, independentemente do IP.
+
+A regra do MQTT é clara: **não pode haver duas conexões ativas com o mesmo
+Client ID ao mesmo tempo.** Quando chega uma conexão nova usando um ID que já
+está em uso, o broker derruba a conexão antiga e mantém a nova. Isso não é um
+defeito do broker — é o comportamento que a especificação do MQTT exige.
+
+No nosso caso, tínhamos **duas conexões do Node-RED usando o mesmo Client ID**
+(`Node-red`, que é o valor padrão). Como as duas tinham reconexão automática,
+elas entraram em um loop:
+
+```
+Conexão A ("Node-red") conecta  ->  broker aceita
+Conexão B ("Node-red") conecta  ->  broker derruba A
+A reconecta sozinha             ->  broker derruba B
+B reconecta sozinha             ->  broker derruba A
+... (loop infinito)
+```
+
+Uma ficava derrubando a outra continuamente. Era esse loop que aparecia para
+nós como "a conexão com o broker fica caindo".
+
+**Ponto importante:** o broker não limita o sistema a "um cliente por vez" —
+ele aceita vários clientes ao mesmo tempo sem problema. O que ele não aceita é
+**duas conexões com o mesmo Client ID**. A restrição é sobre a identidade, não
+sobre a quantidade de clientes.
+
+## 6.3. Como identificar esse problema
+
+- No **monitor serial do ESP32**, o broker registra o Client ID de cada
+  conexão. Ver o mesmo ID conectando e desconectando repetidamente é o sinal
+  característico.
+- No **Node-RED**, o status do broker fica alternando entre "connected" e
+  "disconnected" em ciclo curto.
+- **Dica de diagnóstico:** se o ping para o broker continua estável enquanto a
+  conexão MQTT cai, o problema não é de rede — é da configuração dos clientes.
+
+## 6.4. Solução
+
+Demos um **Client ID diferente para cada conexão** do Node-RED, usando sufixos:
+
+| Conexão              | ID antigo  | ID novo      |
+|----------------------|------------|--------------|
+| Node-RED — conexão 1 | `Node-red` | `Node-red_A` |
+| Node-RED — conexão 2 | `Node-red` | `Node-red_B` |
+| Conexões futuras     | `Node-red` | `Node-red_C`…|
+
+Com IDs únicos, cada conexão passou a ser tratada de forma independente e o
+broker manteve todas ativas ao mesmo tempo. Isso eliminou o loop.
+
+## 6.5. Por que os ESP32 não tiveram esse problema
+
+Os firmwares dos ESP32 (broker, atuador e sensor) **não definem um Client ID
+fixo**. Nesse caso, o ESP-IDF gera um ID automático baseado no chip
+(`ESP32_<código do chip>`), que é único para cada placa. Por isso eles nunca
+colidem entre si. O risco de conflito existe só quando o ID é escolhido
+manualmente — como no Node-RED e em ferramentas de teste.
+
+## 6.6. Pendências 
+- **Flows antigos ainda usam o ID repetido:** `test_update/trabalho_COM.json` e
+  `backbone/PROJETO_NEXUS_FINAL.json` ainda têm `clientid: "Node-red"` sem
+  sufixo. Se algum deles for importado junto com o flow corrigido, o problema
+  volta. Padronizar todos com a convenção nova.
+- **`Flows_VersãoFinal.json` aponta para o broker errado:** o ID está correto
+  (`Node-red_A`), mas o broker configurado é `192.168.15.29` (rede de teste em
+  casa). Corrigir para `192.168.0.105` antes de usar na bancada.
+
+## 6.7. O que aprendemos
+
+- Nem toda queda de conexão é problema de rede. O MQTT gerencia as conexões
+  pelo Client ID, e IDs repetidos causam quedas que parecem instabilidade de
+  Wi-Fi, mas não são.
+- O broker agiu corretamente o tempo todo — derrubar a conexão antiga quando um
+  ID se repete é uma regra do próprio protocolo.
+- Vale diagnosticar por partes: com o ping estável e a conexão MQTT caindo, dá
+  para concluir que o problema está na configuração dos programas, não na rede.
 ---
 
 ## 7. Conteúdo desta pasta
