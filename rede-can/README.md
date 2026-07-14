@@ -101,7 +101,7 @@ Rede ➔ Hardware: O sistema está obedecendo ao Node-RED. Se o operador girar o
 | **Controlador CAN** | Módulo MCP2515 + Transceptor TJA1050 (Cristal de 8MHz / SPI) | [LINK](https://www.mercadolivre.com.br/modulo-can-bus-mcp2515-tja1050-obdii-serve-para-arduino/p/MLB32974037?pdp_filters=item_id:MLB4706675974) |
 | **Atuador** | Painel de Indicadores de Bancada E620 (ID `0x4D2`) | [LINK](https://www.alibaba.com/product-detail/E620-Electric-Golf-cart-dash-board_1600587839114.html) |
 | **Sensor** | Potenciômetro (250kohms) + Microcontrolador ESP32 WROOM DEV-KIT V1 (ID `0x100`) | [LINK](https://www.mercadolivre.com.br/kit-5-potenciometros-lineares-duplos-250k-l20-mini-wh1482/up/MLBU1988972032#polycard_client=search-desktop&be_origin=backend&search_layout=grid&position=8&type=product&tracking_id=3b02a30a-8222-4e3a-ae5f-84980110701d&wid=MLB4370191112&sid=search) |
-| **Comunicação com backbone** | HTTP Client (POST / GET) nativo via `esp_http_client` (MIME: `text/plain`) | Protocolo de Rede |
+| **Comunicação com gateway global** | HTTP Client (POST / GET) nativo via `esp_http_client` (MIME: `text/plain`) | Protocolo de Rede |
 | **Software** | ESP-IDF V5.4 | Ambiente de Desenvolvimento |
 
 ---
@@ -125,7 +125,7 @@ Ao ligar ou resetar o sistema (`Power On / Reset`), ele inicia automaticamente n
 Este estado gerencia as ordens que chegam de fora, ou seja, comandos virtuais vindos do Node-RED:
 
 * **Aguardando:** O sistema fica escutando o barramento CAN.
-* **Processando:** Assim que o gateway(ESP32-CANA) injeta a mensagem com o **ID `0x100`** na rede (via node-red), o sistema captura o comando.
+* **Processando:** Assim que o gateway(ESP32-CANB) injeta a mensagem com o **ID `0x100`** na rede (via node-red), o sistema captura o comando.
 * **Transmitindo_Remoto:** Ele replica e consolida essa velocidade vinda da rede para o atuador e volta a aguardar novas instruções da rede.
 
 ```mermaid
@@ -243,9 +243,9 @@ Se o CANA também fizesse o papel de servidor web, o core do processador seria f
 
 ---
 
-## 8. Arquitetura de Comunicação: Firmware <-> Backbone (Node-RED)
+## 8. Arquitetura de Comunicação: Firmware <-> gateway global (Node-RED)
 
-O sistema utiliza o microcontrolador **CANB** como um **Gateway**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o Node-RED ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
+O sistema utiliza o microcontrolador **CANB** como um **Gateway local**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o Node-RED ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
 
 ---
 
