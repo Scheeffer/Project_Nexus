@@ -33,19 +33,18 @@ O display dashboard utilizado como atuador controlado por protocolo CAN foi obti
 <p align="center"><b>Display Dashboard E620</b></p>
 <br><br>
 
-No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual cada item do dashboard é ligado. Todos os itens que possuem o parametro **Combination switch** na coluna **SIGNAL SOURCE** são operados através da comutação de entradas físicas, sinalizados pela coluna **SIGNAL FORMAT**, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados internos e não são acessíveis pelo usuário ou programador. 
-Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna **SIGNAL FORMAT**. O display E620 possui dois id’s CAN presentes no datasheet, contudo somente um deles funciona, e somente parcialmente, por tanto iremos documentar apenas o ID 0x4D2. Há também a existencia de ID's de formato longo, 24 bits ao invés de 12, no outro datasheet, não obtivemos sucesso com nenhum deles.
+No PDF “Technical requirements for E620-LJ”, presente na pasta Datasheets, adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual se opera cada item do dashboard. Todos os itens que possuem o parametro **Combination switch** na coluna `SIGNAL SOURCE` são operados através da comutação de entradas físicas, sinalizados pela coluna `SIGNAL FORMAT`, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados de controle internos e não são acessíveis pelo usuário ou programador. Itens com o `SIGNAL SOURCE` descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna `SIGNAL FORMAT`. 
 
-### Estrutura de envio de dados
+O display E620 possui dois ID’s CAN presentes no datasheet, **0x4D2** e **0x4D3**, contudo somente um deles provou-se funcional durante os experimentos e somente parcialmente, portanto iremos documentar apenas o ID 0x4D2. Há também a existencia de ID's de formato extendido CAN 2.0B, 29 bits ao invés de 11, presentes no datasheet `Vehicle CAN Protocol for E620.pdf`. **Este datasheet contém informações promissoras e porém não conseguimos fazer-lo funcionar com ID extendido**.
 
-Descrição geral das configurações das variaveis.
+### Descrição geral das variaveis.
 
 | Variavel | Descrição |
 | :--- | :--- |
-| `Velocidade` | BYTE0 e BYTE1 são responsáveis pelos velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km |
-| `Bateria` |Durante os testes experimentais não foi observada resposta do display para os valores enviados ao campo correspondente à bateria.Não foi possível confirmar experimentalmente o funcionamento desse campo. São possíveis causas a incompatibilidade entre versões do firmware do display ou diferenças entre revisões do datasheet, o qual o manual de modelo que obtivemos não disponibilizam, nem mesmo os parametros **nope** ativaram alguma funcionalidade extra. |
-| `Marcha` | BYTE 6 é responsável pela marcha, 0 para N, 1 para D, e 2 para R. Quaisquer outros valores irão fazer com que nenhum estado de marcha esteja ativo |
-| `Erro` | BYTE7 é responsável pelo sinal de erro, qualquer número entre 1 e 255 irá fazer o display apitar e disponibilizar na tela o código de erro periodicamente. |
+| `Velocidade` | BYTE0 (LSB) e BYTE1 (MSB) são responsáveis pelo velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km |
+| `Bateria` |Durante os testes experimentais não foi observada resposta do display para os valores enviados ao campo correspondente à bateria. Não foi possível confirmar experimentalmente o funcionamento desse campo. São possíveis causas a incompatibilidade entre versões do firmware do display ou diferenças entre revisões do datasheet, o qual o manual de modelo que obtivemos não disponibilizam, nem mesmo os parametros **nope** ativaram alguma funcionalidade extra. |
+| `Marcha` | BYTE 6 é responsável pela marcha, 0 para N, 1 para D, e 2 para R. Quaisquer outros valores irão fazer com que nenhum sinal de estado de marcha esteja ativo |
+| `Erro` | BYTE7 é responsável pelo sinal de erro, qualquer número entre 1 e 255 irá fazer o display produzir um alerta sonoro e disponibilizar na tela o código de erro periodicamente. |
 
 
 ### Estrutura de envio de dados
@@ -79,6 +78,7 @@ Transmissão (ID 0x4D2): A cada 50ms, o CANA transmite de forma fixa a velocidad
 <p align="center"> <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%"></p>
 <p align="center"><b>Esquemático da rede CAN</b></p>
 <br><br>
+
 2. CANB (Gateway local, Servidor Web e Integração com gateway global - NODE-RED)
 O CANB atua como a ponte entre o mundo físico (Barramento CAN) e o mundo digital (Rede IP):
 
