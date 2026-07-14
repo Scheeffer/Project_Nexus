@@ -305,13 +305,12 @@ Uma possivel alteração futura ara esta raiz do projeto seria tornar o website 
 Não houve tempo para checar se o protocolo está online no flow do Node-RED central e salva-lo no objeto que vai para o Website. O site é versátil neste quesito e sinaliza através de icones, texto, cores e até sinal de audio, quando o botão estiver ativo, para retratar visualmente o estado da conexão do protocolo. Contudo, esse não foi um problema demasiado grande pois se tudo estiver funcionando raramente haverá a necessidade deste dinamicismo. Mas que fique documentado e em mente para proximo semestres que está opção já está programada no site, só requer que o Node-RED central atualize o estado online do protocolo.
 
 ### set MQTT state estado
+A cors (Cross Origin Resource Sharing) é um mecanismo de segurança do browser  que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor (local). Dependendo do computador a falta desta explicidade pode gerar um bloqueio, e consquente erro no código, impossibilitando a comunicação entre o Node-RED e o website. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario/.node-red)` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo(HTTP/HTTPS) + dominio + porta (Padrão `:1880` para o Node-Red. Note que mesmo que o website que realiza o upload possui o diretorio `/upload`, ele não entra como endereço, apenas o endereço absoluto.
 <table>
   <tr>
     <td>
       <pre><code class="language-js">
-        A cors (Cross Origin Resource Sharing) é um mecanismo de segurança do browser  que bloqueia <br>
-        código Javascript de frontend de ler respostas de diferentes origens a não ser que seja <br>
-        explicitamente habilitado eplo servidor (local). 
+        CORs policy Node-rED setting.js configuration
       </code></pre>
       
             httpNodeCors: {
