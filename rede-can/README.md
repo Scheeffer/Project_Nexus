@@ -1,15 +1,12 @@
-# 🟥 Rede CAN — Célula 2 (Alexandre & Alvaro)
+#  Rede CAN — Célula 2 (Alexandre & Alvaro)
 
-[![Protocolo](https://img.shields.io/badge/protocolo-CAN%202.0A-red.svg)](https://www.iso.org/standard/63648.html)
-[![Controlador](https://img.shields.io/badge/Gateway-ESP32%20%2F%20MCP2515-orange.svg)](#)
 
----
 
 ## 1. Descrição do projeto
 
 O protocolo local utilizado nesta célula é o **CAN (Controller Area Network)** operando a uma taxa de barramento industrial de **250 Kbps**. A rede é composta por microcontroladores **ESP32** acoplados a controladores autônomos **MCP2515** via interface de periféricos serial (**SPI**). O ESP32 principal atua como o nó mestre/gateway local da bancada, coletando os sinais do barramento e disponibilizando uma interface gráfica de monitoramento por meio de um Web Server HTTP nativo. 
 
-O grande objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro) mapeado sob o identificador exclusivo CAN `, processar os pacotes para o cálculo de velocidade real em km/h e comandar um painel atuador de indicadores (Painel E620) via ID CAN `0x4D2`. O Gateway ESP32 também atua como **ponte** para o backbone (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
+O objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro + sistema microcontrolado) mapeado sob o identificador exclusivo CAN, processar os pacotes para o cálculo de velocidade real em Km/h e comandar, através do protoclo CAN, um painel atuador de indicadores (Painel E620). O Gateway ESP32 também atua como **ponte** para o gateway global (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
 
 ### Variáveis Disponíveis ao Node-RED / Servidor HTTP
 
@@ -30,25 +27,24 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 ## 2. Estrutura de dados
 
-O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
+O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o Laboratório de Mobilidade Elétrica (EMOL) do IFSC. Pertence a um kit de componentes automotivos elétricos.
 
 <p align="center"> <img src="figs/E620.png" alt="Display Dashboard E620" width="500"></p>
 <p align="center"><b>Display Dashboard E620</b></p>
 <br><br>
 
-No pdf “Technical requirements for E620-LJ” adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual cada item do dashboard é ligado. Todos os itens que possuem o parametro **Combination switch** na coluna **SIGNAL SOURCE** são operados através da comutação de entradas físicas, sinalizados pela coluna **SIGNAL FORMAT**, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados internos e não são acessíveis pelo usuário ou programador. 
-Itens com o **SIGNAL SOURCE** descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna **SIGNAL FORMAT**. O display E620 possui dois id’s CAN presentes no datasheet, contudo somente um deles funciona, e somente parcialmente, por tanto iremos documentar apenas o ID 0x4D2. Há também a existencia de ID's de formato longo, 24 bits ao invés de 12, no outro datasheet, não obtivemos sucesso com nenhum deles.
+No PDF “Technical requirements for E620-LJ”, presente na pasta Datasheets, adquirido diretamente no site da Wuhan technologies na Alibaba, há uma tabela a qual fornece o método pelo qual se opera cada item do dashboard. Todos os itens que possuem o parametro **Combination switch** na coluna `SIGNAL SOURCE` são operados através da comutação de entradas físicas, sinalizados pela coluna `SIGNAL FORMAT`, sendo high e low level respectivamente VCC/+12V e GND. Qualquer outro formato sinaliza estados de controle internos e não são acessíveis pelo usuário ou programador. Itens com o `SIGNAL SOURCE` descrito como **controller**, podem ser acessados através do protocolo CAN, como indicado pela coluna `SIGNAL FORMAT`. 
 
-### Estrutura de envio de dados
+O display E620 possui dois ID’s CAN presentes no datasheet, **0x4D2** e **0x4D3**, contudo somente um deles provou-se funcional durante os experimentos e somente parcialmente, portanto iremos documentar apenas o ID 0x4D2. Há também a existencia de ID's de formato extendido CAN 2.0B, 29 bits ao invés de 11, presentes no datasheet `Vehicle CAN Protocol for E620.pdf`. **Este datasheet contém informações promissoras e porém não conseguimos fazer-lo funcionar com ID extendido**.
 
-Descrição geral das configurações das variaveis.
+### Descrição geral das variaveis.
 
 | Variavel | Descrição |
 | :--- | :--- |
-| `Velocidade` | BYTE0 e BYTE1 são responsáveis pelos velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km |
-| `Bateria` | Passamos todos os valores entre 0 e 255 e nada foi acionado no display. Ou o display está com problema ou a variável da bateria situa-se em outro id, o qual o manual de modelo que obtivemos não disponibilizam, nem mesmo os parametros **nope** ativaram alguma funcionalidade extra. |
-| `Marcha` | BYTE 6 é responsável pela marcha, 0 para N, 1 para D, e 2 para R. Quaisquer outros valores irão fazer com que nenhum estado de marcha esteja ativo |
-| `Erro` | BYTE7 é responsável pelo sinal de erro, qualquer número entre 1 e 255 irá fazer o display apitar e disponibilizar na tela o código de erro periodicamente. |
+| `Velocidade` | BYTE0 (LSB) e BYTE1 (MSB) são responsáveis pelo velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km |
+| `Bateria` |Durante os testes experimentais não foi observada resposta do display para os valores enviados ao campo correspondente à bateria. Não foi possível confirmar experimentalmente o funcionamento desse campo. São possíveis causas a incompatibilidade entre versões do firmware do display ou diferenças entre revisões do datasheet, o qual o manual de modelo que obtivemos não disponibilizam, nem mesmo os parametros **nope** ativaram alguma funcionalidade extra. |
+| `Marcha` | BYTE 6 é responsável pela marcha, 0 para N, 1 para D, e 2 para R. Quaisquer outros valores irão fazer com que nenhum sinal de estado de marcha esteja ativo |
+| `Erro` | BYTE7 é responsável pelo sinal de erro, qualquer número entre 1 e 255 irá fazer o display produzir um alerta sonoro e disponibilizar na tela o código de erro periodicamente. |
 
 
 ### Estrutura de envio de dados
@@ -68,6 +64,8 @@ O sistema é composto por duas placas ESP32 interligadas por um barramento CAN (
 <p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
 <br><br>
 
+Obs: Os termos CAN_A (CANA) e CAN_B (CANB) são nomenclaturas de projeto adotadas para organização, desenvolvimento. Na prática, não existem dois protocolos CAN diferentes no sistema: ambos os microcontroladores operam e conversam de forma idêntica no mesmo barramento CAN físico padrão. A diferenciação serve apenas para identificar qual software e quais funções cada hardware assume na rede.
+
 1. CANA (Atuador e Sensor Físico)
 O CANA lê continuamente um potenciômetro físico via ADC e monitora o barramento CAN. Ele opera sob duas regras de evento:
 
@@ -80,7 +78,8 @@ Transmissão (ID 0x4D2): A cada 50ms, o CANA transmite de forma fixa a velocidad
 <p align="center"> <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%"></p>
 <p align="center"><b>Esquemático da rede CAN</b></p>
 <br><br>
-2. CANB (Gateway, Servidor Web e Integração com Node-RED)
+
+2. CANB (Gateway local, Servidor Web e Integração com gateway global - NODE-RED)
 O CANB atua como a ponte entre o mundo físico (Barramento CAN) e o mundo digital (Rede IP):
 
 Recepção CAN e HTTP: Ele escuta o ID 0x4D2. Ele extrai a velocidade final e calcula de forma isolada a tensão do potenciômetro (0V a 3.3V), despachando esses dados consolidados via requisição POST HTTP para a rota /can do Node-RED.
@@ -102,7 +101,7 @@ Rede ➔ Hardware: O sistema está obedecendo ao Node-RED. Se o operador girar o
 | **Controlador CAN** | Módulo MCP2515 + Transceptor TJA1050 (Cristal de 8MHz / SPI) | [LINK](https://www.mercadolivre.com.br/modulo-can-bus-mcp2515-tja1050-obdii-serve-para-arduino/p/MLB32974037?pdp_filters=item_id:MLB4706675974) |
 | **Atuador** | Painel de Indicadores de Bancada E620 (ID `0x4D2`) | [LINK](https://www.alibaba.com/product-detail/E620-Electric-Golf-cart-dash-board_1600587839114.html) |
 | **Sensor** | Potenciômetro (250kohms) + Microcontrolador ESP32 WROOM DEV-KIT V1 (ID `0x100`) | [LINK](https://www.mercadolivre.com.br/kit-5-potenciometros-lineares-duplos-250k-l20-mini-wh1482/up/MLBU1988972032#polycard_client=search-desktop&be_origin=backend&search_layout=grid&position=8&type=product&tracking_id=3b02a30a-8222-4e3a-ae5f-84980110701d&wid=MLB4370191112&sid=search) |
-| **Comunicação com backbone** | HTTP Client (POST / GET) nativo via `esp_http_client` (MIME: `text/plain`) | Protocolo de Rede |
+| **Comunicação com gateway global** | HTTP Client (POST / GET) nativo via `esp_http_client` (MIME: `text/plain`) | Protocolo de Rede |
 | **Software** | ESP-IDF V5.4 | Ambiente de Desenvolvimento |
 
 ---
@@ -126,7 +125,7 @@ Ao ligar ou resetar o sistema (`Power On / Reset`), ele inicia automaticamente n
 Este estado gerencia as ordens que chegam de fora, ou seja, comandos virtuais vindos do Node-RED:
 
 * **Aguardando:** O sistema fica escutando o barramento CAN.
-* **Processando:** Assim que o gateway(ESP32-CANA) injeta a mensagem com o **ID `0x100`** na rede (via node-red), o sistema captura o comando.
+* **Processando:** Assim que o gateway(ESP32-CANB) injeta a mensagem com o **ID `0x100`** na rede (via node-red), o sistema captura o comando.
 * **Transmitindo_Remoto:** Ele replica e consolida essa velocidade vinda da rede para o atuador e volta a aguardar novas instruções da rede.
 
 ```mermaid
@@ -155,6 +154,27 @@ stateDiagram-v2
 ---
 
 ## 6. Diagrama de Sequência
+
+Este diagrama de detalha a coordenação de controle entre o operador, os nós CANA (atuador local) e CANB (gateway local) em um barramento CAN físico. A arquitetura gerencia a prioridade entre o potenciômetro físico e o controle virtual do Node-RED através de três cenários de operação.
+
+---
+
+## Cenário 1: Controle via Hardware Físico (Modo Local)
+
+No estado padrão de inicialização, o controle da velociade é local. Quando o operador ajusta o potenciômetro físico, o nó CANA detecta a variação. Caso a leitura mude 2.5% (limiar que elimina ruídos elétricos), o firmware **atualiza a velocidade** e inicia o envio cíclico a cada 50ms do frame de telemetria **ID `0x4D2`** (DLC=8). Para a transmissão, o dado de 16 bits é fatiado: o byte `data[0]` recebe o valor menos significativo (LSB) via máscara `& 0xFF` e o byte `data[1]` recebe o valor mais significativo (MSB) deslocado via `>> 8`. No outro extremo, o gateway CANB lê o barramento com o controlador MCP2515 e reconstrói o valor bruto de 16 bits usando a operação lógica `data[0] | (data[1] << 8)`, enviando o dado tratado ao Node-RED.
+
+---
+
+## Cenário 2: Intervenção Remota via Rede (Modo Remoto)
+
+A operação muda de estado quando ocorre uma interação com o controle virtual no Node-RED, ou seja o comando de outra rede ou gateway global. O gateway local CANB recebe o comando e injeta na rede o frame de controle **ID `0x100`** (DLC=2) carregando o valor do vindo do gataway global em `data[1]`. Ao interceptar o ID `0x100` no barramento, o nó CANA interrompe a leitura local, multiplica o valor recebido por 10 para restaurar a escala de rotação interna e atualiza a velocidade do painel. Durante todo o período em modo remoto, o CANA continua transmitindo o frame cíclico `0x4D2` a cada 50ms, mas agora carregando em seu payload a velocidade ditada pela rede, mantendo o painel e o gateway em sincronia.
+
+---
+
+## Cenário 3: Retomada do Controle Manual
+
+A intervenção física local possui prioridade absoluta sobre qualquer comando externo. Se o operador girar o potenciômetro na bancada enquanto o sistema estiver sob controle remoto,
+
 
 ```mermaid
 sequenceDiagram
@@ -209,7 +229,7 @@ sequenceDiagram
 ## 7. INTERFACE DA REDE-CAN
 
 Para melhor comunicação das redes foi utilizado um esp(CANB) dedicado tanto para fazer a comunicação com o gateway(node-red) e como interface .html do sistema. O microcontrolador CANA é responsável por tarefas de missão crítica: amostrar um sinal analógico (ADC) através de filtros de média móvel e gerenciar a concorrência de controle no barramento de campo (CAN).
-Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi, hoveram tentativas em implementar em um unico microcontrolador, porém a quantidade de rotas para encaminhar as variáveis para o backbone acabaram gerando atualização lenta do painel E620, ja que o painel E620 necessita receber dados constantemnente para não gerar travamento. Essas pilhas de rede (Network Stacks) possuem execução não-determinística, o que causaria atrasos na leitura do potenciômetro e na transmissão cíclica de 50ms da CAN, comprometendo a precisão física do sistema.
+Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi, hoveram tentativas em implementar em um unico microcontrolador, porém a quantidade de rotas para encaminhar as variáveis para o gateway global acabaram gerando atualização lenta do painel E620, ja que o painel E620 necessita receber dados constantemnente para não gerar travamento. Essas pilhas de rede (Network Stacks) possuem execução não-determinística, o que causaria atrasos na leitura do potenciômetro e na transmissão cíclica de 50ms da CAN, comprometendo a precisão física do sistema.
 
 * Painel de Monitoramento CAN (Card Atuador/Sensor): Apresenta visualmente a velocidade consolidada do sistema em tempo real e a tensão isolada calculada para o potenciômetro físico (0V a 3.3V). Ele serve como um diagnóstico rápido para atestar que o barramento a 250 Kbps está online e operando perfeitamente através do recebimento do ID 0x4D2.
 
@@ -223,9 +243,9 @@ Se o CANA também fizesse o papel de servidor web, o core do processador seria f
 
 ---
 
-## 8. Arquitetura de Comunicação: Firmware <-> Backbone (Node-RED)
+## 8. Arquitetura de Comunicação: Firmware <-> gateway global (Node-RED)
 
-O sistema utiliza o microcontrolador **CANB** como um **Gateway**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o Node-RED ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
+O sistema utiliza o microcontrolador **CANB** como um **Gateway local**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o Node-RED ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
 
 ---
 

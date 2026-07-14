@@ -8,9 +8,9 @@
 
 ## 1	Descrição do projeto
 
-Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los para qualquer indivíduo que acesse o domínio online, seja pelo computador ou pelo celular.
+Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los em um website para qualquer indivíduo que acesse o domínio na internet, seja pelo computador ou pelo celular.
 
-<p align="center"> <img src="figs/website.png" alt="diagrama" width="100%"></p>
+<p align="center" style="border-radius: 10%;"> <img src="figs/website.png" alt="diagrama" width="100%"></p>
 <p align="center"><b>Website</b></p>
 <br><br>
 
@@ -304,8 +304,26 @@ Uma possivel alteração futura ara esta raiz do projeto seria tornar o website 
 
 Não houve tempo para checar se o protocolo está online no flow do Node-RED central e salva-lo no objeto que vai para o Website. O site é versátil neste quesito e sinaliza através de icones, texto, cores e até sinal de audio, quando o botão estiver ativo, para retratar visualmente o estado da conexão do protocolo. Contudo, esse não foi um problema demasiado grande pois se tudo estiver funcionando raramente haverá a necessidade deste dinamicismo. Mas que fique documentado e em mente para proximo semestres que está opção já está programada no site, só requer que o Node-RED central atualize o estado online do protocolo.
 
-https://sylphina.com.br/alvaro   <br>
-https://sylphina.com.br/alvaro/upload.php
+### Politica de segurança do browser
+
+A cors (Cross Origin Resource Sharing) é um mecanismo de segurança do browser  que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor (local). Dependendo do computador a falta desta explicidade pode gerar um bloqueio, e consquente erro no código, impossibilitando a comunicação entre o Node-RED e o website. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario/.node-red)` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo(HTTP/HTTPS) + dominio + porta (Padrão `:1880` para o Node-Red. Note que mesmo que o website que realiza o upload possui o diretorio `/upload`, ele não entra como endereço, apenas o endereço absoluto.
+
+<table>
+  <tr>
+    <td>
+      <pre><code class="language-js">
+        CORs policy Node-rED setting.js configuration
+      </code></pre>
+      
+            httpNodeCors: {
+          origin: "https://curricularium.infinityfreeapp.com",
+          methods: "GET,POST,OPTIONS",
+          allowedHeaders: ["Content-Type"]
+      }
+        
+  </tr>
+</table>
+
 
 
 

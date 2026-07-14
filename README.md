@@ -114,6 +114,7 @@ flowchart TB
 ## 5. Sumário / Navegação
 
 - 📁 [**Backbone (Node-RED + Broker)**](./backbone/README.md) — switch, broker MQTT, dashboard, tabela global
+- 📁 [**Nexus Web**](./nexus-web/README.md) — Dashboard online, banco de dados
 - 📁 [**Rede PROFINET**](./rede-profinet/README.md) — Dupla 1
 - 📁 [**Rede CAN**](./rede-can/README.md) — Dupla 2
 - 📁 [**Rede MQTT**](./rede-mqtt/README.md) — Dupla 3
@@ -126,7 +127,7 @@ flowchart TB
 | Dupla | Integrantes | Responsabilidade |
 |:-----:|:------------|:-----------------|
 | 1 | Cainã, Matheus | Rede PROFINET + **hospedagem do broker/Node-RED** |
-| 2 | Álvaro, Alexandre | Rede CAN |
+| 2 | Álvaro, Alexandre | Rede CAN  + **Website** |
 | 3 | Lucas, Henzo | Rede MQTT |
 
 ---

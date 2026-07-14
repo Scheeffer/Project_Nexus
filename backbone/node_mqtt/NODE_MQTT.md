@@ -1,132 +1,137 @@
-# Fluxo mqtt
-Antes de explicar os nós vamos explicar como a comunicação do node-red com o servidor de comunicação mqtt funciona, ao utilizar qualquer balão da mqtt é possivel selecionar e cadastrar o o servidor de interesse:
+# Fluxo MQTT
+
+Antes da explicação dos nós, é necessário compreender o funcionamento da comunicação do Node-RED com o servidor MQTT. Ao utilizar qualquer nó MQTT, é possível selecionar e cadastrar o servidor de interesse:
 
 Clique na opção "+":
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/cadastro_mqtt.png" width="400">
 
-Insira os dados respectivos do seu servidor mqtt:
+Insira os dados respectivos do servidor MQTT:
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_cadastro_disp.png" width="400">
 
-Sobre os dados do servidor mqtt:
-`192.168.0.105` - é a configuração do caminho de endereço de ip do servidor mqtt.
-`:1883` - é a configuração da porta do servidor mqtt.
-`MQTT V3.1.1` - protocolo de uso do servidor mqtt
- E  configuração do ID cliente `Node-red` configurado no servidor mqtt.
+Sobre os dados do servidor MQTT:
+* `192.168.0.105` - Configuração do endereço de IP do servidor MQTT.
+* `:1883` - Configuração da porta do servidor MQTT.
+* `MQTT V3.1.1` - Protocolo de uso do servidor MQTT.
+* Configuração do ID de cliente `Node-red` estabelecida no servidor MQTT.
 
-Com isso ja explicado vamos para nosso Fluxo mqtt
+Com essa etapa concluída, segue a explicação do fluxo MQTT.
 
- <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_mqtt.png" width="600">
- <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_mqtt_2.png" width="600">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_mqtt.png" width="600">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/explica%C3%A7%C3%A3o_mqtt_2.png" width="600">
 
- Para explicar esse fluxo vamos generalizar e explicar cada tipo de nó aplicado:
- 
+Para detalhar este fluxo, cada tipo de nó aplicado será explicado individualmente:
+
 ## Tipo 1 - Nó mqtt out
 
-Nó para envio de valores do servidor mqtt, realizado seleção do servidor de destino e o tópico de leitura:
- <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_out_config.png" width="400">
+Nó para envio de valores ao servidor MQTT, onde é realizada a seleção do servidor de destino e do tópico de escrita:
 
-Nesse fluxo possuimos 2 nós `mqtt out`, que possuem o mesmo servidor cadastrado, o que muda é seu topico de destino:
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_out_config.png" width="400">
+
+Este fluxo possui 2 nós `mqtt out` que compartilham o mesmo servidor cadastrado. A diferença entre eles está no tópico de destino:
 
 | Tópico | Tipo | Função | 
 |------|----|----------------|
-| `ESP32S3/COM/Atuadores` | `string` |Solicitar Alteração do atuador do sistema| 
-| `ESP32S3/COM/get` | `string` | Solicitar aquisição de temperatura atual do sensor de temperatura | 
+| `ESP32S3/COM/Atuadores` | `string` | Solicitar alteração de estado do atuador do sistema. | 
+| `ESP32S3/COM/get` | `string` | Solicitar aquisição da temperatura atual do sensor. | 
 
-O Tópico `ESP32S3/COM/Atuadores` pode enviar os tipos de string `AQUECIMENTO_ON`,`REFRIGERACAO_ON`,`SYSTEM_OFF` que são tratados pelo servidor para alterar estado do atuador.
-O Tópico `ESP32S3/COM/get` pode enviar os tipos de string `GET_TEMP` que é tratado pelo servidor para solicitar aquisição da temperatura.
+O tópico `ESP32S3/COM/Atuadores` pode enviar as strings `AQUECIMENTO_ON`, `REFRIGERACAO_ON` e `SYSTEM_OFF`, as quais são tratadas pelo servidor para alterar o estado do atuador.
+O tópico `ESP32S3/COM/get` pode enviar a string `GET_TEMP`, que é tratada pelo servidor para solicitar a aquisição da temperatura.
 
 ## Tipo 2 - Nó mqtt in
 
-Nó para recebimento de valores do servidor mqtt, realizado seleção do servidor de destino e o tópico de leitura:
- <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_in_config.png" width="400">
+Nó para recebimento de valores do servidor MQTT, onde é realizada a seleção do servidor de origem e do tópico de leitura:
 
- Nesse fluxo possuimos 2 nós `mqtt out`, que possuem o mesmo servidor cadastrado, o que muda é seu topico de leitura:
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/mqtt_in_config.png" width="400">
+
+Este fluxo possui 2 nós `mqtt in` que compartilham o mesmo servidor cadastrado. A diferença entre eles está no tópico de leitura:
 
 | Tópico | Tipo | Função | 
 |------|----|----------------|
-| `ESP32S3/COM/Status` | `string` | Atualização do valor de status dos atuadores | 
-| `ESP32S3/COM/temperatura` | `string` |Atualização do valor de temperatura| 
+| `ESP32S3/COM/Status` | `string` | Atualização do valor de status dos atuadores. | 
+| `ESP32S3/COM/temperatura` | `string` | Atualização do valor de temperatura. | 
 
-O Tópico `ESP32S3/COM/Status` recebe toda atualização tratada pelo servidor mqtt do status dos atuadores que podem ser `Sistema aquecendo`,`Sistema resfriando` e `Sistema desligado` .
-O Tópico `ESP32S3/COM/temperatura` recebe toda atualização de temperatura registrada pelo servidor mqtt.
+O tópico `ESP32S3/COM/Status` recebe todas as atualizações tratadas pelo servidor MQTT referentes ao status dos atuadores, que podem ser `Sistema aquecendo`, `Sistema resfriando` e `Sistema desligado`.
+O tópico `ESP32S3/COM/temperatura` recebe todas as atualizações de temperatura registradas pelo servidor MQTT.
 
 ## Tipo 3 - Nó s7 in
 
-Nó para leitura de variáveis do CLP, realizado seleção do dispositivo de origem, variável de interesse e opções de leitura:
+Nó para leitura de variáveis do CLP, onde é realizada a seleção do dispositivo de origem, da variável de interesse e das opções de leitura:
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_s7_in_mqtt.png" width="400">
 
-A leitura de variavies do CLP, variaveis da IHM para atuação no servidor mqtt
+A leitura engloba variáveis do CLP e variáveis da IHM para atuação no servidor MQTT:
 
-| Tópico | Registrador| Tipo | Função | 
+| Tópico | Registrador | Tipo | Função | 
 |------|----|----------------|---------|
-|`Liga_AQ`|`DB7,X0.0`|bool| Envia true para nó funciont 4 | 
-|`Liga_vent` |`DB7,X0.1`|bool|Envia true para nó funciont 3| 
-|`Desligar_vent_AQ`|`DB7,X0.2`|bool|Envia true para nó funciont 1| 
+| `Liga_AQ` | `DB7,X0.0` | `bool` | Envia `true` para o nó *function* 4. | 
+| `Liga_vent` | `DB7,X0.1` | `bool` | Envia `true` para o nó *function* 3. | 
+| `Desligar_vent_AQ` | `DB7,X0.2` | `bool` | Envia `true` para o nó *function* 1. | 
 
-Todos os nós s7 in, são sinalizadores de comando que são processados pelos nós functions conectados, verificar no tipo 8.
+Todos os nós `s7 in` operam como sinalizadores de comando que são processados pelos nós *function* conectados (verificar no Tipo 8).
 
 ## Tipo 4 - Nó s7 out
 
-Nó para escrita de variáveis do CLP, realizado seleção do dispositivo de origem, variável de interesse:
+Nó para escrita de variáveis no CLP, onde é realizada a seleção do dispositivo de destino e da variável de interesse:
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_s7_out_mqtt.png" width="400">
 
-Nesse tipo foi selecionado a variável `FDK_temp` que recebem dados real, do nó function `String/Real`:
+Neste tipo, foi selecionada a variável `FDK_temp`, que recebe dados do tipo real provenientes do nó *function* `String/Real`:
 
 | Nome | Endereço | Tipo | Uso |
 |------|----------|------|-----|
-| `FDK_temp` | `DB7,REAL2` | real | registra valor de temperatura enviado pelo no function `String/Real`|
+| `FDK_temp` | `DB7,REAL2` | `real` | Registra o valor de temperatura enviado pelo nó *function* `String/Real`. |
 
 ## Tipo 5 - Comunicação http
 
 #### Estrutura de leitura de informações
 
-Para o node receber os dados do esp é necessário configurar 2 nós, `http in` e ` http response`:
+Para que o Node-RED receba os dados do ESP, é necessário configurar 2 nós: `http in` e `http response`.
 
-####`http in`
+#### `http in`
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_http_mqtt_in.png" width="400">
 
-O fluxo do mqtt possui 3 pares de recebimento de informações da rede-can, como na imagem acima, todo `http in`  esta conectado em um `http response`, essa ligação é necessária para estabelecer comunicação. Os nós `http in` estão todos configurados de modo similar, todos com método "POST", suas diferenças estão na configuração do URL e na Label, cada URL é responsavel por receber um dado especificado pela programação do esp:
+O fluxo do MQTT possui 3 pares de recebimento de informações da rede CAN. Conforme ilustrado na imagem acima, todo nó `http in` está conectado a um `http response`; essa ligação é necessária para estabelecer a comunicação. Os nós `http in` estão configurados de modo similar, todos utilizando o método "POST". As diferenças residem na configuração da URL e no rótulo (Label), sendo cada URL responsável por receber um dado especificado pela programação do ESP:
 
-| Label | URL |Dado| 
+| Label | URL | Dado | 
 |------|----------|----------|
-| `Recebe Aquecer` | `/mqtt_aquecer` | string - Envia sinalizador para nó function 4|
-| `Recebe Resfriar` | `/mqtt_resfriar` |string - Envia sinalizador para nó function 3|
-| `Recebe desligar` | `/mqtt_desligar` |string - Envia sinalizador para nó function 1 |
+| `Recebe Aquecer` | `/mqtt_aquecer` | `string` - Envia sinalizador para o nó *function* 4. |
+| `Recebe Resfriar` | `/mqtt_resfriar` | `string` - Envia sinalizador para o nó *function* 3. |
+| `Recebe desligar` | `/mqtt_desligar` | `string` - Envia sinalizador para o nó *function* 1. |
 
-####` http response`
+#### `http response`
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/CAN_http_response.png" width="300">
 
-Os nós ` http response`, são necessários somente para completar o fluxo de comunicação com o esp, neles não são configurados nada, todos estão como na imagem a cima.
+Os nós `http response` são necessários exclusivamente para fechar o ciclo de comunicação com o ESP. Neles, nenhuma configuração adicional é exigida, mantendo-se o padrão exibido na imagem acima.
 
 #### Estrutura de escrita de informações
 
-#####` http request`
+##### `http request`
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_http_request_mqtt.png" width="400">
 
-O fluxo mqtt possui um nó `http request` , que é responsavel por receber a atualização dos status dos atuadores e temperatura dos nós `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura`, respectivamente . Em sua configuração o Método é POST, segue abaixo demais configurações:
-| Label | URL |Dado| 
-|------|----------|----------|
-| `requisição http` | `http://192.168.0.103/set_mqtt_sim` | string - recebe os valores em string da atualização do status dos atuadores e atualização de temperatura enviados pelos mqtt in|
+O fluxo MQTT possui um nó `http request` responsável por receber a atualização do status dos atuadores e da temperatura oriundos dos nós `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura`, respectivamente. Em sua configuração, o método utilizado é o "POST". Seguem as demais definições:
 
-Sobre os URL:
-`http://192.168.0.103` - é a configuração do caminho http para o endereço de ip no ESP.
-`set_mqtt_sim`, variável interna do código do ESP CAN para atualização dos dados dos status dos atuadores e atualização de temperatura enviados pelos mqtt in.
+| Label | URL | Dado | 
+|------|----------|----------|
+| `requisição http` | `http://192.168.0.103/set_mqtt_sim` | `string` - Recebe os valores em string referentes à atualização do status dos atuadores e de temperatura enviados pelos nós `mqtt in`. |
+
+Sobre as URLs:
+`http://192.168.0.103` - Configuração do caminho HTTP para o endereço de IP no ESP.
+`set_mqtt_sim` - Variável interna do código do ESP CAN para atualização dos dados de status dos atuadores e de temperatura enviados pelos nós `mqtt in`.
 
 #### Tipo 6 - Cronômetro de Feedback de envio e retorno de mensagem
-Esse tipo, também presente nas demais colunas, é constituido de 2 nós o `Inicia cronometro` e `Para Cronômetro e Mede (ms)`. São dois nós dependentes, o nó `Inicia cronometro`,com uma saída, possui uma variável que ao ser acionada inicia um contador de tempo, nessa caso, quando o valor de frequência é alterado pelo dashboard, o nó `Para Cronômetro e Mede (ms)` para o contador de tempo e o converte para ms, possuí duas saída, uma para o código seguir seu caminho para o nó dashboard de texto de temperatura e outra para o nó dashbaord de texto para valor em ms.
 
-Nó `Inicia cronometro`
+Este tipo, também presente nas demais colunas, é constituído de 2 nós: `Inicia cronometro` e `Para Cronômetro e Mede (ms)`. São nós dependentes. O nó `Inicia cronometro`, contendo uma saída, possui uma variável que, ao ser acionada (neste caso, quando o valor de frequência é alterado pelo dashboard), inicia um contador de tempo. O nó `Para Cronômetro e Mede (ms)` interrompe o contador de tempo, converte o valor para milissegundos (ms) e possui duas saídas: uma para dar seguimento ao fluxo em direção ao nó dashboard de texto de temperatura, e outra para o nó dashboard de texto que exibe o valor em ms.
+
+Nó `Inicia cronometro`:
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_inicia.png" width="600">
 
-```
+```javascript
 // Salva o momento exato em que o comando passou por aqui
 flow.set('t_start_3', Date.now());
 
@@ -134,11 +139,11 @@ flow.set('t_start_3', Date.now());
 return msg;
 ```
 
-Nó `Para Cronômetro e Mede (ms)`
+Nó `Para Cronômetro e Mede (ms)`:
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_para_mede.png" width="600">
 
-```
+```javascript
 // Recupera o tempo salvo na memória
 let start = flow.get('t_start_3');
 
@@ -161,22 +166,19 @@ if (start) {
 
 // Se não houver tempo inicial, apenas passa a msg original
 return [msg, null];
-
-
-
 ```
 
-> ⚠️ **No código é possivel verificar a variável 't_start', como essas funções se repetem no código, é necessária alteração para não gerar conflito e falhar a sincronização dos contadores com seus respectivos inica e para, para isso foi diferenciado essa variável para 't_start_2' e 't_start_3', esse dado deve ser alterado tanto no `Inicia cronometro` quanto `Para Cronômetro e Mede (ms)` para ficar sincronizado. obs: essa variável repete duas vezes no `Para Cronômetro e Mede (ms)`.
+> ⚠️ **Atenção:** No código, é possível observar a variável `t_start`. Como essas funções se repetem em outras instâncias do projeto, é necessária a alteração do nome da variável para evitar conflitos e falhas na sincronização dos contadores com seus respectivos nós de início e parada. Para isso, a variável foi diferenciada para `t_start_2` e `t_start_3`. Este dado deve ser alterado tanto no nó `Inicia cronometro` quanto no `Para Cronômetro e Mede (ms)` para manter a sincronização. Observação: esta variável se repete duas vezes no script do nó `Para Cronômetro e Mede (ms)`.
 
 #### Tipo 7 - Exportar dados para nexus-web
 
-Esse tipo se trata da exportação de dados para o site nexus-web, nesse fluxo possui somente um nó, `set CAN state`.
+Este tipo trata da exportação de dados para o site nexus-web. No escopo deste fluxo, há somente um nó responsável por essa função.
 
 `set MQTT state`
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_mqtt_state_nexus_web.png" width="400">
 
-```
+```javascript
 const protocolState = flow.get("protocolState") || {};
 
 protocolState.MQTT = {
@@ -188,34 +190,36 @@ protocolState.MQTT = {
 flow.set("protocolState", protocolState);
 return msg;
 ```
+
 #### Tipo 8 - Nós function
-Esse tipo de nó possui varias funcões, tirando as funções agregadas aos tipos 6 e 7.
 
-##### `function 1` `function 3`  `function 4` - Function para envio de string para `mqtt out`
-Esses nós quando recebem sinalização de entrada dos nós `s7 in` e `http in` eles retornam as `msg.payload = "AQUECIMENTO_ON"` sendo que a mensagem alterna de `AQUECIMENTO_ON` no `function 4` ,`REFRIGERACAO_ON` no `function 3` ,`SYSTEM_OFF` e `function 1`.
+Este tipo de nó abriga várias funções, excluindo as agregadas aos tipos 6 e 7.
 
-```
+##### `function 1`, `function 3` e `function 4` - Envio de string para `mqtt out`
+Quando estes nós recebem sinalização de entrada dos nós `s7 in` ou `http in`, eles retornam `msg.payload = "AQUECIMENTO_ON"`. A mensagem alterna para `AQUECIMENTO_ON` no nó `function 4`, `REFRIGERACAO_ON` no nó `function 3` e `SYSTEM_OFF` no nó `function 1`.
+
+```javascript
 // O nó s7 in envia true ou false no msg.payload
 
 if (msg.payload === true) {
-    msg.payload = "AQUECIMENTO_ON"; // Sua string para nível lógico alto (1)
+    msg.payload = "AQUECIMENTO_ON"; // String para nível lógico alto (1)
 } else {
-    msg.payload = "AQUECIMENTO_ON";   // Sua string para nível lógico baixo (0)
+    msg.payload = "AQUECIMENTO_ON";   // String para nível lógico baixo (0)
 }
 
-// Opcional: Você pode mudar o tópico para identificar o status
+// Opcional: Mudança de tópico para identificar o status
 //msg.topic = "status_inversor";
 
 return msg;
 ```
-> ⚠️ As variáveis `msg.payload = "AQUECIMENTO_ON"` visivel no scrip da `function 4` é a variavel que se altera para `msg.payload = "REFRIGERACAO_ON"` e `msg.payload = "SYSTEM_OFF"` nos nós `function 3` `function 1`, respectivamente.
+> ⚠️ A definição `msg.payload = "AQUECIMENTO_ON"`, visível no script do nó `function 4`, é a variável que deve ser alterada para `msg.payload = "REFRIGERACAO_ON"` e `msg.payload = "SYSTEM_OFF"` nos nós `function 3` e `function 1`, respectivamente.
 
 ##### `String/Real`
-Essa function é responsavel pela conversão dos dados de temperatatura enviados pelo nó mqtt in `ESP32S3/COM/temperatura` no formato string e encaminhar para o nó s7 out `FDK_temp`.
+Esta *function* é responsável pela conversão dos dados de temperatura, enviados pelo nó `mqtt in` `ESP32S3/COM/temperatura` no formato `string`, para o formato `real`, encaminhando o resultado para o nó `s7 out` `FDK_temp`.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_mqtt_state_nexus_web.png" width="400">
 
-```
+```javascript
 // Supondo que msg.payload venha como "123.45" ou "123,45"
 let stringOriginal = msg.payload.toString();
 
@@ -228,28 +232,29 @@ let numeroReal = parseFloat(stringLimpa);
 // Verifica se a conversão foi válida para evitar enviar erros ao CLP
 if (!isNaN(numeroReal)) {
     msg.payload = numeroReal;
-    msg.topic = "DB7,REAL2"; // Substitua pelo endereço exato da sua Tag REAL no CLP
+    msg.topic = "DB7,REAL2"; // Endereço exato da Tag REAL no CLP
     return msg;
 } else {
     node.error("Erro na conversão: O valor recebido não é uma String numérica válida. Recebido: " + stringOriginal);
-    return null; // Aborta o fluxo para não enviar lixo ao CLP
+    return null; // Aborta o fluxo para não enviar dados incorretos ao CLP
 }
 ```
+
 #### Tipo 9 - Envio de dados para http request
 
-Esse nó function é responsável por receber os dados dos mqtt in `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura` e processa-los para serem direcionados para o nó `http request´ da rede CAN
+Este nó *function* é responsável por receber os dados dos nós `mqtt in` `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura` e processá-los para serem direcionados ao nó `http request` da rede CAN.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_envio_http_mqtt.png" width="400">
 
-```
+```javascript
 // 1. Inicializa os valores guardados na memória do Node-RED caso ainda estejam vazios
 let tempSalva = context.get('tempSalva') || 0.0;
 let statusSalvo = context.get('statusSalvo') || "Aguardando";
 
-// 2. Filtra o dado analisando diretamente a mensagem que entrou
+// 2. Filtra o dado analisando diretamente a mensagem de entrada
 let conteudo = msg.payload.toString().trim();
 
-// Se o conteúdo for um número (ou começar com um número), veio da temperatura
+// Se o conteúdo for um número (ou começar com um número), é referente à temperatura
 if (!isNaN(parseFloat(conteudo)) && !conteudo.includes("aquecer") && !conteudo.includes("refri")) {
     tempSalva = parseFloat(conteudo);
     context.set('tempSalva', tempSalva); // Salva na memória
@@ -260,7 +265,7 @@ else {
     context.set('statusSalvo', statusSalvo); // Salva na memória
 }
 
-// 3. Monta o JSON unificado perfeito que o seu ESP32 espera receber
+// 3. Monta o objeto JSON unificado esperado pelo ESP32
 msg.payload = {
     temp: tempSalva,
     status: statusSalvo
@@ -268,61 +273,62 @@ msg.payload = {
 
 return msg;
 ```
+
 #### Tipo 10 - Dashboard
-Antes de explicar os nós de dashboard, vamos esclarecer a configuração do dashboard, no nosso caso, foi realizado a criação de um dashbaord com 3 grupos, cada um desses grupos sendo um tipo de comunicação e na exibição estão expostos da mesma forma, espectivamente Profinet, CAN e MQTT.
+
+Antes de detalhar os nós de interface, cabe esclarecer a configuração geral do dashboard. Foi criado um dashboard dividido em 3 grupos, representando cada um dos tipos de comunicação e dispostos visualmente como as colunas Profinet, CAN e MQTT, respectivamente.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_dashboard_groups.png" width="400">
 
- A pagina do Dashboard fica dessa forma:
- 
+A página do Dashboard é apresentada da seguinte forma:
+
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/Dashboard.png" width="800">
 
-Voltando para os nós desse fluxo, da biblioteca dashboard há 8 nós, 4 botões, 3 text e 1 chart
-.
-##### Botões
+Retornando aos nós deste fluxo, são utilizados 8 nós da biblioteca dashboard: 4 *buttons*, 3 *texts* e 1 *chart*.
 
-Nos Nós botões são configurados de forma simples, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE MQTT do dashboard NEXUS, em icon e configurado um indicador gráfico retirado do site https://fontawesome.com/v4/icon/arrow-right, Label é Nome exibido no dashboard, opções opcionais não foram configuradas, e foi configuradp para quando acionado emitir um payload string que retornam as variávies de acionamento `AQUECIMENTO_ON` no botão `Aquecimento` ,`REFRIGERACAO_ON` no botão `Refrigeração` ,`SYSTEM_OFF` no botão `Desligar` e `GET_TEMP` no botão `Leitura temperatura`
+##### Botões (*Button*)
 
-|Botão Dashboard | msg.payload |
+Os nós do tipo botão são configurados de forma simples. No campo `Group`, é definida a coluna na qual o botão será posicionado (neste caso, `REDE MQTT` do dashboard NEXUS). Em `Icon`, é configurado um indicador gráfico oriundo do repositório de ícones (FontAwesome). O campo `Label` define o nome exibido no dashboard. Quando acionados, estes botões emitem um *payload* do tipo string contendo as seguintes variáveis de acionamento:
+
+| Botão Dashboard | msg.payload |
 |----------------|--------------|
 | `Aquecimento` | `AQUECIMENTO_ON` | 
-|`Refrigeração` | `REFRIGERACAO_ON` |
-|`Desligar` | `SYSTEM_OFF` |
-|`Leitura temperatura` | `GET_TEMP` |
+| `Refrigeração` | `REFRIGERACAO_ON` |
+| `Desligar` | `SYSTEM_OFF` |
+| `Leitura temperatura` | `GET_TEMP` |
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_button_mqtt.png" width="400">
 
-O botão `Leitura temperatura` é o gatinho para inicio do cronometro da function tipo 7, inicia cronometro.
+O botão `Leitura temperatura` serve como gatilho para o início do cronômetro da *function* descrita no Tipo 6 (`Inicia cronometro`).
 
-##### Text
+##### Texto (*Text*)
 
-Nos nós text, em group é diferenciado a coluna que ficará posicionado, nesse caso REDE MQTT do dashboard NEXUS, esse fluxo possui 3 nós text que recebem tem variaveis para exibição diferentes.
+Nos nós de texto, o campo `Group` também define o posicionamento (coluna `REDE MQTT`). O fluxo possui 3 nós de texto configurados para exibir diferentes variáveis:
 
-|Label |tipo Valor | Origem do dado |
+| Label | Formato do Valor | Origem do Dado |
 |----------------|--------------|----------|
-| `temperatura` |{{msg.payload}} |Dado de temperatura encaminhado pelo nó mqtt in `ESP32S3/COM/temperatura`|
-| `Delay` |{{msg.payload}}| Dado de valor de tempo ms encaminhado pelo nó function `Para Cronômetro e Mede (ms)` |
-| `text` | {{msg.payload}} | Dado de Status dos atuadores encaminhado pelo nó mqtt in `ESP32S3/COM/Status`|
+| `temperatura` | `{{msg.payload}}` | Dado de temperatura encaminhado pelo nó `mqtt in` `ESP32S3/COM/temperatura`. |
+| `Delay` | `{{msg.payload}}` | Dado de tempo (em ms) encaminhado pelo nó *function* `Para Cronômetro e Mede (ms)`. |
+| `text` | `{{msg.payload}}` | Dado de status dos atuadores encaminhado pelo nó `mqtt in` `ESP32S3/COM/Status`. |
 
- <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_text_mqtt.png" width="400">
- 
-##### Chart
-O nó chart foi configurado para receber os dados do nó mqtt in ESP32S3/COM/temperatura e exibe os dados em gráfico com histórico de amostragem
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_text_mqtt.png" width="400">
 
-|Label | Origem do dado |
+##### Gráfico (*Chart*)
+
+O nó gráfico foi configurado para receber os dados do nó `mqtt in` `ESP32S3/COM/temperatura`, exibindo os valores visualmente com histórico de amostragem.
+
+| Label | Origem do Dado |
 |----------------|--------------|
-| `chart` |Dado de temperatura encaminhado pelo nó mqtt in `ESP32S3/COM/temperatura`|
+| `chart` | Dado de temperatura encaminhado pelo nó `mqtt in` `ESP32S3/COM/temperatura`. |
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_chart_mqtt.png" width="400">
 
 #### Tipo 11 - Inject
 
-O Nó Inject foi inserido afim de testar a comunicação de modo manual com o servidor mqtt, esse fluxo possui 4 nós Inject, cada um deles com a Label corresponte a mensagem enviada,
-O que muda de um para o outro é usa mensagem,  que varia conforme a mensagem: `AQUECIMENTO_ON`,`REFRIGERACAO_ON`,`SYSTEM_OFF` que estão com as labels, Aquecimento, Resfrigeração e Desligar, respectivamente
- 
+O nó `Inject` foi inserido a fim de testar a comunicação de modo manual com o servidor MQTT. Este fluxo possui 4 nós `Inject`, cada um com sua `Label` correspondente à mensagem enviada. A diferença entre eles reside no parâmetro `msg.payload`, que envia as strings `AQUECIMENTO_ON`, `REFRIGERACAO_ON` e `SYSTEM_OFF` (referentes às labels Aquecimento, Refrigeração e Desligar, respectivamente).
+
 <img width="457" height="561" alt="image" src="https://github.com/user-attachments/assets/e74cf6d9-3704-4f4a-acbb-67d569085abd" />
 
-o 4º nó `GET` possui divergência, que além de mandar a msg.payload `get`, o nó esta configurado para enviar a mensagem repetivamente a cada 1 segundo, sendo assim recebendo a atualização da temperatura a cada segundo.
+O 4º nó `Inject`, denominado `GET`, apresenta um comportamento diferente: além de enviar o `msg.payload` configurado como `get`, ele está ajustado para enviar a mensagem repetidamente em intervalos de 1 segundo, recebendo, assim, a atualização da temperatura a cada segundo.
 
 <img width="457" height="554" alt="image" src="https://github.com/user-attachments/assets/b41ab72a-d09c-4131-9b94-27398bf6510a" />
-
