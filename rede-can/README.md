@@ -6,7 +6,7 @@
 
 O protocolo local utilizado nesta célula é o **CAN (Controller Area Network)** operando a uma taxa de barramento industrial de **250 Kbps**. A rede é composta por microcontroladores **ESP32** acoplados a controladores autônomos **MCP2515** via interface de periféricos serial (**SPI**). O ESP32 principal atua como o nó mestre/gateway local da bancada, coletando os sinais do barramento e disponibilizando uma interface gráfica de monitoramento por meio de um Web Server HTTP nativo. 
 
-O objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro + sistema microcontrolado) mapeado sob o identificador exclusivo CAN, processar os pacotes para o cálculo de velocidade real em km/h e comandar um painel atuador de indicadores (Painel E620) via ID CAN `0x4D2`. O Gateway ESP32 também atua como **ponte** para o backbone (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
+O objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro + sistema microcontrolado) mapeado sob o identificador exclusivo CAN, processar os pacotes para o cálculo de velocidade real em km/h e comandar um painel atuador de indicadores (Painel E620) via ID CAN `0x4D2`. O Gateway ESP32 também atua como **ponte** para o gateway global (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
 
 ### Variáveis Disponíveis ao Node-RED / Servidor HTTP
 
@@ -27,7 +27,7 @@ O objetivo desta célula é ler de maneira contínua os dados de um sensor anal�
 
 ## 2. Estrutura de dados
 
-O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o laboratório de mobilidade elétrica (EMOL) do IFSC. Pertence a um kit de componentes automotivos elétricos.
+O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o Laboratório de Mobilidade Elétrica (EMOL) do IFSC. Pertence a um kit de componentes automotivos elétricos.
 
 <p align="center"> <img src="figs/E620.png" alt="Display Dashboard E620" width="500"></p>
 <p align="center"><b>Display Dashboard E620</b></p>
@@ -79,7 +79,7 @@ Transmissão (ID 0x4D2): A cada 50ms, o CANA transmite de forma fixa a velocidad
 <p align="center"> <img src="figs/ESQUEMÁTICO_REDE_CAN.jpg" alt="Display Dashboard E620" width="100%"></p>
 <p align="center"><b>Esquemático da rede CAN</b></p>
 <br><br>
-2. CANB (Gateway, Servidor Web e Integração com Node-RED)
+2. CANB (Gateway local, Servidor Web e Integração com gateway global - NODE-RED)
 O CANB atua como a ponte entre o mundo físico (Barramento CAN) e o mundo digital (Rede IP):
 
 Recepção CAN e HTTP: Ele escuta o ID 0x4D2. Ele extrai a velocidade final e calcula de forma isolada a tensão do potenciômetro (0V a 3.3V), despachando esses dados consolidados via requisição POST HTTP para a rota /can do Node-RED.
@@ -154,6 +154,27 @@ stateDiagram-v2
 ---
 
 ## 6. Diagrama de Sequência
+
+Este diagrama de detalha a coordenação de controle entre o operador, os nós CANA (atuador local) e CANB (gateway local) em um barramento CAN físico. A arquitetura gerencia a prioridade entre o potenciômetro físico e o controle virtual do Node-RED através de três cenários de operação.
+
+---
+
+## Cenário 1: Controle via Hardware Físico (Modo Local)
+
+No estado padrão de inicialização, o controle da velociade é local. Quando o operador ajusta o potenciômetro físico, o nó CANA detecta a variação. Caso a leitura mude 2.5% (limiar que elimina ruídos elétricos), o firmware **atualiza a velocidade** e inicia o envio cíclico a cada 50ms do frame de telemetria **ID `0x4D2`** (DLC=8). Para a transmissão, o dado de 16 bits é fatiado: o byte `data[0]` recebe o valor menos significativo (LSB) via máscara `& 0xFF` e o byte `data[1]` recebe o valor mais significativo (MSB) deslocado via `>> 8`. No outro extremo, o gateway CANB lê o barramento com o controlador MCP2515 e reconstrói o valor bruto de 16 bits usando a operação lógica `data[0] | (data[1] << 8)`, enviando o dado tratado ao Node-RED.
+
+---
+
+## Cenário 2: Intervenção Remota via Rede (Modo Remoto)
+
+A operação muda de estado quando ocorre uma interação com o controle virtual no Node-RED, ou seja o comando de outra rede ou gateway global. O gateway local CANB recebe o comando e injeta na rede o frame de controle **ID `0x100`** (DLC=2) carregando o valor do vindo do gataway global em `data[1]`. Ao interceptar o ID `0x100` no barramento, o nó CANA interrompe a leitura local, multiplica o valor recebido por 10 para restaurar a escala de rotação interna e atualiza a velocidade do painel. Durante todo o período em modo remoto, o CANA continua transmitindo o frame cíclico `0x4D2` a cada 50ms, mas agora carregando em seu payload a velocidade ditada pela rede, mantendo o painel e o gateway em sincronia.
+
+---
+
+## Cenário 3: Retomada do Controle Manual
+
+A intervenção física local possui prioridade absoluta sobre qualquer comando externo. Se o operador girar o potenciômetro na bancada enquanto o sistema estiver sob controle remoto,
+
 
 ```mermaid
 sequenceDiagram
