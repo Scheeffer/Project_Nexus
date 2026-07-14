@@ -304,8 +304,23 @@ Uma possivel alteração futura ara esta raiz do projeto seria tornar o website 
 
 Não houve tempo para checar se o protocolo está online no flow do Node-RED central e salva-lo no objeto que vai para o Website. O site é versátil neste quesito e sinaliza através de icones, texto, cores e até sinal de audio, quando o botão estiver ativo, para retratar visualmente o estado da conexão do protocolo. Contudo, esse não foi um problema demasiado grande pois se tudo estiver funcionando raramente haverá a necessidade deste dinamicismo. Mas que fique documentado e em mente para proximo semestres que está opção já está programada no site, só requer que o Node-RED central atualize o estado online do protocolo.
 
-https://sylphina.com.br/alvaro   <br>
-https://sylphina.com.br/alvaro/upload.php
+### set MQTT state estado
+<table>
+  <tr>
+    <td>
+      <pre><code class="language-js">
+      A cors (Cross Origin Resource Sharing) é um mecanismo de segurança do browser  que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado eplo servidor (local). 
+      </code></pre>
+      
+            httpNodeCors: {
+          origin: "https://curricularium.infinityfreeapp.com",
+          methods: "GET,POST,OPTIONS",
+          allowedHeaders: ["Content-Type"]
+      }
+        
+  </tr>
+</table>
+
 
 
 
