@@ -1,0 +1,55 @@
+[
+    {
+        "id": "dbccfcf8b608c0bb",
+        "type": "mqtt in",
+        "z": "52d3e910e6e8ef25",
+        "name": "",
+        "topic": "ESP32S3/COM/temperatura",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "8860c2e7aa1a2b1d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 280,
+        "y": 120,
+        "wires": [
+            [
+                "608daca9b2e01fbf",
+                "9f0d3995d70dcfcf"
+            ]
+        ]
+    },
+    {
+        "id": "8860c2e7aa1a2b1d",
+        "type": "mqtt-broker",
+        "name": "mosquitto esp32s3",
+        "broker": "192.168.15.29",
+        "port": 1883,
+        "clientid": "Node-red_A",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
