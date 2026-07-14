@@ -1,15 +1,12 @@
-# 🟥 Rede CAN — Célula 2 (Alexandre & Alvaro)
+#  Rede CAN — Célula 2 (Alexandre & Alvaro)
 
-[![Protocolo](https://img.shields.io/badge/protocolo-CAN%202.0A-red.svg)](https://www.iso.org/standard/63648.html)
-[![Controlador](https://img.shields.io/badge/Gateway-ESP32%20%2F%20MCP2515-orange.svg)](#)
 
----
 
 ## 1. Descrição do projeto
 
 O protocolo local utilizado nesta célula é o **CAN (Controller Area Network)** operando a uma taxa de barramento industrial de **250 Kbps**. A rede é composta por microcontroladores **ESP32** acoplados a controladores autônomos **MCP2515** via interface de periféricos serial (**SPI**). O ESP32 principal atua como o nó mestre/gateway local da bancada, coletando os sinais do barramento e disponibilizando uma interface gráfica de monitoramento por meio de um Web Server HTTP nativo. 
 
-O grande objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro) mapeado sob o identificador exclusivo CAN `, processar os pacotes para o cálculo de velocidade real em km/h e comandar um painel atuador de indicadores (Painel E620) via ID CAN `0x4D2`. O Gateway ESP32 também atua como **ponte** para o backbone (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
+O objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro + sistema microcontorolado) mapeado sob o identificador exclusivo CAN, processar os pacotes para o cálculo de velocidade real em km/h e comandar um painel atuador de indicadores (Painel E620) via ID CAN `0x4D2`. O Gateway ESP32 também atua como **ponte** para o backbone (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
 
 ### Variáveis Disponíveis ao Node-RED / Servidor HTTP
 
@@ -30,7 +27,7 @@ O grande objetivo desta célula é ler de maneira contínua os dados de um senso
 
 ## 2. Estrutura de dados
 
-O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o laboratório EMOL do IFSC. Pertence a um kit de componentes automotivos elétricos.
+O display dashboard utilizado como atuador controlado por protocolo CAN foi obtido através de uma parceria com o laboratório de mobilidade elétrica (EMOL) do IFSC. Pertence a um kit de componentes automotivos elétricos.
 
 <p align="center"> <img src="figs/E620.png" alt="Display Dashboard E620" width="500"></p>
 <p align="center"><b>Display Dashboard E620</b></p>
@@ -67,6 +64,8 @@ O sistema é composto por duas placas ESP32 interligadas por um barramento CAN (
 <p align="center"> <img src="figs/diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750"> </p>
 <p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
 <br><br>
+
+Obs: Os termos CAN_A (CANA) e CAN_B (CANB) são nomenclaturas de projeto adotadas para organização, desenvolvimento. Na prática, não existem dois protocolos CAN diferentes no sistema: ambos os microcontroladores operam e conversam de forma idêntica no mesmo barramento CAN físico padrão. A diferenciação serve apenas para identificar qual software e quais funções cada hardware assume na rede.
 
 1. CANA (Atuador e Sensor Físico)
 O CANA lê continuamente um potenciômetro físico via ADC e monitora o barramento CAN. Ele opera sob duas regras de evento:
