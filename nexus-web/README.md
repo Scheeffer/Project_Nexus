@@ -309,7 +309,9 @@ Não houve tempo para checar se o protocolo está online no flow do Node-RED cen
   <tr>
     <td>
       <pre><code class="language-js">
-      A cors (Cross Origin Resource Sharing) é um mecanismo de segurança do browser  que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado eplo servidor (local). 
+        A cors (Cross Origin Resource Sharing) é um mecanismo de segurança do browser  que bloqueia <br>
+        código Javascript de frontend de ler respostas de diferentes origens a não ser que seja <br>
+        explicitamente habilitado eplo servidor (local). 
       </code></pre>
       
             httpNodeCors: {
