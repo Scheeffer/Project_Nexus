@@ -60,7 +60,7 @@ A estrutura de dados reconhecida pelo display E620 é a de uma sequencia de 8 by
 
 O sistema é composto por duas placas ESP32 interligadas por um barramento CAN (250 Kbps) e integradas a uma interface web e ao Node-RED via HTTP. O objetivo principal é controlar a variável g_velocidade_sistema, gerenciando quem tem a prioridade no momento (Concorrência).
 
-<p align="center"> <img src="figs/Diagrama.png" alt="Topologia Física da Rede CAN - Célula 2" width="750"> </p>
+<p align="center"> <img src="figs/diagramaV2.png" alt="Topologia Física da Rede CAN - Célula 2" width="750"> </p>
 <p align="center"><b>Topologia Física da Rede CAN - Célula 2</b></p>
 <br><br>
 
