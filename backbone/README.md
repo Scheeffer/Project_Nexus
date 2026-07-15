@@ -17,15 +17,6 @@ No contexto do **Projeto Nexus**, o computador que executa o **Node-RED** atua e
 * **Tradução Multiprotocolo:** O sistema interliga equipamentos de naturezas totalmente diferentes. Ele realiza a ingestão de dados de CLPs Siemens via **PROFINET** (através da biblioteca S7), de dispositivos na rede **CAN** e de sensores sem fios via **MQTT**. O Node-RED traduz e normaliza estes dados brutos incompatíveis num formato universal padronizado (objetos JSON).
 * **Intermediação Centralizada (Middleware):** O computador configurado com o IP fixo `192.168.0.100` funciona como o ponto focal da rede `COM_N_26.1`. Os dispositivos finais não comunicam diretamente entre si; em vez disso, enviam as informações para este nó central, que faz a gestão e a ponte de dados entre as sub-redes.
 * **Processamento e Roteamento de Aplicação:** Ao contrário de um elemento de infraestrutura pura (como um switch ou um backbone), que apenas transporta os pacotes de dados, o Node-RED abre e processa o conteúdo das mensagens. Ele aplica lógica de controlo (através dos nós `function` e `change`) e encaminha a informação processada para o destino final — seja alimentando a interface gráfica (Dashboard) ou enviando comandos de volta para os atuadores em campo.
-# O que é o Node-RED - https://nodered.org/
-
-O Node-RED é uma ferramenta de desenvolvimento de código aberto focada na programação baseada em fluxos (Flow-Based Programming), originalmente criada pela IBM para simplificar a interconexão de dispositivos de hardware, APIs e serviços online no ecossistema da Internet das Coisas (IoT). Por meio de uma interface gráfica executada diretamente no navegador, os usuários podem arrastar, soltar e interligar blocos funcionais chamados de "nós", o que reduz drasticamente a necessidade de codificação manual complexa para estabelecer fluxos de dados automatizados.
-
-A base estrutural do Node-RED repousa sobre o conceito de nós de entrada, processamento e saída, onde cada nó executa uma tarefa atômica e se comunica enviando mensagens padronizadas na forma de objetos JSON (JavaScript Object Notation). Toda a lógica visual construída pelo usuário, incluindo a disposição e o encadeamento desses nós, é convertida e salva nativamente em arquivos JSON de texto limpo, o que confere à plataforma extrema leveza, portabilidade e facilidade para exportação, importação e controle de versão de projetos de automação.
-
-Por baixo dessa interface visual, o Node-RED roda inteiramente sobre o Node.js, um ambiente de execução (runtime) JavaScript assíncrono e orientado a eventos, construído sobre o motor V8 do Google Chrome. A arquitetura de I/O (Entrada/Saída) não bloqueante do Node.js permite que o Node-RED gerencie milhares de conexões e eventos simultâneos em tempo real com um consumo mínimo de memória e CPU. Isso o torna altamente eficiente tanto para servidores robustos em nuvem quanto para gateways industriais de recursos limitados e sistemas embarcados.
-
-Na comunicação entre equipamentos distintos, o Node-RED atua como um middleware ou gateway inteligente, realizando a ingestão multiprotocolo de dados provenientes de hardwares que utilizam linguagens incompatíveis, como MQTT, Modbus, HTTP ou comunicação Serial. Após capturar esses dados brutos, a ferramenta realiza o parsing e a normalização das informações em tempo real e as roteia para seus respectivos destinos — sejam eles bancos de dados, painéis de monitoramento ou comandos de controle enviados de volta para os dispositivos.
 
 # O que é o Node-RED - https://nodered.org/
 
@@ -49,7 +40,8 @@ A imagem abaixo apresenta a configuração interna do roteador:
 
 O computador no qual o Node-RED está instalado, e que atua como o **gateway** central do sistema, deve ter sua interface de conexão (RJ45 ou Wi-Fi) configurada com IP estático. Conforme detalhado na imagem a seguir, os parâmetros de adaptador de rede exigem a definição manual do endereço IPv4 fixado em `192.168.0.100`, alinhado com a respectiva máscara de sub-rede e apontando para o gateway padrão da rede (`192.168.0.167`).
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/Ip%20Broker.png" alt=" Componentes" width="400">
+<img width="389" height="441" alt="image" src="https://github.com/user-attachments/assets/b801b8bd-3ed7-443a-81f9-3544d5891be5" />
+
 
 # Fluxo Node-RED - Projeto Nexus
 
