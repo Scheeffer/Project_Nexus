@@ -7,11 +7,11 @@
 
 void app_main() 
 {
- wifi_init_sta();
-
+    gpioInit();/*Configura GPIO */
+    wifi_init_sta();
     vTaskDelay(pdMS_TO_TICKS(5000));
     mqtt_start();
-    gpioInit();
+  
     while(1)
     {
         vTaskDelay(pdMS_TO_TICKS(10));

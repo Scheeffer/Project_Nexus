@@ -117,7 +117,10 @@ static void mqtt_event_handler(
         case MQTT_EVENT_DISCONNECTED:
 
             ESP_LOGI("MQTT","Desconectado");
-
+            /**abre os reles */
+            atualiza_saidas(DESLIGADO);
+            /*Tenta iniciar uma nova conexção com o brocker*/
+            mqtt_start();
         break;
     }
 }
