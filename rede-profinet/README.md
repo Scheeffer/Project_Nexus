@@ -149,10 +149,13 @@ A documentação do projeto engloba um diagrama elétrico multifilar, essencial 
 
 Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/diagramas/Diagrama_Multifilar.pdf).
 
+Segue arquivo do programa do CLP, compativel com software TIA Portal - [Programação do CLP](https://github.com/Scheeffer/Project_Nexus/tree/main/rede-profinet/projeto-tia).
+
 Na imagem a seguir, detalham-se as conexões PROFINET configuradas no ambiente TIA Portal, evidenciando a comunicação estabelecida entre o IO Controller (CLP Mestre) e os respectivos IO Devices (IHM e Inversor de Frequência).
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/clp_profinet.jpeg" alt="Componentes" width="500">
 
+[Programação do CLP](https://github.com/Scheeffer/Project_Nexus/tree/main/rede-profinet/projeto-tia).
 
 ## 6. Componentes e Modelos
 | Componente | Especificação | Fornecedor| Link | Manual |
