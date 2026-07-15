@@ -16,13 +16,13 @@ Para disponibilizar os resultados obtidos do Node central sem depender de um das
 
 ## 2	Funcionamento
 
-o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo o mais comum `index`, como na figura abaixo. Deste modo o dashboard online para o publico geral será sempre disponibilizada se não houver especificação do arquivo na URL.
+o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo o mais comum `index`, como na figura abaixo. Deste modo o dashboard online para o publico geral presente no arquivo `index.php` será sempre disponibilizada se não houver especificação do arquivo na URL.
 
 <p align="center"> <img src="figs/htaccess.png" alt="diagrama" width="500"></p>
 <p align="center"><b>Configuração .htacess do servidor PHP local Apache</b></p>
 <br><br>
 
-A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents), pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo.xxx`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real . o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. 
+A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents), pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real . o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender das necessidades do projetista. 
 
 <p align="center"> <img src="figs/url_fetch.png" alt="diagrama" width="100%"></p>
 <p align="center"><b>Endereço da requisição http</b></p>
@@ -32,10 +32,6 @@ A segunda entrada é a de upload de dados. Através de um sistema de armazername
 <br><br>
 
 ## 3	Estrutura de dados
-
-Ao inserir o link do site sem indicar o arquivo, do mesmo modo que qualquer outro site, o servidor hospedado procura automaticamente por um arquivo de nome index e quaisquer variações de extensão. Esse arquivo index.php é responsável por disponibilizar os dados do banco de dados do servidor hospedado ao usuári oem contraste ao upload.php que é responsavel pelo upload dos dados ao banco de dados do servidor.
-
-Para inserir os dados é necessário adicionar o diretório “/upload.php” a url do site de modo a ficar:  https://`dominio`.infinityfreeapp.com/upload.php ou somente `dominio`.infinityfreeapp.com/upload.php, pois o navegador completa a pesquisa na web. No arquivo upload.php existe um código que faz uma requisição ao ip do próprio pc utilizando o ip de loopback 127.0.0.1, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados os quais serão requisitados: http://127.0.0.1:1880/api/state. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender da circunstancia. No caso deste projeto, esse endereço significa que o website irá procurar o diretorio na porta default do Node-RED no proprio computador.
 
 ### Estrutura de arquivos do Website
 
@@ -56,12 +52,12 @@ Resumo geral dos arquivos e suas funcionalidades.
 `HTML` : Responsavel por criar a estrutura do website, quando o navegador recebe o código HTML ele cria uma arvore de documentos/objetos).<br>
 `CSS` : Formata a configuração padrão de objetos HTML.<br>
 `javascript` : Linguagem de responsavel pelo tornar o website responsive, desde alterar icones/css até realizar requisições htttp. <br>
-`PHP` : linguagem de backend, utilizadas nos servidores. Suporta HTML e Javascript em seu arquivo. Todo código php fica invisivel ao usuario, diferente do html<br>
+`PHP` : linguagem de server-side, utilizadas pelos servidores. Suporta HTML e Javascript em seu arquivo. Todo código php fica invisivel ao usuario, diferente do html e javascript<br>
 `MySQL` : Estrura semantica lida por banco de dados para realizar diversas ações no mesmo.<br>
 
 ## 4  Configuração Node-Red
 
-para que Node-RED responda as requisições foi criado funções em paralelo com o código do Node-RED central para extrair dados do fluxo de comunicação
+para que Node-RED responda as requisições foi criado funções em paralelo com o código do Node-RED central para extrair dados do fluxo de comunicação.
 
 ### Função principal Requisição GET `/api/state`
 
@@ -117,8 +113,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
             "Access-Control-Allow-Origin": "https://curricularium.infinityfreeapp.com"
         };
         
-        msg.payload = JSON.stringify(response);
-        
+        msg.payload = JSON.stringify(response);        
         return msg;
         
   </td>
@@ -181,8 +176,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
             erro:       Number(can.erro ?? can.error ?? protocolState.CAN?.erro ?? 0)
         };
         
-        flow.set("protocolState", protocolState);
-        
+        flow.set("protocolState", protocolState);        
         return msg;
          
   </tr>
@@ -206,8 +200,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
             temperatura: Number(msg.payload)
         };
         
-        flow.set("protocolState", protocolState);
-        
+        flow.set("protocolState", protocolState);        
         return msg;        
   </tr>
 </table>
@@ -269,7 +262,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
 
 ### Politica de segurança do browser
 
-A CORS (Cross Origin Resource Sharing) é um mecanismo de segurança do browser que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor (local). Dependendo do computador e de sua configuração a falta desta explicidade pode gerar um bloqueio, e consequente erro, impossibilitando a comunicação entre o Website e o Node-RED. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario)/.node-red` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo(HTTP/HTTPS) + dominio + porta (Padrão `:1880` para o Node-Red. Coloque sempre a porta que estiver utilizando). Note que mesmo que o website que realiza o upload possui o diretorio `/upload`, ele não entra como endereço, apenas o endereço absoluto.
+A CORS (Cross Origin Resource Sharing) é um mecanismo de segurança do browser que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor. Dependendo do computador e de sua configuração a falta desta explicidade pode gerar um bloqueio, e consequente erro, impossibilitando a comunicação entre o Website e o Node-RED. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario)/.node-red` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo(HTTP/HTTPS) + dominio + porta (Padrão `:1880` para o Node-Red. Coloque sempre a porta que estiver utilizando). Note que mesmo que o website que realiza o upload possui o diretorio `/upload`, ele não entra como endereço, apenas o endereço absoluto.
 
 <table>
   <tr>
@@ -301,28 +294,28 @@ Resumo geral dos arquivos e suas funcionalidades.
 | :---: | :--- |
 | `Overview` | Dados gerais do website. |
 | `file manager` | local para armazenar e atualizar os arquivos do website dentro da pasta `htdocs`. |
-| `MySQL Databases` | Banco de dados MySQL onde seus dados serão criados/atualizados. |
-| `resource Usage` | Aba de uso de recursos do website. Cuidado para não ultrapassar os 50000 hits, que significa requisitar os **arquivos** ao host, Atualizar o website não requisitar os arquivos novamente mas CTRL + F5 e abri-lo em uma nova aba requisitam.  |
+| `MySQL Databases` | Gerenciador de banco de dados MySQL onde seus dados serão criados/atualizados. |
+| `resource Usage` | Aba de uso de recursos do website. Cuidado para não ultrapassar os 50000 hits, que significa requisitar os **arquivos** ao host, Atualizar o website não requisita os arquivos novamente mas CTRL + F5 e abri-lo em uma nova aba requisitam. |
 | `Control Panel` | Configurações gerais do website. |
 
 ### Banco de dados
-Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos.
+Será necessario criar e acessar o banco de dados em seu novo website. No arquivo `backend.php` existe a classe `Connection` responsavel por realisar a conexão ao banco de dados, ele utiliza os parametros host, dbname, user e password que são auto explicativos. O desenvolvedor deverá colocar os dados do seu banco de dados no arquivo para que a comunicação com a "nuvem" aconteça.
 
-<p align="center"> <img src="figs/connection.png" alt="Fluxograma" width="100%"></p>
-<p align="center"><b>Fluxograma</b></p>
+<p align="center"> <img src="figs/connection.png" alt="" width="100%"></p>
+<p align="center"><b>Conexão de banco de dados</b></p>
 <br><br>
 
-Esses dados são obtidos na aba `MySQL Databases` discutida na tabela logo acima.
+Esses dados são obtidos na aba `MySQL Databases` apresentadas na tabela logo acima.
 
 <p align="center"> <img src="figs/database_details.png" alt="Fluxograma" width="100%"></p>
-<p align="center"><b>Fluxograma</b></p>
+<p align="center"><b>Detalhes da base de dados</b></p>
 <br><br>
 
-Com Esses parametros configurados você podera acessar o banco de dados local a partir do website e configurar tabela e coluna necessarias para o projeto. Se futuros projetos forem similares ao utilizados neste semestre 2026/1, é possivel importar as configurações do banco de dados pelo MyPHPadmin utilizando o arquivo `database_export.sql`.
+Com Esses parametros configurados você poderá acessar o banco de dados a partir do website e configurar tabela e coluna necessarias para o projeto. Se a necessidade de projetos futuros fortem similares ao do website deste semestre, 2026/1, é possivel importar as configurações do banco de dados pelo MyPHPadmin utilizando o arquivo `database_export.sql`.
 
-Uma possivel alteração futura ara esta raiz do projeto seria tornar o website completamente independente do Node central, de modo que o Node, ou um segundo website local, envie e receba  requisições através de IP's ou dominios, realizando uma troca de dados mais complexa com o website. Esta topologia não é melhor ou pior, mas deve ser levado em conta as necessidades gerais do projeto.
+Uma possivel alteração futura para esta raiz do projeto seria tornar o website completamente independente do Node central, de modo que o Node, ou um segundo website local, envie e receba  requisições através de IP's ou dominios, realizando uma troca de dados mais dinamica com o website. Esta topologia não é melhor ou pior, deve ser levado em conta as necessidades gerais do projeto.
 
-Não houve tempo para checar se o protocolo está online no flow do Node-RED central e salva-lo no objeto que vai para o Website. O site é versátil neste quesito e sinaliza através de icones, texto, cores e até sinal de audio, quando o botão estiver ativo, para retratar visualmente o estado da conexão do protocolo. Contudo, esse não foi um problema demasiado grande pois se tudo estiver funcionando raramente haverá a necessidade deste dinamicismo. Mas que fique documentado e em mente para proximo semestres que está opção já está programada no site, só requer que o Node-RED central atualize o estado online do protocolo.
+Não houve tempo para checar se o protocolo está online no flow do Node-RED central e salva-lo no objeto que vai para o Website. Contudo, o website é versátil neste quesito e sinaliza através de icones, texto, cores e até sinal de audio, quando o botão estiver ativo, para retratar visualmente o estado da conexão do protocolo. Contudo, esse não foi um problema demasiado grande pois se tudo estiver funcionando raramente haverá a necessidade desta verificação ocorrer. Mas que fique documentado e em mente para proximo semestres que está opção já está programada no site (index.php), só requer que o Node-RED central atualize o estado online do protocolo.
 
 
 
