@@ -1,110 +1,101 @@
 # 🟦 Rede PROFINET — Célula 1 (Cainã & Matheus)
 
+## 1. Descrição do Projeto
 
----
+O protocolo local utilizado é o **PROFINET**, com um CLP S7-1217C configurado como mestre da rede, uma IHM operando como interface de operação e visualização, e um Inversor de Frequência atuando como elemento final de controle. O CLP também opera como **bridge** para o gateway central (Node-RED) via protocolo **S7 / ISO‑on‑TCP**, nativo dos controladores Siemens. 
 
-## 1. Descrição do projeto
-
-O protocolo local utilizado é o **PROFINET**, com um CLP s7 1217C usado como mestre da rede, uma IHM operando como sensor e tela de visualização e um Inversor de Frequência, atuando como um atuador final. O CLP também atua como **bridge** para o gateway central (node-red) via protocolo **S7 / ISO‑on‑TCP**, um protocolo nativo do proprio CLP. 
-
-A ideia dentro desta rede é de controlar um motor de 380V e 2cv de potencia atraves de um inversor de frequencia, para isso sera usado a IHM para definir a frequencia, ligar e desligar o motor. Toda a comunicação dentro desta rede independe do gateway central, podendo funcionar de forma offline. O grande diferencial desta abordagem é poder conectar dois mundos aparentemente distantes: um motor de alta potencia e um Dashboard altamente tecnologico e moderno.  
+O objetivo desta rede consiste em controlar um motor de 380 V e 2 cv de potência por meio de um inversor de frequência. A IHM é utilizada para definir o setpoint de frequência, além de ligar e desligar o motor. A comunicação local independe do gateway central, operando de forma autônoma. A vantagem desta topologia é a integração entre o acionamento de potência e plataformas de supervisão de alto nível (Dashboards).
 
 | Item | Valor |
 |------|-------|
-| Controlador | **CLP Siemens S7‑1217 C** (endpoint `192.168.0.1`, rack 0 / slot 1) |
-| Sensor / IHM | **IHM KTP700 Basic** (endpoint `192.168.0.10`) |
+| Controlador | **CLP Siemens S7‑1217C** (endpoint `192.168.0.1`, rack 0 / slot 1) |
+| Interface / IHM | **IHM KTP700 Basic** (endpoint `192.168.0.10`) |
 | Atuador | **Inversor de frequência SINAMICS G120C** (endpoint `192.168.0.5`) |
 | Bridge Gateway | **S7 / ISO‑on‑TCP** via `node‑red‑contrib‑s7` (cycletime 1000 ms) |
 | Software | TIA Portal _(versão: V20)_ |
 
-### Variáveis Disponiveis ao Node-RED
+### Variáveis Disponíveis ao Node-RED
 
 | Nome | Endereço | Tipo | Uso |
 |------|----------|------|-----|
-| `START` | `DB4.DBX0.0` | bool | Liga o inversor |
-| `STOP` | `DB4.DBX0.1` | bool | Desliga o inversor |
-| `ENTRADA_REF_FREQUENCIA` | `DB4,REAL2` | real | Seta frequência |
+| `START` | `DB4,X0.0` | bool | Liga o inversor |
+| `STOP` | `DB4,X0.1` | bool | Desliga o inversor |
+| `ENTRADA_REF_FREQUENCIA` | `DB4,REAL2` | real | Define a frequência |
 | `FDK_HZ` | `DB2,REAL6` | real | Feedback de frequência |
-| `RESET_INV` | `DB4,x0.2` | bool | Reseta as falhas no inversor de frequência |
-| `HABILITA NODE RED` | `DB2,X10.1` | bool | Habilita o comando via node red |
-| `FDK_VEL` | `DB6,REAL4` | real | Feedback da velocidade rede can |
-| `SET_VEL` | `DB6,REAL0` | real | Seta o valor da velocidade rede can |
-| `Liga_AQ` | `DB7,X0.0` | bool | Liga o Aquecedor rede MQTT |
-| `Liga_Vent` | `DB7,X0.1` | bool | Liga o Ventilador rede MQTT |
-| `Desliga_Vent_AQ` | `DB7,X0.2` | bool | Desliga o Ventilador ou o Aquecedor rede MQTT |
-| `FDK_temp` | `DB7,REAL2` | real | Feedback do valor da temperatura rede MQTT |
+| `RESET_INV` | `DB4,X0.2` | bool | Reseta as falhas no inversor de frequência |
+| `HABILITA NODE RED` | `DB2,X10.1` | bool | Habilita o comando via Node-RED |
+| `FDK_VEL` | `DB6,REAL4` | real | Feedback da velocidade na rede CAN |
+| `SET_VEL` | `DB6,REAL0` | real | Define o valor da velocidade na rede CAN |
+| `Liga_AQ` | `DB7,X0.0` | bool | Liga o Aquecedor na rede MQTT |
+| `Liga_Vent` | `DB7,X0.1` | bool | Liga o Ventilador na rede MQTT |
+| `Desliga_Vent_AQ` | `DB7,X0.2` | bool | Desliga o Ventilador ou o Aquecedor na rede MQTT |
+| `FDK_temp` | `DB7,REAL2` | real | Feedback do valor da temperatura na rede MQTT |
 
 
 ---
 
-## 2. Diagrama de blocos
+## 2. Diagrama de Blocos
 
-O sistema adota uma **topologia em estrela**, onde todas as comunicações são centralizadas em um swtich. Esta abordagem minimiza o impacto de falhas individuais nos cabos e simplifica o diagnóstico e a manutenção da infraestrutura de comunicação.
+O sistema adota uma **topologia em estrela**, onde todas as comunicações são centralizadas em um switch. Esta abordagem minimiza o impacto de falhas individuais nos cabos e simplifica o diagnóstico e a manutenção da infraestrutura de comunicação.
 
-* **Switch Industrial Phoenix Contact FL Switch 1108** Atua como o nó central da rede Profinet. É responsável pelo chaveamento físico dos pacotes de dados, garantindo a comutação eficiente entre a camada de controle de campo e a camada de monitoramento.
+* **Switch Industrial Phoenix Contact FL Switch 1108:** Atua como o nó central da rede PROFINET. É responsável pelo chaveamento físico dos pacotes de dados, garantindo a comutação eficiente entre a camada de controle de campo e a camada de monitoramento.
   
-  Camada de Controle de Campo:Representa o nível operacional e físico do sistema, atuando diretamente no maquinário por meio   de sensores, atuadores e CLPs. É caracterizada pela execução da lógica de controle em tempo real, exigindo comunicação de   rede determinística e de baixíssima latência para garantir ações físicas e respostas imediatas.
+  * **Camada de Controle de Campo:** Representa o nível operacional e físico do sistema, atuando diretamente no maquinário por meio de sensores, atuadores e CLPs. É caracterizada pela execução da lógica de controle em tempo real, exigindo comunicação de rede determinística e de baixíssima latência para garantir ações físicas e respostas imediatas.
+  * **Camada de Monitoramento:** É o nível tecnológico de supervisão e gestão de dados focado na interface humana. Sua função é coletar as informações geradas no campo para compor históricos e alimentar Dashboards, permitindo que operadores acompanhem visualmente o sistema e ajustem parâmetros gerais sem a exigência crítica de controle em milissegundos.
 
-  Camada de Monitoramento: É o nível tecnológico de supervisão e gestão de dados focado na interface humana. Sua função é      coletar as informações geradas no campo para compor históricos e alimentar Dashboards, permitindo que operadores
-  acompanhem visualmente o sistema e ajustem parâmetros gerais sem a exigência crítica de controle em milissegundos.
-
-* **CLP Siemens S7-1217C. Endereço IP: `192.168.0.1`** Unidade central de processamento e lógica. Executa o algoritmo de controle do processo, gerencia os intertravamentos de segurança e coordena os demais periféricos.
+* **CLP Siemens S7-1217C (Endereço IP: `192.168.0.1`):** Unidade central de processamento e lógica. Executa o algoritmo de controle do processo, gerencia os intertravamentos de segurança e coordena os demais periféricos.
  
-* **IHM Siemens KTP700 Basic. Endereço IP: `192.168.0.10`** Interface Homem-Máquina. Permite a interação do operador com o sistema para a visualização de variáveis em tempo real, inserção de parâmetros operacionais e interação com as demais redes.
+* **IHM Siemens KTP700 Basic (Endereço IP: `192.168.0.10`):** Interface Homem-Máquina. Permite a interação do operador com o sistema para a visualização de variáveis em tempo real, inserção de parâmetros operacionais e interação com as demais redes.
  
-* **Inversor de Frequência Siemens Sinamics G120C. Endereço IP: `192.168.0.5`** Acionamento e controle de velocidade do motor elétrico. Envia dados de diagnóstico (frequencia, ligado, desligado e falhas) e recebe comandos de frequência do CLP.
+* **Inversor de Frequência Siemens Sinamics G120C (Endereço IP: `192.168.0.5`):** Acionamento e controle de velocidade do motor elétrico. Envia dados de diagnóstico (frequência, status de ligado/desligado e falhas) e recebe comandos de referência do CLP.
   
-* **Camada de Supervisão e Integração (gateway central) Node-RED. Endereço IP: `192.168.0.100`** Atua como o *gateway central* de dados. É responsável por coletar informações das redes para exibição em dashboards. Alem de gerenciar o acionamento e controle entre as redes. 
- 
+* **Camada de Supervisão e Integração - Node-RED (Endereço IP: `192.168.0.100`):** Atua como o *gateway central* de dados. É responsável por coletar informações das redes para exibição em dashboards, além de gerenciar o acionamento e controle entre as redes. 
 
-```mermaid
+```
+mermaid
 flowchart LR
-    IHM["IHM KTP700 Basic<br/>192.168.0.10"] == "PROFINET" ==> SW["FL Swith 1108 <br/>Phoenix Contact"]
+    IHM["IHM KTP700 Basic<br/>192.168.0.10"] == "PROFINET" ==> SW["FL Switch 1108 <br/>Phoenix Contact"]
     PLC["CLP S7-1217C<br/>192.168.0.1"] == "PROFINET" ==> SW
     G120["Inversor G120C<br/>192.168.0.5"] == "PROFINET" ==> SW
     SW == "S7 / ISO-on-TCP" ==> NR["Node-RED (gateway central)<br/>192.168.0.100"]
 ```
-
 ---
 
 ## 3. Diagrama de Estados 
 
 Este diagrama de estados descreve a sequência lógica de controle e a troca de sinais que ocorrem via rede **PROFINET** entre a **IHM KTP700**, o **CLP S7-1217C** e o **Inversor G120C** durante o ciclo de operação do motor.
 
-* **Inicialização -> PARADO:** `Inicialização da Rede Conexão PROFINET OK`: Ao ligar o painel elétrico, o Switch Phoenix Contact estabelece a comunicação entre todos os nós. Assim que o CLP reconhece a presença da IHM e do G120C na rede sem erros de barramento, o sistema entra no modo de espera seguro (`Parado`).
- 
+* **Inicialização -> PARADO (`Inicialização da Rede / Conexão PROFINET OK`):** Ao energizar o painel elétrico, o Switch estabelece a comunicação entre todos os nós. Assim que o CLP reconhece a presença da IHM e do G120C na rede sem erros de barramento, o sistema entra no modo de espera seguro (`Parado`).
 
-* **PARADO -> ACIONANDO:** `IHM envia bit START para o CLP / CLP envia START para o G120C`: O operador pressiona o botão de partida na tela da IHM. Essa informação é enviada via rede para o CLP, que processa as lógicas de intertravamento. Estando tudo correto, o CLP envia a palavra de comando com o bit de partida para o inversor via PROFINET, partindo o motor.
+* **PARADO -> ACIONANDO (`IHM envia bit START para o CLP / CLP envia START para o G120C`):** O comando de partida é acionado na tela da IHM. Essa informação é enviada via rede para o CLP, que processa as lógicas de intertravamento. Atendidas as condições de segurança, o CLP envia a palavra de comando com o bit de partida para o inversor via PROFINET, iniciando o acionamento do motor.
 
+* **ACIONANDO -> RODANDO (`G120C retorna rampa concluída / Setpoint de frequência alcançado`):** O inversor acelera o motor. Assim que a frequência real medida pelo drive se iguala à frequência desejada (Setpoint), o inversor atualiza sua palavra de status na rede, informando ao CLP que a rampa foi concluída. O sistema assume o estado `Rodando`.
 
-* **ACIONANDO -> RODANDO:** `G120C retorna rampa concluída / Setpoint de frequência alcançado`: O inversor acelera o motor. Assim que a frequência real medida pelo drive se iguala à frequência desejada (Setpoint), o inversor atualiza sua palavra de status na rede informando ao CLP que a rampa foi concluída. O sistema assume o estado `Rodando`.
+* **RODANDO -> PARADO (`IHM envia bit STOP para o CLP / CLP envia STOP para o G120C`):** Durante a operação normal, solicita-se a parada através da IHM. O comando é enviado para o CLP, que remove o sinal de partida destinado ao inversor. O G120C desacelera o motor de forma controlada até a inércia total, retornando ao estado `Parado`.
 
-* **RODANDO -> PARADO:** `IHM envia bit STOP para o CLP / CLP envia STOP para o G120C`: Durante a operação normal, o operador solicita a parada através da IHM. O comando é enviado para o CLP, que remove o sinal de partida enviado ao inversor. O G120C desacelera o motor de forma controlada até a parada total, retornando ao estado `Parado`.
+* **RODANDO -> FALHA (`G120C dispara bit de trip / CLP lê código de erro`):** Ocorrendo qualquer anomalia elétrica ou mecânica durante a operação, o inversor interrompe a saída por proteção e envia instantaneamente um bit de "Trip" (Falha Ativa) e o código do erro para o CLP. O controlador bloqueia o sistema e sinaliza o alarme na IHM.
 
-* **RODANDO -> FALHA:** `G120C dispara bit de trip / CLP lê código de erro`: Se ocorrer qualquer anomalia elétrica ou mecânica com o motor em movimento, o inversor corta a saída por proteção e envia instantaneamente um bit de "Trip" (Falha Ativa) para o CLP via PROFINET, além do código correspondente ao erro. O CLP bloqueia o sistema e envia o alarme para a tela da IHM.
+* **FALHA -> PARADO (`IHM envia bit RESET para o CLP / CLP envia pulso Reset para o G120C`):** Após a eliminação da causa do problema em campo, o comando de "Reset" é acionado na IHM. O CLP processa a solicitação e envia um pulso (borda de subida) de reset ao inversor. Caso a condição de falha não persista, o inversor limpa o erro e o sistema retorna ao estado `Parado`.
 
-* **FALHA -> PARADO:** `IHM envia bit RESET para o CLP / CLP envia pulso Reset para o G120C`: Após o operador verificar e sanar a causa do problema no campo, ele pressiona o botão de "Reset" na IHM. O CLP recebe a solicitação e envia um pulso de borda de subida no bit de reset para o inversor através da rede. Se a falha sumir, o inversor limpa o erro e o sistema volta a ficar pronto no estado `Parado`.
-
-
-```mermaid
+```
+mermaid
 stateDiagram-v2
-    [*] --> Parado : Inicialização da Rede Conexão PROFINET OK
+    [*] --> Parado : Inicialização da Rede / Conexão PROFINET OK
     
-    Parado --> Acionando : IHM envia bit START para o CLP CLP envia START para o G120C
+    Parado --> Acionando : IHM envia bit START para o CLP / CLP envia START para o G120C
     
-    Acionando --> Rodando : G120C retorna rampa concluída Setpoint de frequência alcançado
+    Acionando --> Rodando : G120C retorna rampa concluída / Setpoint de frequência alcançado
     
-    Rodando --> Parado : IHM envia bit STOP para o CLP CLP envia STOP para o G120C
+    Rodando --> Parado : IHM envia bit STOP para o CLP / CLP envia STOP para o G120C
     
-    Rodando --> Falha : G120C dispara bit de trip CLP lê código de erro 
+    Rodando --> Falha : G120C dispara bit de trip / CLP lê código de erro 
     
-    Falha --> Parado : IHM envia bit RESET para o CLP CLP envia pulso Reset para o G120C
+    Falha --> Parado : IHM envia bit RESET para o CLP / CLP envia pulso Reset para o G120C
 ```
 
 ## 4. Diagrama de Sequência
 
-O **Diagrama de Sequência** apresentado mostra a sequencia de comandos necessários para acionar o inversor na perspectiva de um usuário usando a IHM via rede Profinet. A cada interação do usuário uma etapa do diagrama é atualizada seguindo o fluxo com possibilidade de ligar, desligar e resetar o inversor em caso de falha.  
-
+O **Diagrama de Sequência** a seguir apresenta o fluxo de comandos necessários para acionar o inversor a partir da IHM via rede PROFINET. Cada interação atualiza o estado do sistema, compreendendo os fluxos de ligar, desligar e resetar o inversor em caso de falha.  
 
 ```mermaid
 sequenceDiagram
@@ -138,8 +129,8 @@ sequenceDiagram
     %% Frequência Alcançada
     Note over G120: Setpoint de Frequência Alcançado
     G120->>CLP: Altera bit de status (ZSW1.8 = 1)
-    CLP->>IHM: Exibe valor atualizado da frequência
- 
+    CLP->>IHM: Atualiza Status: "Motor Rodando"
+    IHM->>Operador: Exibe valor atualizado da frequência
 
     %% Parada do Motor
     Operador->>IHM: Pressiona botão "STOP"
@@ -154,14 +145,13 @@ sequenceDiagram
 
 ## 5. Diagrama Elétrico 
 
-Para implementar este projeto foi realizado um diagrama elétrico multifilar onde é possível observar todas as conexões elétricas, tanto para a parte de potencia quanto para a parte da **Rede Profinet**. 
+A documentação do projeto engloba um diagrama elétrico multifilar, essencial para observar todas as conexões elétricas de potência e as derivações da **Rede PROFINET**. 
 
 Veja a documentação completa no arquivo [Diagrama Multifilar Profinet](https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/diagramas/Diagrama_Multifilar.pdf).
 
-Na imagem abaixo podemos analisar as conexões profinet realizadas dentro do Tia Portal.
+Na imagem a seguir, detalham-se as conexões PROFINET configuradas no ambiente TIA Portal, evidenciando a comunicação estabelecida entre o IO Controller (CLP Mestre) e os respectivos IO Devices (IHM e Inversor de Frequência).
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/clp_profinet.jpeg" alt=" Componentes" width="500">
-
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/clp_profinet.jpeg" alt="Componentes" width="500">
 
 
 ## 6. Componentes e Modelos
@@ -176,7 +166,7 @@ Na imagem abaixo podemos analisar as conexões profinet realizadas dentro do Tia
 | Fonte de alimentação | 24V VCC 2,5A  | EATON|<a href="https://www.mercadolivre.com.br/fonte-chaveada-24v-25a-psee2g1ac24dc60wsc-phoenix/up/MLBU2744053218#polycard_client=search-desktop&be_origin=backend&search_layout=grid&position=7&type=product&tracking_id=3575352c-2871-414b-bc9d-7d146c6c67a3&wid=MLB5173451578&sid=search" target="_blank">Link</a> 
 ---
 
-Na imagem abaixo temos o quadro de automação montado com todos os equipamentos necessários para fazer as conexões da rede profinet.
+Na imagem abaixo há o quadro de automação montado com todos os equipamentos necessários para fazer as conexões da rede profinet.
 
 * **CLP - S7-1217C** 
 * **Switch** com 8 pontos de conexão
@@ -192,49 +182,42 @@ Na imagem abaixo temos o quadro de automação montado com todos os equipamentos
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/Componentes%20internos.png" alt=" Componentes" width="300">
 
 
-Na imagem abaixo temos o quadro de automação visto por fora e a tela da IHM ligada na tela geral de controle das redes.
+Na imagem abaixo há o quadro de automação visto por fora e a tela da IHM ligada na tela geral de controle das redes.
 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/IHM%20Externo.png" alt="IHM" width="300">
 
-Na imagem abaixo temos o quadro de automação visto por dentro, com as conexões de alimentação e da rede profinet.
+Na imagem abaixo há o quadro de automação visto por dentro, com as conexões de alimentação e da rede profinet.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/IHM%20Interno.png" alt="IHM" width="300">
 ---
 
-## 7. TELAS IHM 
+## 7. Telas IHM 
 
-### Tela IHM geral
+### Tela IHM Geral
 
-Nesta tela temos os botões para escolha de qual rede queremos controlar ou monitorar. Também temos o botão de escolha se a operação será via IHM ou via Node-Red, para poder operar via node-red temos que setar no dashboard do node-red e na IHM. 
+Esta tela contém os botões de seleção da rede a ser controlada ou monitorada. Devido à arquitetura do CLP e aos seus requisitos de segurança, configurou-se um comando para prioridade de controle,`Habilita Comando IHM`, permitindo a alternância da operação entre a IHM e o Node-RED. Para a operação via Node-RED, exige-se o acionamento prévio do botão `Acionamento PROFINET via Node` diretamente no dashboard.
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/geral_ihm.jpeg" alt=" Componentes" width="500">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/geral_ihm.jpeg" alt="Componentes" width="500">
 
 
-### Tela IHM Rede Profinet 
+### Tela IHM Rede PROFINET 
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/profinet_ihm.jpeg" alt=" Componentes" width="500">
+A imagem a seguir ilustra a interface de controle e leitura da rede PROFINET. Os botões realizam funções dedicadas para atuar sobre o inversor. Nos blocos de exibição, `Velocidade Bomba Atual` indica a frequência instantânea do equipamento, enquanto o campo `Frequência` é editável para a definição de novos setpoints.
 
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/profinet_ihm.jpeg" alt="Componentes" width="500">
+ 
 
 ### Tela IHM Rede CAN
 
+A imagem abaixo demonstra a interface de monitoramento e controle destinada à rede CAN. Apresenta dois blocos de informação principais: o `Mostrador de Velocidade` exibe o valor em tempo real lido no velocímetro, e o campo `Setpoint Velocidade` é editável para a parametrização de novos valores de referência.
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/can_ihm.jpeg" alt=" Componentes" width="500">
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/can_ihm.jpeg" alt="Componentes" width="500">
 
 
 ### Tela IHM Rede MQTT 
 
+A interface de atuação e leitura da rede MQTT está ilustrada abaixo. Os botões enviam dados de status para publicação no broker MQTT, e o bloco de texto exibe o valor da temperatura mensurado pelo sensor pertencente a esta mesma rede.
 
-<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/mqtt_ihm.jpeg" alt=" Componentes" width="500">
-
-
-
-
-
-
-
-
-
-
-
+<img src="https://github.com/Scheeffer/Project_Nexus/blob/main/rede-profinet/figs/mqtt_ihm.jpeg" alt="Componentes" width="500">
 ```
