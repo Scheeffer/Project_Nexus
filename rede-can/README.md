@@ -41,7 +41,7 @@ O display E620 possui dois ID’s CAN presentes no datasheet, **0x4D2** e **0x4D
 
 | Variavel | Descrição |
 | :--- | :--- |
-| `Velocidade` | BYTE0 (LSB) e BYTE1 (MSB) são responsáveis pelo velocímetro, com uma escala de 0,1 km por bit, chegando a no máximo 99 km |
+| `Velocidade` | BYTE0 (LSB) e BYTE1 (MSB) são responsáveis pelo velocímetro, com uma escala de 0,1 km/h por bit, com limite máximo de 99 km/h |
 | `Bateria` |Durante os testes experimentais não foi observada resposta do display para os valores enviados ao campo correspondente à bateria. Não foi possível confirmar experimentalmente o funcionamento desse campo. São possíveis causas a incompatibilidade entre versões do firmware do display ou diferenças entre revisões do datasheet, o qual o manual de modelo que obtivemos não disponibilizam, nem mesmo os parametros **nope** ativaram alguma funcionalidade extra. |
 | `Marcha` | BYTE 6 é responsável pela marcha, 0 para N, 1 para D, e 2 para R. Quaisquer outros valores irão fazer com que nenhum sinal de estado de marcha esteja ativo |
 | `Erro` | BYTE7 é responsável pelo sinal de erro, qualquer número entre 1 e 255 irá fazer o display produzir um alerta sonoro e disponibilizar na tela o código de erro periodicamente. |
@@ -49,7 +49,7 @@ O display E620 possui dois ID’s CAN presentes no datasheet, **0x4D2** e **0x4D
 
 ### Estrutura de envio de dados
 
-A estrutura de dados reconhecida pelo display E620 é a de uma sequencia de 8 bytes, cada qual responsavel por uma variavel, ou parte dela. É possivel enviar menos que 8 bytes, o display ainda irá recebe-los, bytes não enviados serão setados com zero por padrão.
+A estrutura de dados reconhecida pelo display E620 é a de uma sequencia de 8 bytes, cada qual responsavel por uma variavel, ou parte dela. É possivel enviar menos que 8 bytes, o display irá receber somente os bytes enviados e não alterará os bytes restantes.
 
 | ID | BYTE0 | BYTE1 | BYTE2 | BYTE3 | BYTE4 | BYTE5 | BYTE6 | BYTE7 |
 | :--- | :--- | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
