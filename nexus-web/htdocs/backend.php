@@ -1,10 +1,10 @@
 <?php
 
     class Connection{
-        private $host   = "mysql-ag-br1-17.hospedagemelastica.com.br:33175";
-        private $dbname = "mvvrym_sylphina";
-        private $user   = "mvvrym_sylphina";
-        private $pass   = "p6e6r0o7la";
+        private $host   = "m";
+        private $dbname = "";
+        private $user   = "";
+        private $pass   = "";
         
         public function connectDB(){
             try{
