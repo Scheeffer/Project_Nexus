@@ -229,8 +229,7 @@ sequenceDiagram
 ## 7. INTERFACE DA REDE-CAN
 
 Para melhor comunicação das redes foi utilizado um esp(CANB) dedicado tanto para fazer a comunicação com o gateway(node-red) e como interface .html do sistema. O microcontrolador CANA é responsável por tarefas de missão crítica: amostrar um sinal analógico (ADC) através de filtros de média móvel e gerenciar a concorrência de controle no barramento de campo (CAN).
-Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi, hoveram tentativas em implementar em um unico microcontrolador, porém a quantidade de rotas para encaminhar as variáveis para o gateway global acabaram gerando atualização lenta do painel E620, ja que o painel E620 necessita receber dados constantemnente para não gerar travamento. Essas pilhas de rede (Network Stacks) possuem execução não-determinística, o que causaria atrasos na leitura do potenciômetro e na transmissão cíclica de 50ms da CAN, comprometendo a precisão física do sistema.
-
+Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi, hoveram tentativas em implementar em um unico microcontrolador, porém a quantidade de rotas para encaminhar as variáveis para o gateway global acabaram gerando atualização lenta do painel E620, no caso resposta entre 3 a 5 segundos, ja que o painel E620 necessita receber dados constantemnente para não gerar travamento.
 * Painel de Monitoramento CAN (Card Atuador/Sensor): Apresenta visualmente a velocidade consolidada do sistema em tempo real e a tensão isolada calculada para o potenciômetro físico (0V a 3.3V). Ele serve como um diagnóstico rápido para atestar que o barramento a 250 Kbps está online e operando perfeitamente através do recebimento do ID 0x4D2.
 
 * Controle PROFINET - CLP: Permite a interação direta com a lógica de frequência. Traz um controle local (Slider de 0 a 60 Hz) acoplado a travas de segurança JavaScript (userIsDragging) para que o valor não sofra oscilações enquanto o operador arrasta o ponteiro, além de exibir a frequência de referência vinda do Node-RED e botões industriais de LIGAR e DESLIGAR.
@@ -245,7 +244,7 @@ Se o CANA também fizesse o papel de servidor web, o core do processador seria f
 
 ## 8. Arquitetura de Comunicação: Firmware <-> gateway global (Node-RED)
 
-O sistema utiliza o microcontrolador **CANB** como um **Gateway local**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o Node-RED ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
+O sistema utiliza o microcontrolador **CANB** como um **Gateway local**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o gateway global ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
 
 ---
 
