@@ -52,8 +52,6 @@ O sistema adota uma **topologia em estrela**, onde todas as comunicações são 
 * **Camada de Supervisão e Integração - Node-RED (Endereço IP: `192.168.0.100`):** Atua como o *gateway central* de dados. É responsável por coletar informações das redes para exibição em dashboards, além de gerenciar o acionamento e controle entre as redes. 
 
 ```
-mermaid
-flowchart LR
     IHM["IHM KTP700 Basic<br/>192.168.0.10"] == "PROFINET" ==> SW["FL Switch 1108 <br/>Phoenix Contact"]
     PLC["CLP S7-1217C<br/>192.168.0.1"] == "PROFINET" ==> SW
     G120["Inversor G120C<br/>192.168.0.5"] == "PROFINET" ==> SW
