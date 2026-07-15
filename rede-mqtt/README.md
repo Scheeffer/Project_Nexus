@@ -4,7 +4,7 @@
 
 ## 1. Arquitetura da célula MQTT
 
-A célula MQTT é composta por **três ESP32 com papéis distintos**. A "rede local" da célula **é o próprio MQTT**: os nós não se falam diretamente — tudo passa pelo broker.
+A célula MQTT é composta por **três ESP32 com papéis distintos**. O protocolo da célula **é o próprio MQTT**: os nós não se falam diretamente — tudo passa pelo broker.
 
 | Nó | Papel | IP |
 |----|----------|-------|
@@ -125,7 +125,7 @@ Projeto ESP-IDF (template `app-template`) cuja única função é **ser o servid
 
 ## 5. Integração com o dashboard (Node-RED)
 
-O Node-RED (`192.168.0.100`) conecta-se ao broker `192.168.0.105:1883` como cliente `Node-red` (MQTT v3.1.1) e expõe o grupo **REDE MQTT** no dashboard. O flow completo e sua documentação estão em [`../backbone/node_mqtt/`](../backbone/node_mqtt/README.md); em resumo:
+O Node-RED (`192.168.0.100`) conecta-se ao broker `192.168.0.105:1883` como cliente `Node-red` (MQTT v3.1.1) e expõe o grupo **REDE MQTT** no dashboard. O flow completo e sua documentação está na documentação do backbone; em resumo:
 
 | Widget | Nó dashboard | Fluxo |
 |--------|--------------|-------|
