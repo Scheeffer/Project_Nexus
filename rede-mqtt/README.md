@@ -113,7 +113,7 @@ stateDiagram-v2
 
 ---
 
-## 4. Firmware do broker (`embedded_brocker`)
+## 4. Firmware do broker (`embedded_broker`)
 
 Projeto ESP-IDF (template `app-template`) cuja única função é **ser o servidor MQTT do sistema**:
 
