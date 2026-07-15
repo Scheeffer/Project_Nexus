@@ -5,16 +5,16 @@
 
 ## 1. Descrição do projeto
 
-O protocolo local utilizado é o **PROFINET**, com um CLP s7 1217C usado como mestre da rede, uma IHM operando como sensor e tela de visualização e um Inversor de Frequência, atuando como um atuador final. O CLP também atua como **bridge** para o backbone (node-red) via protocolo **S7 / ISO‑on‑TCP**, um protocolo nativo do proprio CLP. 
+O protocolo local utilizado é o **PROFINET**, com um CLP s7 1217C usado como mestre da rede, uma IHM operando como sensor e tela de visualização e um Inversor de Frequência, atuando como um atuador final. O CLP também atua como **bridge** para o gateway central (node-red) via protocolo **S7 / ISO‑on‑TCP**, um protocolo nativo do proprio CLP. 
 
-A ideia dentro desta rede é de controlar um motor de 380V e 2cv de potencia atraves de um inversor de frequencia, para isso sera usado a IHM para definir a frequencia, ligar e desligar o motor. Toda a comunicação dentro desta rede independe do backbone, podendo funcionar de forma offline. O grande diferencial desta abordagem é poder conectar dois mundos aparentemente distantes: um motor de alta potencia e um Dashboard altamente tecnologico e moderno.  
+A ideia dentro desta rede é de controlar um motor de 380V e 2cv de potencia atraves de um inversor de frequencia, para isso sera usado a IHM para definir a frequencia, ligar e desligar o motor. Toda a comunicação dentro desta rede independe do gateway central, podendo funcionar de forma offline. O grande diferencial desta abordagem é poder conectar dois mundos aparentemente distantes: um motor de alta potencia e um Dashboard altamente tecnologico e moderno.  
 
 | Item | Valor |
 |------|-------|
 | Controlador | **CLP Siemens S7‑1217 C** (endpoint `192.168.0.1`, rack 0 / slot 1) |
 | Sensor / IHM | **IHM KTP700 Basic** (endpoint `192.168.0.10`) |
 | Atuador | **Inversor de frequência SINAMICS G120C** (endpoint `192.168.0.5`) |
-| Bridge backbone | **S7 / ISO‑on‑TCP** via `node‑red‑contrib‑s7` (cycletime 1000 ms) |
+| Bridge Gateway | **S7 / ISO‑on‑TCP** via `node‑red‑contrib‑s7` (cycletime 1000 ms) |
 | Software | TIA Portal _(versão: V20)_ |
 
 ### Variáveis Disponiveis ao Node-RED
@@ -42,6 +42,10 @@ A ideia dentro desta rede é de controlar um motor de 380V e 2cv de potencia atr
 O sistema adota uma **topologia em estrela**, onde todas as comunicações são centralizadas em um swtich. Esta abordagem minimiza o impacto de falhas individuais nos cabos e simplifica o diagnóstico e a manutenção da infraestrutura de comunicação.
 
 * **Switch Industrial Phoenix Contact FL Switch 1108** Atua como o nó central da rede Profinet. É responsável pelo chaveamento físico dos pacotes de dados, garantindo a comutação eficiente entre a camada de controle de campo e a camada de monitoramento.
+  
+Camada de Controle de Campo:Representa o nível operacional e físico do sistema, atuando diretamente no maquinário por meio de sensores, atuadores e CLPs. É caracterizada pela execução da lógica de controle em tempo real, exigindo comunicação de rede determinística e de baixíssima latência para garantir ações físicas e respostas imediatas.
+
+Camada de Monitoramento: É o nível tecnológico de supervisão e gestão de dados focado na interface humana. Sua função é coletar as informações geradas no campo para compor históricos e alimentar Dashboards, permitindo que operadores acompanhem visualmente o sistema e ajustem parâmetros gerais sem a exigência crítica de controle em milissegundos.
 
 * **CLP Siemens S7-1217C. Endereço IP: `192.168.0.1`** Unidade central de processamento e lógica. Executa o algoritmo de controle do processo, gerencia os intertravamentos de segurança e coordena os demais periféricos.
  
@@ -49,7 +53,7 @@ O sistema adota uma **topologia em estrela**, onde todas as comunicações são 
  
 * **Inversor de Frequência Siemens Sinamics G120C. Endereço IP: `192.168.0.5`** Acionamento e controle de velocidade do motor elétrico. Envia dados de diagnóstico (frequencia, ligado, desligado e falhas) e recebe comandos de frequência do CLP.
   
-* **Camada de Supervisão e Integração (Backbone) Node-RED. Endereço IP: `192.168.0.100`** Atua como o *backbone* de dados e gateway IoT. É responsável por coletar informações das redes para exibição em dashboards. Alem de gerenciar o acionamento e controle entre as redes. 
+* **Camada de Supervisão e Integração (gateway central) Node-RED. Endereço IP: `192.168.0.100`** Atua como o *gateway central* de dados. É responsável por coletar informações das redes para exibição em dashboards. Alem de gerenciar o acionamento e controle entre as redes. 
  
 
 ```mermaid
@@ -57,7 +61,7 @@ flowchart LR
     IHM["IHM KTP700 Basic<br/>192.168.0.10"] == "PROFINET" ==> SW["FL Swith 1108 <br/>Phoenix Contact"]
     PLC["CLP S7-1217C<br/>192.168.0.1"] == "PROFINET" ==> SW
     G120["Inversor G120C<br/>192.168.0.5"] == "PROFINET" ==> SW
-    SW == "S7 / ISO-on-TCP" ==> NR["Node-RED (backbone)<br/>192.168.0.100"]
+    SW == "S7 / ISO-on-TCP" ==> NR["Node-RED (gateway central)<br/>192.168.0.100"]
 ```
 
 ---
