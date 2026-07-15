@@ -43,9 +43,10 @@ O sistema adota uma **topologia em estrela**, onde todas as comunicações são 
 
 * **Switch Industrial Phoenix Contact FL Switch 1108** Atua como o nó central da rede Profinet. É responsável pelo chaveamento físico dos pacotes de dados, garantindo a comutação eficiente entre a camada de controle de campo e a camada de monitoramento.
   
-Camada de Controle de Campo:Representa o nível operacional e físico do sistema, atuando diretamente no maquinário por meio de sensores, atuadores e CLPs. É caracterizada pela execução da lógica de controle em tempo real, exigindo comunicação de rede determinística e de baixíssima latência para garantir ações físicas e respostas imediatas.
+  Camada de Controle de Campo:Representa o nível operacional e físico do sistema, atuando diretamente no maquinário por meio   de sensores, atuadores e CLPs. É caracterizada pela execução da lógica de controle em tempo real, exigindo comunicação de   rede determinística e de baixíssima latência para garantir ações físicas e respostas imediatas.
 
-Camada de Monitoramento: É o nível tecnológico de supervisão e gestão de dados focado na interface humana. Sua função é coletar as informações geradas no campo para compor históricos e alimentar Dashboards, permitindo que operadores acompanhem visualmente o sistema e ajustem parâmetros gerais sem a exigência crítica de controle em milissegundos.
+  Camada de Monitoramento: É o nível tecnológico de supervisão e gestão de dados focado na interface humana. Sua função é      coletar as informações geradas no campo para compor históricos e alimentar Dashboards, permitindo que operadores
+  acompanhem visualmente o sistema e ajustem parâmetros gerais sem a exigência crítica de controle em milissegundos.
 
 * **CLP Siemens S7-1217C. Endereço IP: `192.168.0.1`** Unidade central de processamento e lógica. Executa o algoritmo de controle do processo, gerencia os intertravamentos de segurança e coordena os demais periféricos.
  
@@ -134,11 +135,11 @@ sequenceDiagram
     Note over G120: Inicia Rampa de Aceleração
     G120->>CLP: Envia velocidade atual (NIST_A) & ZSW1
     
-    %% Motor Rodando
+    %% Frequência Alcançada
     Note over G120: Setpoint de Frequência Alcançado
     G120->>CLP: Altera bit de status (ZSW1.8 = 1)
-    CLP->>IHM: Atualiza Status: "Motor Rodando"
-    IHM->>Operador: Exibe animação do motor girando
+    CLP->>IHM: Exibe valor atualizado da frequência
+ 
 
     %% Parada do Motor
     Operador->>IHM: Pressiona botão "STOP"
