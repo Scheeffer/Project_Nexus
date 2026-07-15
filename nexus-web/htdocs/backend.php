@@ -2,10 +2,10 @@
 
     class Connection{
 		// Insira os dados do seb website/banco de dados nestas variaveis
-        private $host   = "";
-        private $dbname = "";
-        private $user   = "";
-        private $pass   = "";
+        private $host   = "---";
+        private $dbname = "---";
+        private $user   = "---";
+        private $pass   = "---";
         
         public function connectDB(){
             try{
