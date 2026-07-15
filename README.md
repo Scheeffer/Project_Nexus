@@ -31,9 +31,9 @@ O critério central é a **interoperabilidade**: ao final, *o status de qualquer
 |------|-------|
 | Instituição | IFSC — Departamento Acadêmico de Eletrônica |
 | Disciplina | Comunicação de Dados |
+| Professor Orientador |  Matheus Leitzke Pinto |
 | Integrantes | Matheus e Cainã, Álvaro e Alexandre, Henzo e Lucas |
-| Integração | Backbone Ethernet + Broker MQTT central (Node-RED) |
-
+| Integração | Gateway Central  + Broker central (Node-RED) |
 
 ---
 
@@ -52,7 +52,7 @@ Tabela Global de váriaveis: Status do sensor, comando do atuador, diagnóstico 
 
 ## 3. As três células (introdução)
 
-| Dupla | Protocolo local | Controlador | Sensor | Atuador | Bridge p/ backbone |
+| Dupla | Protocolo local | Controlador | Sensor | Atuador | Bridge p/ Gateway Central |
 |:-----:|:----------------|:------------|:-------|:--------|:-------------------|
 | **1** — Cainã & Matheus | **PROFINET** | CLP Siemens S7‑121xC (`192.168.0.1`) | IHM KTP700 Basic | Inversor SINAMICS G120C | **S7 / ISO‑on‑TCP** (node‑red‑contrib‑s7) |
 | **2** — Álvaro & Alexandre | **CAN** | ESP32 TWAI (`192.168.0.63`) | Potenciômetro (nó CAN substituto) | Display Dashboard E620 | **HTTP REST** (`/can`, `/set_nodered_*`) |
@@ -81,7 +81,7 @@ flowchart TB
         S3["Sensor temperatura<br/>ESP32-S3 (cliente MQTT)"] -.-> BR3[" ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
         A3["ESP32 atuador (cliente MQTT)<br/>aquece GPIO18 / refrigera GPIO19"] -.-> BR3
     end
-    SW["🔀 Switch Ethernet<br/>(Backbone)"]
+    SW["🔀 Switch Ethernet<br/>(Gateway Central)"]
     NR["📊 Node-RED<br/>hub S7 + HTTP + MQTT<br/>dashboard + Tabela Global<br/>(cliente do broker da Célula 3)"]
     PLC -- "Aplicação: S7comm Apresentação: ISO-on-TCP  Transporte: TCP  Rede: IP  Enlace/Física: Ethernet" --> SW
     ESP2 -- "Aplicação: HTTP REST  Transporte: TCP  Rede:IP         Enlace/Física: WIFI802.11" --> SW
@@ -113,7 +113,7 @@ flowchart TB
 
 ## 5. Sumário / Navegação
 
-- 📁 [**Backbone (Node-RED + Broker)**](./backbone/README.md) — switch, broker MQTT, dashboard, tabela global
+- 📁 [**Gateway Central (Node-RED + Broker)**](./Gateway Central/README.md) — switch, broker MQTT, dashboard, tabela global
 - 📁 [**Nexus Web**](./nexus-web/README.md) — Dashboard online, banco de dados
 - 📁 [**Rede PROFINET**](./rede-profinet/README.md) — Dupla 1
 - 📁 [**Rede CAN**](./rede-can/README.md) — Dupla 2
