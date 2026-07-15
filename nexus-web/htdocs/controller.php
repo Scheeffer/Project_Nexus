@@ -9,8 +9,6 @@
         $json = file_get_contents("php://input");
         $data = json_decode($json, true);
         
-        //echo $json;
-        //print_r($data);      
 
 
         if ($data === null) {
