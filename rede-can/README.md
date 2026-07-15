@@ -243,15 +243,19 @@ Se o CANA também fizesse o papel de servidor web, o core do processador seria f
 
 ---
 
-## 8. Arquitetura de Comunicação: Firmware <-> gateway global (Node-RED)
+## 8. Arquitetura
 
-O sistema utiliza o microcontrolador **CANB** como um **Gateway local**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o gateway global ocorre de forma bidirecional via requisições assíncronas **HTTP (POST/GET)**.
+O sistema utiliza o microcontrolador **CANB** como um **Gateway local**, sendo o único nó conectado à rede Wi-Fi. A troca de dados com o gateway global ocorre de forma bidirecional via requisições assíncronas **HTTP (POST/GET)**.
 
 ---
 
-## Topologia de Rede e Configurações de IP
+### 8.1 Topologia
+A arquitetura é estruturada em uma topologia, onde o **CANB** atua como o ponto central de tradução física, interligando o barramento CAN a outras redes através do gateway global.
 
-Para que a comunicação ocorra com firmware do CANB, a configuração de IPs estão com os seguintes parâmetros:
+---
+
+### 8.2 Endereçamento IP
+Configurações de rede para a comunicação com o firmware do CANB:
 
 * **Ponto de Acesso (Wi-Fi):** `WIFI_SSID "COM_N_26.1"`
 * **Endereço IP do Node-RED:** `192.168.0.100` (Porta padrão: `1880`)
@@ -259,43 +263,47 @@ Para que a comunicação ocorra com firmware do CANB, a configuração de IPs es
 
 ---
 
-## 2. Configurações e Rotas do Firmware (CANB)
-
-O código C do CANB gerencia dois fluxos de rotas HTTP: as **rotas de saída** (onde o ESP32 é o cliente HTTP e envia dados ao Node-RED) e as **rotas de entrada** (onde o ESP32 é o servidor Web e o Node-RED envia comandos).
-
-### A. Rotas de Saída (ESP32 -> Node-RED)
-Sempre que o barramento CAN recebe o frame de telemetria `0x4D2` ou a interface local sofre interação, o ESP32 dispara pacotes via `esp_http_client`:
-
-| Rota no Node-RED | Tipo | Payload/Formato | comandos no Firmware |
-| :--- | :--- | :--- | :--- |
-| `/can` | `POST` | `{"valor_can": uint16, "velocidade": float, "tensao": float}` | Disparado a cada 50ms na `CAN_Task` ao receber o ID `0x4D2`. |
-| `/slider` | `POST` | Texto puro (ex: `"45"`) | Quando o operador altera o Slider diretamente na página HTML do ESP32. - PROFINET|
-| `/ligar` / `/desligar` | `POST` | Texto puro (`"true"`) | Cliques nos botões industriais da página HTML. - PROFINET |
-| `/mqtt_aquecer` / `/mqtt_resfriar` | `POST` | `{"status": true}` | Cliques no painel de controle de temperatura da página HTML. - MQTT|
-
-### B. Rotas de Entrada (Node-RED -> ESP32)
-O servidor Web nativo do ESP32 (`esp_http_server`) registra URIs específicas para escutar o Node-RED:
-
-* **`/set_nodered_value` (POST):** Recebe um valor inteiro enviado pelo Slider do Node-RED Dashboard. O handler armazena em `g_node_red_slider` e injeta imediatamente o frame **ID `0x100`** na rede CAN para alterar a velocidade do motor.
-* **`/set_nodered_freq` (POST):** Atualiza a variável global `g_node_red_freq` para exibição de referência na interface HTML - PROFINET(Seta a a frequência do inversor).
-* **`/set_mqtt_sim` (POST):** Recebe strings em formato JSON vindas da lógica MQTT do Node-RED (ex: `{"temp": 24.5, "status": "Aquecendo"}`). O firmware usa `strstr()` e `atof()` para processar o texto e atualizar as variáveis `g_mqtt_temperatura` e `g_mqtt_status` - MQTT(seta os estados do atuador MQTT).
+### 8.3 API HTTP
+A API utilizada para operar de forma assíncrona foi dividida da seguinte forma: estrutura que faz requisições de saída (ESP32 como cliente) e requisições de entrada ( onde gateway global no caso o Node-red encaminha comandos para o CANB) estruturado através do código main.c.
 
 ---
 
-## 3. Configurações dos Nós no Node-RED
+### 8.4 Rotas do Firmware
 
-No painel do Node-RED, os fluxos são configurados seguindo regras estritas de tipos de dados para evitar falhas de processamento.
+#### A. Rotas de Saída (ESP32 -> Node-RED)
+Disparadas via `esp_http_client` por eventos no barramento físico ou interações na interface local:
 
-### A. Nós de Entrada (HTTP In Nodes)
-Para escutar o ESP32, é utilizado nós do tipo **`http in`**:
+| Rota no Node-RED | Tipo | Payload/Formato | Comandos no Firmware |
+| :--- | :--- | :--- | :--- |
+| `/can` | `POST` | `{"valor_can": uint16, "velocidade": float, "tensao": float}` | A cada 50ms na `CAN_Task` ao receber o ID `0x4D2`. |
+| `/slider` | `POST` | Texto puro (ex: `"45"`) | Alteração do Slider de frequência (PROFINET) na página HTML local. |
+| `/ligar` / `/desligar` | `POST` | Texto puro (`"true"`) | botões Liga e Desliga (PROFINET) da página HTML local. |
+| `/mqtt_aquecer` / `/mqtt_resfriar` | `POST` | `{"status": true}` | Botões de controle térmico (MQTT) da página HTML local. |
+
+#### B. Rotas de Entrada (Node-RED -> ESP32)
+Escutadas de forma passiva pelo servidor nativo (`esp_http_server`):
+
+* **`/set_nodered_value` (POST):** Recebe o setpoint numérico do Slider do Node-RED, salva em `g_node_red_slider` e injeta imediatamente o frame **ID `0x100`** na rede CAN.
+* **`/set_nodered_freq` (POST):** Atualiza a variável `g_node_red_freq` para exibição de referência de rotação do inversor (PROFINET).
+* **`/set_mqtt_sim` (POST):** Recebe dados JSON simulados (ex: `{"temp": 24.5, "status": "Aquecendo"}`). O firmware usa `strstr()` e `atof()` para atualizar o display de temperatura (MQTT).
+
+---
+
+### 8.5 Rotas do Node-RED
+
+#### A. Nós de Entrada (HTTP In Nodes)
 * **Método:** `POST`
-* **URL:** `/can` (ou as respectivas rotas de telemetria descritas acima).
-* **Nó `json` subsequente:** É obrigatório conectar a saída do nó `http in` a um nó `json` para converter a string HTTP recebida em um objeto Javascript manipulável (`msg.payload.velocidade`).
+* **URL:** `/can` (ou demais rotas de telemetria).
+* **Nó `json` subsequente:** Obrigatório para converter a string HTTP em um objeto JavaScript manipulável (`msg.payload.velocidade`).
 
-### B. Nós de Saída (HTTP Request Nodes)
-Para enviar dados ou devolver comandos para as rotas do ESP32, é utilizado nós do tipo **`http request`**:
+#### B. Nós de Saída (HTTP Request Nodes)
 * **Método:** `POST`
-* **URL:** `http://192.168.0.X/set_nodered_value` (substitua pelo IP dinâmico ou estático que o ESP32 Gateway assumiu na rede).
+* **URL:** `http://192.168.0.x/set_nodered_value` (conforme IP dinâmico ou estático assumido pelo ESP32-CANB).
+
+---
+
+### 8.6 Fluxo de Comunicação
+O fluxo dinâmico baseia-se em eventos assíncronos: os dados de campo consolidados pelo frame CAN são imediatamente empacotados e transmitidos para as rotas `/can` do Node-RED. Em contrapartida, comandos e setpoints do painel global são despachados para o endpoint `/set_nodered_value` do gateway local, que os converte em frames de controle.
 
 ---
 ## Biblioteca do módulo CAN MCP2515
