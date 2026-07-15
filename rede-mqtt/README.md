@@ -18,24 +18,19 @@ Todos os nós conectam-se à rede Wi-Fi do projeto **`COM_N_26.1`**
 flowchart LR
     S3["🌡️ ESP32-S3<br/>sensor de temperatura<br/>(cliente MQTT)"]
     BR["🧠 ESP32 broker<br/>Mosquitto embarcado<br/>192.168.0.105:1883"]
-    ACT["🔥❄️ ESP32 atuador<br/>(cliente esp-mqtt)<br/>GPIO18 aquece · GPIO19 refrigera"]
+    ACT["🔥❄️ ESP32 atuador<br/>(cliente esp-mqtt)<br/>GPIO18 aquece · GPIO23 refrigera"]
     NR["📊 Node-RED (PC, 192.168.0.100)<br/>dashboard + Tabela Global<br/>(cliente MQTT)"]
+    S3 -. "Envia temperatura medida" .-> BR
+    ACT -. "Envia status - Recebe comandos" .-> BR
+    BR -. "pub comandos · sub telemetria" .-> NR
 
-    S3 -. "pub ESP32S3/COM/temperatura<br/>sub ESP32S3/COM/get" .-> BR
-    ACT -. "sub ESP32/COM/Atuador<br/>pub ESP32/COM/Status" .-> BR
-    NR -. "pub comandos · sub telemetria" .-> BR
-
-    classDef broker fill:#ffffff,stroke:#e65100,stroke-width:2px;
-    classDef cliente fill:#ffffff,stroke:#2e7d32,stroke-width:1px;
-    classDef central fill:#ffffff,stroke:#e65100,stroke-width:1px;
+    classDef broker fill:#ffffff,stroke:#2e7d32,stroke-width:3px;
+    classDef cliente fill:#ffffff,stroke:#2e7d32,stroke-width:3px;
+    classDef central fill:#ffffff,stroke:#e65100,stroke-width:4px;
     class BR broker;
     class S3,ACT cliente;
     class NR central;
 ```
-
-**Leitura do diagrama:** todas as linhas são **MQTT sobre TCP/IP via Wi-Fi** (pontilhado = meio não guiado). Não há ligação física direta sensor→atuador: o acoplamento entre eles acontece **por tópicos**, mediado pelo broker. Isso é a topologia estrela característica do MQTT — e o motivo pelo qual a célula continua trocando dados internamente mesmo se o PC/Node-RED sair do ar (o broker não está no PC).
-
----
 
 1.2 Arquitetura lógica MQTT
 Em nível de aplicação, a topologia é em estrela em torno do broker: os clientes não se comunicam diretamente entre si — publicam e assinam tópicos, e o broker encaminha as mensagens.
@@ -285,7 +280,8 @@ rede-mqtt/
 ├── diagramas/     ← exports dos diagramas
 ├── figs/          ← fotos da bancada
 └── firmware/
-    ├── ESP32_act.rar         ← projeto PlatformIO do atuador
-    ├── embedded_brocker.rar  ← projeto ESP-IDF do broker Mosquitto
-    └── trabalho_COM.json     ← flow Node-RED da coluna MQTT
+    ├── ESP32_act          ← projeto PlatformIO do atuador
+    ├── embedded_broker    ← projeto ESP-IDF do broker Mosquitto
+    └── Flows_VersãoFinal  ← flow Node-RED da coluna MQTT
+    └── mqtt_temp_sense    ← projeto PlatformIO do atuador
 ```
