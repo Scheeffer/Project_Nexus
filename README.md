@@ -55,13 +55,14 @@ Tabela Global de váriaveis: Status do sensor, comando do atuador, diagnóstico 
 | Dupla | Protocolo local | Controlador | Sensor | Atuador | Bridge p/ Gateway Central |
 |:-----:|:----------------|:------------|:-------|:--------|:-------------------|
 | **1** — Cainã & Matheus | **PROFINET** | CLP Siemens S7‑121xC (`192.168.0.1`) | IHM KTP700 Basic | Inversor SINAMICS G120C | **S7 / ISO‑on‑TCP** (node‑red‑contrib‑s7) |
-| **2** — Álvaro & Alexandre | **CAN** | ESP32 TWAI (`192.168.0.63`) | Potenciômetro (nó CAN substituto) | Display Dashboard E620 | **HTTP REST** (`/can`, `/set_nodered_*`) |
+| **2** — Álvaro & Alexandre | **CAN** | ESP32 TWAI (`192.168.0.102`) | Potenciômetro (nó CAN substituto) | Display Dashboard E620 | **HTTP REST** (`/can`, `/set_nodered_*`) |
 | **3** — Lucas & Henzo | **MQTT** | **ESP32 broker** — Mosquitto embarcado (`192.168.0.105:1883`) | Temperatura com **ESP32‑S3** (cliente MQTT) | Aquecimento + Refrigeração (GPIO18/19) com **ESP32 atuador** (cliente MQTT) | **MQTT** (Node‑RED como cliente do broker embarcado) |
-
-Cada célula tem sua documentação completa, diagramas e código nas pastas abaixo.
-*IP Fixo:* Foi utilizado um IP Fixo, para evitar conflito entre as redes e e para que os sensores/atuadores possam direcionar para apenas um IP em cada célula.
 ---
 
+Cada célula tem sua documentação completa, diagramas e código nas pastas abaixo.
+*IP Fixo:* Foi utilizado um IP Fixo, para evitar conflito entre as redes e para que os sensores/atuadores possam direcionar para apenas um IP em cada célula.
+
+---
 ## 4. Diagrama de blocos geral do sistema
 
 ```mermaid
