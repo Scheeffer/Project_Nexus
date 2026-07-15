@@ -6,7 +6,7 @@
 
 O protocolo local utilizado nesta célula é o **CAN (Controller Area Network)** operando a uma taxa de barramento industrial de **250 Kbps**. A rede é composta por microcontroladores **ESP32** acoplados a controladores autônomos **MCP2515** via interface de periféricos serial (**SPI**). O ESP32 principal atua como o nó mestre/gateway local da bancada, coletando os sinais do barramento e disponibilizando uma interface gráfica de monitoramento por meio de um Web Server HTTP nativo. 
 
-O objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro + sistema microcontrolado) mapeado sob o identificador exclusivo CAN, processar os pacotes para o cálculo de velocidade real em Km/h e comandar, através do protocolo CAN, um painel atuador de indicadores (Painel E620). O Gateway ESP32 também atua como **ponte** para o gateway global (Node-RED) por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
+O objetivo desta célula é ler de maneira contínua os dados de um sensor analógico (potenciômetro + sistema microcontrolado) mapeado sob o identificador exclusivo CAN, processar os pacotes para o cálculo de velocidade real em Km/h e comandar, através do protocolo CAN, um painel atuador de indicadores (Painel E620). O Gateway ESP32 também atua como **ponte** para o gateway global (Node-RED) com função de estabelecer comnunicacação com as outras redes(PROFINET E MQTT). A comunicação com gateway global ocorre por meio de requisições assíncronas **HTTP (POST/GET)** em formato de texto puro (`text/plain`) e JSON. 
 
 ### Variáveis Disponíveis ao Node-RED / Servidor HTTP
 
@@ -87,9 +87,10 @@ Recepção CAN e HTTP: Ele escuta o ID 0x4D2. Ele extrai a velocidade final e ca
 Comando Remoto: Quando atua o comando para no Node-RED ou no Slider da página Web, o CANB empacota esse comando e injeta no barramento CAN com o ID 0x100, fazendo o CANA mudar seu estado de controle.
 
 📊 Transições de Estado de Concorrência
-Hardware ➔ Rede: O sistema está rodando pelo potenciômetro. Assim que um frame 0x100 aparece na CAN, o sistema pula para o modo Rede, aceitando os valores do Slider(node-red) remoto e das outras redes.
+Hardware ➔ Rede: O sistema está rodando pelo potenciômetro. Assim que um frame 0x100 aparece na CAN, o sistemao sistema realiza a transição para o modo Rede, aceitando os valores do Slider(node-red) remoto e das outras redes.
 
-Rede ➔ Hardware: O sistema está obedecendo ao Node-RED. Se o operador girar o potenciômetro físico na bancada rompendo a barreira de 2.5% de variação, o comando físico "derruba" a rede e o Hardware reassume o controle imediatamente.
+Rede ➔ Hardware: O sistema está obedecendo ao Node-RED. Se o operador girar o potenciômetro físico na bancada rompendo a barreira de 2.5% de variação, o comando físico devolve a prioridade ao controle local.
+
 
 ---
 
@@ -187,7 +188,7 @@ sequenceDiagram
     %% CENÁRIO 1: CONTROLE LOCAL (PRIORIDADE DO POTENCIÔMETRO)
     rect rgb(240, 248, 255)
         note right of Operador: Cenário 1: Controle via Hardware Físico (Local)
-        Operador->>HardwareA: Gira botão físico (Variação >= 2.5%)
+        Operador->>HardwareA: altera posição do potênciometro(Variação >= 2.5%)
         Note over HardwareA: g_velocidade_sistema assume valor do Potenciômetro
         
         loop Transmissão Cíclica (A cada 50ms)
@@ -230,7 +231,7 @@ sequenceDiagram
 
 Para melhor comunicação das redes foi utilizado um esp(CANB) dedicado tanto para fazer a comunicação com o gateway(node-red) e como interface .html do sistema. O microcontrolador CANA é responsável por tarefas de missão crítica: amostrar um sinal analógico (ADC) através de filtros de média móvel e gerenciar a concorrência de controle no barramento de campo (CAN).
 Se o CANA também fizesse o papel de servidor web, o core do processador seria frequentemente interrompido para processar conexões de rede de sockets TCP, renderizar strings HTML massivas e gerenciar o handshake do Wi-Fi, hoveram tentativas em implementar em um unico microcontrolador, porém a quantidade de rotas para encaminhar as variáveis para o gateway global acabaram gerando atualização lenta do painel E620, no caso resposta entre 3 a 5 segundos, ja que o painel E620 necessita receber dados constantemnente para não gerar travamento.
-* Painel de Monitoramento CAN (Card Atuador/Sensor): Apresenta visualmente a velocidade consolidada do sistema em tempo real e a tensão isolada calculada para o potenciômetro físico (0V a 3.3V). Ele serve como um diagnóstico rápido para atestar que o barramento a 250 Kbps está online e operando perfeitamente através do recebimento do ID 0x4D2.
+* Painel de Monitoramento CAN (Card Atuador/Sensor): Apresenta visualmente a velocidade consolidada do sistema em tempo real e a tensão isolada calculada para o potenciômetro físico (0V a 3.3V). Ele serve como um diagnóstico rápido para atestar que o barramento a 250 Kbps está online e operando através do recebimento do ID 0x4D2.
 
 * Controle PROFINET - CLP: Permite a interação direta com a lógica de frequência. Traz um controle local (Slider de 0 a 60 Hz) acoplado a travas de segurança JavaScript (userIsDragging) para que o valor não sofra oscilações enquanto o operador arrasta o ponteiro, além de exibir a frequência de referência vinda do Node-RED e botões industriais de LIGAR e DESLIGAR.
 
@@ -244,7 +245,7 @@ Se o CANA também fizesse o papel de servidor web, o core do processador seria f
 
 ## 8. Arquitetura de Comunicação: Firmware <-> gateway global (Node-RED)
 
-O sistema utiliza o microcontrolador **CANB** como um **Gateway local**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o gateway global ocorre de forma bidirecional via requisições assíncronas **HTTP REST (POST/GET)**.
+O sistema utiliza o microcontrolador **CANB** como um **Gateway local**. Ele é o único nó conectado à rede Wi-Fi local. A troca de dados com o gateway global ocorre de forma bidirecional via requisições assíncronas **HTTP (POST/GET)**.
 
 ---
 
