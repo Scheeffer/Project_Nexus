@@ -1,16 +1,16 @@
-# Rede MQTT — Célula 3 (Lucas & Henzo)
+# Célula 3 — Comunicação baseada em MQTT (Lucas & Henzo)
 
 ---
 
 ## 1. Arquitetura da célula MQTT
 
-A célula MQTT é composta por **três ESP32 com papéis distintos**. O protocolo da célula **é o próprio MQTT**: os nós não se falam diretamente — tudo passa pelo broker.
+A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos:A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos:
 
 | Nó | Papel | IP |
 |----|----------|-------|
-|  **Broker** | ESP32 rodando **Mosquitto embarcado** (componente `espressif/mosquitto` ^2.0.20), escutando `0.0.0.0:1883`. É o **servidor MQTT de todo o sistema NEXUS** — o Node-RED se conecta aqui como cliente. | `192.168.0.105` |
-|  **Sensor** | Lê a temperatura e publica em `ESP32S3/COM/temperatura`; responde a solicitações em `ESP32S3/COM/get`. | — |
-|  **Atuador** | Cliente `esp-mqtt` (ESP-IDF via PlatformIO, `esp32doit-devkit-v1`). Assina o tópico de comando e aciona **GPIO18 (aquecimento)** / **GPIO19 (refrigeração)**. | — |
+|  **Broker** | ESP32 rodando **Mosquitto embarcado** (componente `espressif/mosquitto` ^2.0.20), escutando `0.0.0.0:1883`. É o **servidor da célula MQTT** | `192.168.0.105` |
+|  **Sensor** | ESP32-S3 com sensor DS18B20. Publica a temperatura em ESP32S3/COM/temperatura quando solicitado pelo comando GET_TEMP recebido em ESP32S3/COM/get.| — |
+|  **Atuador** | Cliente esp-mqtt (ESP-IDF via PlatformIO, placa esp32doit-devkit-v1). Assina o tópico de comando e aciona GPIO18 (aquecimento) / GPIO23 (refrigeração).| — |
 
 Todos os nós conectam-se à rede Wi-Fi do projeto **`COM_N_26.1`**
 
@@ -37,6 +37,31 @@ flowchart LR
 
 ---
 
+1.2 Arquitetura lógica MQTT
+Em nível de aplicação, a topologia é em estrela em torno do broker: os clientes não se comunicam diretamente entre si — publicam e assinam tópicos, e o broker encaminha as mensagens.
+```mermaid
+flowchart LR
+    S3["Sensor"]
+    ACT["Atuador"]
+    NR["Node-RED"]
+    BR["Broker MQTT"]
+
+    S3 -- "publica temperatura" --> BR
+    BR -- "encaminha GET_TEMP" --> S3
+    BR -- "encaminha comando" --> ACT
+    ACT -- "publica status" --> BR
+    NR -- "publica comandos" --> BR
+    BR -- "encaminha telemetria e status" --> NR
+
+    classDef preto fill:#ffffff,stroke:#000000,color:#000000;
+    class S3,ACT,NR,BR preto;
+```
+1.3 Papel do Node-RED no laço de controle
+Um ponto importante da arquitetura atual: não existe acoplamento direto sensor → atuador. O atuador não assina o tópico de temperatura, e o sensor não publica comandos. Quem fecha o laço é o Node-RED, de modo que o caminho efetivo da informação é:
+```text
+Sensor → Broker → Node-RED → Broker → Atuador
+```
+
 ## 2. Tabela de tópicos (contrato da célula)
 
 | Tópico | Direção (visão do broker) | Payload (string) | Publicador | Assinantes |
@@ -48,33 +73,73 @@ flowchart LR
 
 ---
 
-## 3. Firmware do atuador (`ESP32_act`)
+## 3. Firmware do atuador (`ESP32\_act`)
 
-| Item | Valor |
-|------|-------|
-| Board | `esp32doit-devkit-v1` |
-| Plataforma | PlatformIO `espressif32@6.5.0` (ESP-IDF 5.1.x) |
-| Cliente MQTT | `esp-mqtt` nativo do IDF |
-| Broker configurado | `mqtt://192.168.0.105:1883` (hardcoded em `mqtt_app.c`) |
-| Wi-Fi | SSID `COM_N_26.1`, rede aberta (sem campo de senha na `wifi_config_t`) |
+|Item|Valor|
+|-|-|
+|Placa|`esp32doit-devkit-v1`|
+|Plataforma|PlatformIO `espressif32@6.5.0` (ESP-IDF 5.1.x)|
+|Cliente MQTT|`esp-mqtt` nativo do ESP-IDF|
+|Broker configurado|`mqtt://192.168.0.105:1883` (definido diretamente em `mqtt\_app.c`)|
+|Wi-Fi|SSID `COM\_N\_26.1`, rede aberta (sem campo de senha na `wifi\_config\_t`); IP por DHCP|
 
 ### 3.1 Estrutura
 
 ```text
-ESP32_act/
+ESP32\_act/
 ├── platformio.ini
 ├── include/
-│   ├── atuador.h    ← GPIOs, enum acionamento_sistema_t
-│   ├── mqtt_app.h   ← enum estado_sistema_t, mqtt_start(), mqtt_publish_status()
+│   ├── atuador.h    ← GPIOs, enum acionamento\_sistema\_t
+│   ├── mqtt\_app.h   ← enum estado\_sistema\_t, mqtt\_start(), mqtt\_publish\_status()
 │   └── wifi.h       ← SSID
 └── src/
-    ├── main.c       ← wifi_init_sta() → delay 5 s → mqtt_start() → gpioInit()
-    ├── atuador.c    ← gpioInit(), atualiza_saidas()
-    ├── mqtt_app.c   ← conexão, subscribe, parser de comandos, publish de status
-    └── wifi.c       ← station mode + reconexão automática
+    ├── main.c       ← wifi\_init\_sta() → espera fixa de 5 s → mqtt\_start() → gpioInit()
+    ├── atuador.c    ← gpioInit(), atualiza\_saidas()
+    ├── mqtt\_app.c   ← conexão, assinatura, interpretação de comandos, publicação de status
+    └── wifi.c       ← modo estação + reconexão automática
+
 ```
 
-### 3.2 Máquina de estados **implementada** (comando remoto)
+3.2. Firmware do sensor (`mqtt\_temp\_sense`)
+
+|Item|Valor|
+|-|-|
+|Placa|`esp32-s3-devkitm-1`|
+|Plataforma|PlatformIO `espressif32@6.5.0` (framework ESP-IDF)|
+|Sensor|**DS18B20** (sensor digital de temperatura)|
+|Interface|Barramento **1-Wire** implementado por software (temporização por GPIO), no **GPIO 45**|
+|Resolução configurada|12 bits (0,0625 °C internos); a formatação de saída publica com passo de **0,5 °C**|
+|Formato publicado|String `±XXX.Y` — ex.: `+025.5`, `-010.0`|
+|Calibração / filtragem|Não implementadas (valor bruto do sensor)|
+|Publicação|**Somente sob solicitação** (`GET\_TEMP`); não há publicação periódica|
+|Broker configurado|`mqtt://192.168.0.105:1883` (definido diretamente em `mqtt\_app.c`)|
+|Wi-Fi|SSID `COM\_N\_26.1`, rede aberta; IP por DHCP|
+|Reconexão|Wi-Fi: reconexão imediata a cada desconexão (sem espera progressiva). MQTT: reconexão automática do cliente `esp-mqtt`|
+
+### 3.3 Estrutura
+
+```text
+mqtt\_temp\_sense/
+├── platformio.ini
+├── include/
+│   ├── DS18B20.h    ← pino do sensor, códigos de erro, API do 1-Wire
+│   ├── mqtt\_app.h   ← mqtt\_start(), mqtt\_publish\_temp()
+│   └── wifi.h       ← SSID
+└── src/
+    ├── main.c       ← wifi\_init\_sta() → ds18b20\_init() → set\_resolution(12) → espera fixa de 5 s → mqtt\_start()
+    ├── DS18B20.c    ← protocolo 1-Wire e leitura/formatação da temperatura
+    ├── mqtt\_app.c   ← conexão, assinatura de ESP32S3/COM/get, tratamento do GET\_TEMP
+    └── wifi.c       ← modo estação + reconexão automática
+```
+
+### 3.4 Comportamento
+
+1. Na conexão ao broker, assina `ESP32S3/COM/get` (QoS 1) e publica `ESP32 online` em `ESP32S3/COM/temperatura`.
+2. Ao receber `GET\_TEMP` (com remoção de CR/LF do payload), lê o DS18B20 e publica a temperatura formatada.
+
+---
+
+### 4. Máquina de estados **implementada** (comando remoto)
 
 O firmware atual é um executor de comandos: não lê sensor e não decide nada sozinho. Cada string recebida em `ESP32/COM/Atuador` leva diretamente a um estado, e cada troca de estado publica o status:
 
@@ -90,20 +155,20 @@ stateDiagram-v2
     REFRIGERANDO --> DESLIGADO: "SYSTEM_OFF"
 
     note right of AQUECENDO
-        GPIO18=1, GPIO19=0
+        GPIO18=1, GPIO23=0
         pub "Sistema aquecendo"
     end note
     note right of REFRIGERANDO
-        GPIO18=0, GPIO19=1
+        GPIO18=0, GPIO23=1
         pub "Sistema resfriando"
     end note
     note left of DESLIGADO
-        GPIO18=0, GPIO19=0
+        GPIO18=0, GPIO23=0
         pub "Sistema desligado"
     end note
 ```
 
-| Estado | GPIO18 | GPIO19 | Como se chega |
+| Estado | GPIO18 | GPIO23 | Como se chega |
 |--------|:---:|:---:|----------------|
 | `DESLIGADO` | 0 | 0 | Boot, ou comando `SYSTEM_OFF` |
 | `AQUECENDO` | 1 | 0 | Comando `AQUECIMENTO_ON` |
@@ -115,7 +180,7 @@ stateDiagram-v2
 
 ## 4. Firmware do broker (`embedded_broker`)
 
-Projeto ESP-IDF (template `app-template`) cuja única função é **ser o servidor MQTT do sistema**:
+Projeto ESP-IDF (template `app-template`) cuja única função é **ser a comunicação entre célula MQTT e Node-RED**:
 
 - Dependência: `espressif/mosquitto: "^2.0.20~7"` (Mosquitto real, portado para ESP-IDF pela Espressif).
 - `mosq_broker_run()` roda numa task FreeRTOS dedicada (stack de 8192 bytes, prioridade 5), escutando em `0.0.0.0:1883`, sem TLS.
@@ -142,86 +207,58 @@ A interoperabilidade cross-protocolo acontece no mesmo flow: comandos vindos do 
 
 ## 6. Problemas de Bancada
 
-Quedas de conexão do Node-RED com o Broker
+### Quedas de conexão do Node-RED com o broker
 
-**Status:** resolvido em bancada (14/07/2026)
+**Situação:** resolvido em bancada (14/07/2026)
 **Onde:** célula MQTT — broker embarcado no ESP32
 
----
+### 6.1 Problema
 
-## 6.1. Problema
+Durante os testes de integração, a conexão entre o Node-RED e o broker MQTT caía de forma repetida: conectava, permanecia ativa por alguns segundos, caía, reconectava e caía novamente — em ciclo contínuo.
 
-Durante os testes de integração, a conexão entre o Node-RED e o broker MQTT
-caía de forma repetida: conectava, ficava ativa por alguns segundos, caía,
-reconectava e caía de novo — em ciclo, sem parar.
+No início, suspeitamos de problema de rede (Wi-Fi ou conflito de IP). Porém, o Wi-Fi estava estável e o *ping* para o broker (`192.168.0.105`) respondia normalmente durante as quedas. A conectividade IP permaneceu disponível ao longo de todo o episódio — o que direcionou a investigação para as camadas superiores: a forma como o Node-RED se identificava para o broker.
 
-No início suspeitamos de problema de rede (Wi-Fi ou conflito de IP). Mas o
-Wi-Fi estava estável e o ping para o broker (`192.168.0.105`) respondia
-normalmente durante as quedas. Ou seja, a rede estava boa — o problema estava
-na forma como o Node-RED se identificava para o broker.
+### 6.2 Causa
 
-## 6.2. Causa
+Todo cliente que se conecta a um broker MQTT precisa se identificar com um **Client ID**. O Client ID é um **identificador lógico** utilizado pelo broker para distinguir as conexões e, conforme a configuração, associá-las a sessões MQTT — ele não é uma credencial de autenticação.
 
-Todo cliente que conecta em um broker MQTT precisa se identificar com um
-**Client ID** — um nome que serve para o broker distinguir uma conexão da
-outra. É parecido com um nome de usuário: o broker usa esse ID para saber quem
-é quem, independentemente do IP.
+A regra do MQTT é clara: **não pode haver duas conexões ativas com o mesmo Client ID ao mesmo tempo.** Quando chega uma conexão nova usando um ID que já está em uso, o broker encerra a conexão antiga e mantém a nova. Isso não é um defeito do broker — é o comportamento que a especificação do MQTT exige (MQTT 3.1.1, seção 3.1.4).
 
-A regra do MQTT é clara: **não pode haver duas conexões ativas com o mesmo
-Client ID ao mesmo tempo.** Quando chega uma conexão nova usando um ID que já
-está em uso, o broker derruba a conexão antiga e mantém a nova. Isso não é um
-defeito do broker — é o comportamento que a especificação do MQTT exige.
+No nosso caso, havia **duas conexões do Node-RED usando o mesmo Client ID** (`Node-red`, valor padrão da ferramenta). Como as duas tinham reconexão automática, elas entraram em um ciclo:
 
-No nosso caso, tínhamos **duas conexões do Node-RED usando o mesmo Client ID**
-(`Node-red`, que é o valor padrão). Como as duas tinham reconexão automática,
-elas entraram em um loop:
-
-```
+```text
 Conexão A ("Node-red") conecta  ->  broker aceita
-Conexão B ("Node-red") conecta  ->  broker derruba A
-A reconecta sozinha             ->  broker derruba B
-B reconecta sozinha             ->  broker derruba A
-... (loop infinito)
+Conexão B ("Node-red") conecta  ->  broker encerra A
+A reconecta automaticamente     ->  broker encerra B
+B reconecta automaticamente     ->  broker encerra A
+... (ciclo contínuo)
 ```
 
-Uma ficava derrubando a outra continuamente. Era esse loop que aparecia para
-nós como "a conexão com o broker fica caindo".
+Cada nova conexão encerrava a anterior, continuamente. Era esse ciclo que se manifestava para nós como "a conexão com o broker fica caindo".
 
-**Ponto importante:** o broker não limita o sistema a "um cliente por vez" —
-ele aceita vários clientes ao mesmo tempo sem problema. O que ele não aceita é
-**duas conexões com o mesmo Client ID**. A restrição é sobre a identidade, não
-sobre a quantidade de clientes.
+**Ponto importante:** o broker não limita o sistema a "um cliente por vez" — ele aceita vários clientes simultâneos sem problema. O que ele não aceita é **duas conexões com o mesmo Client ID**. A restrição é sobre a identidade, não sobre a quantidade de clientes.
 
-## 6.3. Como identificar esse problema
+### 6.3 Como identificar esse problema
 
-- No **monitor serial do ESP32**, o broker registra o Client ID de cada
-  conexão. Ver o mesmo ID conectando e desconectando repetidamente é o sinal
-  característico.
-- No **Node-RED**, o status do broker fica alternando entre "connected" e
-  "disconnected" em ciclo curto.
-- **Dica de diagnóstico:** se o ping para o broker continua estável enquanto a
-  conexão MQTT cai, o problema não é de rede — é da configuração dos clientes.
+* No **monitor serial do ESP32**, o broker registra o Client ID de cada conexão. Ver o mesmo ID conectando e desconectando repetidamente é o sinal característico.
+* No **Node-RED**, o estado do broker fica alternando entre "connected" e "disconnected" em ciclo curto.
+* **Dica de diagnóstico:** a permanência do *ping* durante as quedas **reduz a probabilidade** de uma falha geral de conectividade IP e **direciona a investigação** para as camadas TCP e MQTT e para a configuração dos clientes. Ela não elimina, por si só, outras hipóteses (perda seletiva de pacotes TCP, problemas na porta 1883, sobrecarga do broker, esgotamento de recursos), mas indica por onde começar.
 
-## 6.4. Solução
+### 6.4 Solução
 
-Demos um **Client ID diferente para cada conexão** do Node-RED, usando sufixos:
+Foi atribuído um **Client ID diferente para cada conexão** do Node-RED, usando sufixos:
 
-| Conexão              | ID antigo  | ID novo      |
-|----------------------|------------|--------------|
-| Node-RED — conexão 1 | `Node-red` | `Node-red_A` |
-| Node-RED — conexão 2 | `Node-red` | `Node-red_B` |
-| Conexões futuras     | `Node-red` | `Node-red_C`…|
+|Conexão|ID antigo|ID novo|
+|-|-|-|
+|Node-RED — conexão 1|`Node-red`|`Node-red\\\_A`|
+|Node-RED — conexão 2|`Node-red`|`Node-red\\\_B`|
+|Conexões futuras|`Node-red`|`Node-red\\\_C`…|
 
-Com IDs únicos, cada conexão passou a ser tratada de forma independente e o
-broker manteve todas ativas ao mesmo tempo. Isso eliminou o loop.
+Com IDs únicos, cada conexão passou a ser tratada de forma independente e o broker manteve todas ativas ao mesmo tempo, eliminando o ciclo de quedas.
 
-## 6.5. Por que os ESP32 não tiveram esse problema
+### 6.5 Por que os ESP32 não tiveram esse problema
 
-Os firmwares dos ESP32 (broker, atuador e sensor) **não definem um Client ID
-fixo**. Nesse caso, o ESP-IDF gera um ID automático baseado no chip
-(`ESP32_<código do chip>`), que é único para cada placa. Por isso eles nunca
-colidem entre si. O risco de conflito existe só quando o ID é escolhido
-manualmente — como no Node-RED e em ferramentas de teste.
+Os firmwares dos ESP32 (broker, atuador e sensor) **não definem um Client ID fixo**. Nesse caso, o ESP-IDF gera um ID automático baseado no chip (`ESP32\\\_<código do chip>`), que é único para cada placa. Por isso eles nunca colidem entre si. O risco de conflito existe apenas quando o ID é escolhido manualmente — como no Node-RED e em ferramentas de teste.
 
 ## 6.6. Pendências 
 - **Flows antigos ainda usam o ID repetido:** `test_update/trabalho_COM.json` e
@@ -234,13 +271,9 @@ manualmente — como no Node-RED e em ferramentas de teste.
 
 ## 6.7. O que aprendemos
 
-- Nem toda queda de conexão é problema de rede. O MQTT gerencia as conexões
-  pelo Client ID, e IDs repetidos causam quedas que parecem instabilidade de
-  Wi-Fi, mas não são.
-- O broker agiu corretamente o tempo todo — derrubar a conexão antiga quando um
-  ID se repete é uma regra do próprio protocolo.
-- Vale diagnosticar por partes: com o ping estável e a conexão MQTT caindo, dá
-  para concluir que o problema está na configuração dos programas, não na rede.
+* Nem toda queda de conexão é problema de rede. O MQTT gerencia as conexões pelo Client ID, e IDs repetidos causam quedas que se parecem com instabilidade de Wi-Fi, mas não são.
+* O broker agiu corretamente o tempo todo — encerrar a conexão antiga quando um ID se repete é uma regra do próprio protocolo.
+* Vale diagnosticar por camadas: com a conectividade IP confirmada (*ping* estável) e a conexão MQTT caindo, a investigação se concentra na configuração dos clientes e nas camadas superiores, em vez de na infraestrutura de rede.
 ---
 
 ## 7. Conteúdo desta pasta
