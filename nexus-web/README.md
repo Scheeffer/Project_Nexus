@@ -22,7 +22,9 @@ o website possui duas entradas, a geral e a local. A entrada geral é aquela que
 <p align="center"><b>Configuração .htacess do servidor PHP local Apache</b></p>
 <br><br>
 
-A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents) através da URL, pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` tamém possui códigos html e javascript, e o código javascript realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, o qual é o endereço do próprio computador, e salva o objeto no banco de dados ele for retornado. Deste modo é possível fazer requisições as portas do próprio computador em que o website for acessado e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real. Se o Node-RED vir a fechar, travar ou reiniciar, a função sempre realizará um "ultimo suspiro" e retornará o objeto padrão com todos os campos zerados ou falso. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender das necessidades do projetista. E
+A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents) através da URL, pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` tamém possui códigos html e javascript, e o código javascript realiza requisições periodicamente, através de uma função setInterval() dentro da função set_data(), HTTP ao IP de loopback `127.0.0.1`, conhecido como localhost, o qual é o endereço do próprio computador, e salva o objeto JSON no banco de dados se ele for retornado. Deste modo é possível fazer requisições as portas do próprio computador em que o website for acessado e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real. Se o Node-RED vir a fechar, travar ou reiniciar, o Node sempre realizará um "ultimo suspiro" e retornará o objeto padrão com todos os campos zerados ou falso. O IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender das necessidades do projetista.
+
+Ambos arquivos `index.php` e `upload.php` realizam requisições javascript por metodos **POST** ao arquivo `controller.php` que realiza alguma checagens na requisição, e checa também a ação a ser tomada, e direciona devimente, através de um swich(), os metodos a serem chamados pelo arquivo `backend.php` que está importado no mesmo.
 
 <p align="center"> <img src="figs/url_fetch.png" alt="diagrama" width="100%"></p>
 <p align="center"><b>Endereço da requisição http</b></p>
@@ -69,7 +71,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
       </code></pre>
       
           const defaultState = {
-            deviceId: "NEXUS Central Node V2",
+            deviceID: "NEXUS Central Node V2",
         
             PROFINET: {
                 online: true,
@@ -93,7 +95,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
       
         const saved = flow.get("protocolState") || {};
         const response = {
-            deviceId: saved.deviceId || defaultState.deviceId,
+            deviceID: saved.deviceID || defaultState.deviceID,
             PROFINET: {
                 ...defaultState.PROFINET,
                 ...(saved.PROFINET || {})
@@ -262,7 +264,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
 
 ### Politica de segurança do browser
 
-A CORS (Cross Origin Resource Sharing) é um mecanismo de segurança do browser que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor. Dependendo do computador e de sua configuração a falta desta explicidade pode gerar um bloqueio, e consequente erro, impossibilitando a comunicação entre o Website e o Node-RED. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario)/.node-red` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo(HTTP/HTTPS) + dominio + porta (Padrão `:1880` para o Node-Red. Coloque sempre a porta que estiver utilizando). Note que mesmo que o website que realiza o upload possui o diretorio `/upload`, ele não entra como endereço, apenas o endereço absoluto.
+A CORS (Cross Origin Resource Sharing) é um mecanismo de segurança do browser que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor. Dependendo do computador e de sua configuração a falta desta explicidade pode gerar um bloqueio, e consequente erro, impossibilitando a comunicação entre o Website e o Node-RED. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario)/.node-red` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo (HTTP/HTTPS) + dominio. Note que mesmo que o website que realiza o upload possui o diretorio `/upload`, ele não entra como endereço, apenas o endereço absoluto.
 
 <table>
   <tr>
