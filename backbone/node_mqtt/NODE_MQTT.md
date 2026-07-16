@@ -36,7 +36,7 @@ Este fluxo possui 2 nós `mqtt out` que compartilham o mesmo servidor cadastrado
 |------|----|----------------|
 | `nexus/mqtt/actuator/command` | `string` | Solicitar alteração de estado do atuador do sistema. | 
 | `nexus/mqtt/sensor/request` | `string` | Solicitar aquisição da temperatura atual do sensor. |
-O tópico `ESP32S3/COM/Atuadores` pode enviar as strings `AQUECIMENTO_ON`, `REFRIGERACAO_ON` e `SYSTEM_OFF`, as quais são tratadas pelo servidor para alterar o estado do atuador.
+O tópico `nexus/mqtt/actuator/command` pode enviar as strings `AQUECIMENTO_ON`, `REFRIGERACAO_ON` e `SYSTEM_OFF`, as quais são encaminhadas pelo servidor MQTT ao ESP32 atuador, que as interpreta e altera seu estado.
 O tópico `nexus/mqtt/actuator/command` pode enviar as strings `AQUECIMENTO_ON`, `REFRIGERACAO_ON` e `SYSTEM_OFF`, as quais são encaminhadas pelo servidor MQTT ao ESP32 atuador, que as interpreta e altera seu estado.
 O tópico `nexus/mqtt/sensor/request` pode enviar a string `GET_TEMP`, que é encaminhada ao sensor para solicitar a aquisição da temperatura.
 
