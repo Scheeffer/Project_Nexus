@@ -33,11 +33,11 @@ Este fluxo possui 2 nós `mqtt out` que compartilham o mesmo servidor cadastrado
 
 | Tópico | Tipo | Função | 
 |------|----|----------------|
-| `ESP32S3/COM/Atuadores` | `string` | Solicitar alteração de estado do atuador do sistema. | 
-| `ESP32S3/COM/get` | `string` | Solicitar aquisição da temperatura atual do sensor. | 
-
+| `nexus/mqtt/actuator/command` | `string` | Solicitar alteração de estado do atuador do sistema. | 
+| `nexus/mqtt/sensor/request` | `string` | Solicitar aquisição da temperatura atual do sensor. |
 O tópico `ESP32S3/COM/Atuadores` pode enviar as strings `AQUECIMENTO_ON`, `REFRIGERACAO_ON` e `SYSTEM_OFF`, as quais são tratadas pelo servidor para alterar o estado do atuador.
-O tópico `ESP32S3/COM/get` pode enviar a string `GET_TEMP`, que é tratada pelo servidor para solicitar a aquisição da temperatura.
+O tópico `nexus/mqtt/actuator/command` pode enviar as strings `AQUECIMENTO_ON`, `REFRIGERACAO_ON` e `SYSTEM_OFF`, as quais são encaminhadas pelo servidor MQTT ao ESP32 atuador, que as interpreta e altera seu estado.
+O tópico `nexus/mqtt/sensor/request` pode enviar a string `GET_TEMP`, que é encaminhada ao sensor para solicitar a aquisição da temperatura.
 
 ## Tipo 2 - Nó mqtt in
 
@@ -49,11 +49,11 @@ Este fluxo possui 2 nós `mqtt in` que compartilham o mesmo servidor cadastrado.
 
 | Tópico | Tipo | Função | 
 |------|----|----------------|
-| `ESP32S3/COM/Status` | `string` | Atualização do valor de status dos atuadores. | 
-| `ESP32S3/COM/temperatura` | `string` | Atualização do valor de temperatura. | 
+| `nexus/mqtt/actuator/state` | `string` | Atualização do valor de status dos atuadores. | 
+| `nexus/mqtt/sensor/temperature` | `string` | Atualização do valor de temperatura. |
 
-O tópico `ESP32S3/COM/Status` recebe todas as atualizações tratadas pelo servidor MQTT referentes ao status dos atuadores, que podem ser `Sistema aquecendo`, `Sistema resfriando` e `Sistema desligado`.
-O tópico `ESP32S3/COM/temperatura` recebe todas as atualizações de temperatura registradas pelo servidor MQTT.
+O tópico `nexus/mqtt/actuator/state` recebe todas as atualizações publicadas pelo ESP32 atuador e encaminhadas pelo servidor MQTT, que podem ser `Sistema aquecendo`, `Sistema resfriando`, `Sistema desligado`, `Aguardando comando` e `ESP32 online` (esta última publicada na conexão do atuador).
+O tópico `nexus/mqtt/sensor/temperature` recebe todas as atualizações de temperatura encaminhadas pelo servidor MQTT.
 
 ## Tipo 3 - Nó s7 in
 
@@ -113,7 +113,7 @@ Os nós `http response` são necessários exclusivamente para fechar o ciclo de 
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_http_request_mqtt.png" width="400">
 
-O fluxo MQTT possui um nó `http request` responsável por receber a atualização do status dos atuadores e da temperatura oriundos dos nós `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura`, respectivamente. Em sua configuração, o método utilizado é o "POST". Seguem as demais definições:
+O fluxo MQTT possui um nó `http request` responsável por receber a atualização do status dos atuadores e da temperatura oriundos dos nós `nexus/mqtt/actuator/state` e `nexus/mqtt/sensor/temperature`, respectivamente. Em sua configuração, o método utilizado é o "POST". Seguem as demais definições:
 
 | Label | URL | Dado | 
 |------|----------|----------|
@@ -215,7 +215,7 @@ return msg;
 > ⚠️ A definição `msg.payload = "AQUECIMENTO_ON"`, visível no script do nó `function 4`, é a variável que deve ser alterada para `msg.payload = "REFRIGERACAO_ON"` e `msg.payload = "SYSTEM_OFF"` nos nós `function 3` e `function 1`, respectivamente.
 
 ##### `String/Real`
-Esta *function* é responsável pela conversão dos dados de temperatura, enviados pelo nó `mqtt in` `ESP32S3/COM/temperatura` no formato `string`, para o formato `real`, encaminhando o resultado para o nó `s7 out` `FDK_temp`.
+Esta *function* é responsável pela conversão dos dados de temperatura, enviados pelo nó `mqtt in` `nexus/mqtt/sensor/temperature` no formato `string`, para o formato `real`, encaminhando o resultado para o nó `s7 out` `FDK_temp`.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_mqtt_state_nexus_web.png" width="400">
 
@@ -242,7 +242,7 @@ if (!isNaN(numeroReal)) {
 
 #### Tipo 9 - Envio de dados para http request
 
-Este nó *function* é responsável por receber os dados dos nós `mqtt in` `ESP32S3/COM/Status` e `ESP32S3/COM/temperatura` e processá-los para serem direcionados ao nó `http request` da rede CAN.
+Este nó *function* é responsável por receber os dados dos nós `mqtt in` `nexus/mqtt/actuator/state` e `nexus/mqtt/sensor/temperature` e processá-los para serem direcionados ao nó `http request` da rede CAN.
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_function_envio_http_mqtt.png" width="400">
 
@@ -307,19 +307,19 @@ Nos nós de texto, o campo `Group` também define o posicionamento (coluna `REDE
 
 | Label | Formato do Valor | Origem do Dado |
 |----------------|--------------|----------|
-| `temperatura` | `{{msg.payload}}` | Dado de temperatura encaminhado pelo nó `mqtt in` `ESP32S3/COM/temperatura`. |
+| `temperatura` | `{{msg.payload}}` | Dado de temperatura encaminhado pelo nó `mqtt in` `nexus/mqtt/sensor/temperature`. |
 | `Delay` | `{{msg.payload}}` | Dado de tempo (em ms) encaminhado pelo nó *function* `Para Cronômetro e Mede (ms)`. |
-| `text` | `{{msg.payload}}` | Dado de status dos atuadores encaminhado pelo nó `mqtt in` `ESP32S3/COM/Status`. |
+| `text` | `{{msg.payload}}` | Dado de status dos atuadores encaminhado pelo nó `mqtt in` `nexus/mqtt/actuator/state`. |
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_text_mqtt.png" width="400">
 
 ##### Gráfico (*Chart*)
 
-O nó gráfico foi configurado para receber os dados do nó `mqtt in` `ESP32S3/COM/temperatura`, exibindo os valores visualmente com histórico de amostragem.
+O nó gráfico foi configurado para receber os dados do nó `mqtt in` `nexus/mqtt/sensor/temperature`, exibindo os valores visualmente com histórico de amostragem.
 
 | Label | Origem do Dado |
 |----------------|--------------|
-| `chart` | Dado de temperatura encaminhado pelo nó `mqtt in` `ESP32S3/COM/temperatura`. |
+| `chart` | Dado de temperatura encaminhado pelo nó `mqtt in` `nexus/mqtt/sensor/temperature`. |
 
 <img src="https://github.com/Scheeffer/Project_Nexus/blob/main/backbone/figs/config_chart_mqtt.png" width="400">
 
