@@ -14,7 +14,8 @@ Sobre os dados do servidor MQTT:
 * `192.168.0.105` - Configuração do endereço de IP do servidor MQTT.
 * `:1883` - Configuração da porta do servidor MQTT.
 * `MQTT V3.1.1` - Protocolo de uso do servidor MQTT.
-* Configuração do ID de cliente `Node-red` estabelecida no servidor MQTT.
+* Configuração do ID de cliente estabelecida no servidor MQTT.
+> **Atenção — Client ID único por conexão:** não pode haver duas conexões ativas com o mesmo Client ID no mesmo broker: a conexão nova encerra a antiga, gerando um ciclo de quedas. Por isso, cada conexão do Node-RED deve receber um ID com sufixo próprio (`Node-red_A`, `Node-red_B`, ...). O problema, a causa e a solução estão documentados na [seção "Problemas de bancada" do README da célula MQTT](../../rede-mqtt/README.md#6-problemas-de-bancada).
 
 Com essa etapa concluída, segue a explicação do fluxo MQTT.
 
