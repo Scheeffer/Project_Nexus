@@ -10,19 +10,19 @@
 
 Para disponibilizar os resultados obtidos do Node central sem depender de um dashboard local foi construído um site capaz de requisitar os dados localmente para a porta de onde o `Node-RED` central está rodando, salvá-los em um banco de dados e disponibilizá-los em um website para qualquer indivíduo que acesse o domínio na internet, seja pelo computador ou pelo celular.
 
-<p align="center" style="border-radius: 10%;"> <img src="figs/website.png" alt="diagrama" width="100%"></p>
+<p align="center"> <img src="figs/website.png" alt="diagrama" width="100%"></p>
 <p align="center"><b>Website</b></p>
 <br><br>
 
 ## 2	Funcionamento
 
-o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. o website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo o mais comum `index`, como na figura abaixo. Deste modo o dashboard online para o publico geral presente no arquivo `index.php` será sempre disponibilizada se não houver especificação do arquivo na URL.
-
+o website possui duas entradas, a geral e a local. A entrada geral é aquela que é acessado como qualquer site, a partir de sua url pura, por exemplo exemplo: www.google.com. O website funciona de modo em que as instruções da sua configuração `.htacess` do servidor retornem para o usuario, a partil da URL dada, qualquer arquivo que se encaixe no padrão de nome configurado, sendo o mais comum `index`, como na figura abaixo. Deste modo o dashboard online para o publico geral presente no arquivo `index.php` será sempre disponibilizada se não houver especificação do arquivo na URL, enquanto a URL de upload precisa ser especificada. O arquivo `index.php` apesar de ter a extensão .php admite em seu arquivo código html e javascript, portanto quando o host retornar a pagina presente no mesmo, o javascript presente irá começar a executar queries (requisições ao banco de dados) periodicamente através de uma função `setInterval()` que é chamada dentro da própria função `get_data()` cada vez que a requisição da query é finalizada, tendo ela sido recebida ou não. O intervalo de tempo pode ser ajustado para aquele que o desenvolvedor achar necessario, o tempo atual é de 3 segundos pois estavamos receoso que durante os testes as milhares de requisições acumuladas iriam fazer o host travar o website. Esse problema foi. de uma certa forma, controna através de uma função que escuta pela mudança do estado `"visibilitychange"`, assim quando a aba do website não estiver em foco as requisções são cessadas até que o usuario volte ao website e as requisições retornam a ser realizadas.
+ 
 <p align="center"> <img src="figs/htaccess.png" alt="diagrama" width="500"></p>
 <p align="center"><b>Configuração .htacess do servidor PHP local Apache</b></p>
 <br><br>
 
-A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents), pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real . o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender das necessidades do projetista. 
+A segunda entrada é a de upload de dados. Através de um sistema de armazernamento similar ao de diretorios é possivel acessar diferentes arquivos dentro da pasta `htdocs` (Hyper Text Documents), pasta que contem todos os arquivos de seu website. Portanto selecionando a URL + `/arquivo`, podemos entrar na pagina de upload de dados ao banco de dados do servidor. O arquivo `/upload.php` tamém possui códigos html e javascript, o código javascript realiza requisições http ao IP de loopback `127.0.0.1`, conhecido como localhost, é o endereço do próprio computador. Deste modo é possível fazer requisições as portas do próprio computador em que o website for acessado e acessar a porta 1880, porta padrão por onde o Node-RED estará rodando e disponibilizando os dados em tempo real. Se o Node-RED vir a fechar, travar ou reiniciar, a função sempre realizará um "ultimo suspiro" e retornará o objeto padrão com todos os campos zerados ou falso. o IP `127.0.0.1`, porta `1880` e diretorio `/api/state` podem vir a ser mudados a depender das necessidades do projetista. Este website é uma solução simples para um problema que tende a uma alta complexidade, isto é, devido a situação academica não haverá muitos usuarios se não aqueles que estão ativamente coordenando ou desenvolvendo o projeto, não há segurança e diversos problemas que ocorrem com baixa frequencia são descartados ou adiados. 
 
 <p align="center"> <img src="figs/url_fetch.png" alt="diagrama" width="100%"></p>
 <p align="center"><b>Endereço da requisição http</b></p>
@@ -218,7 +218,7 @@ para que Node-RED responda as requisições foi criado funções em paralelo com
         protocolState.MQTT = {
             ...(protocolState.MQTT || {}),
             online: true,
-            status: String(msg.payload)
+            estado: String(msg.payload)
         };
         
         flow.set("protocolState", protocolState);
