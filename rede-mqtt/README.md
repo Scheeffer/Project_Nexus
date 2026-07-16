@@ -4,7 +4,7 @@
 
 ## 1. Arquitetura da célula MQTT
 
-A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos: A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos:
+A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos:
 
 | Nó | Papel | IP |
 |----|----------|-------|
@@ -60,8 +60,7 @@ Sensor → Broker → Node-RED → Broker → Atuador
 ## 2. Tabela de tópicos (contrato da célula)
 
 | Tópico | Direção (visão do broker) | Payload (string) | Publicador | Assinantes |
-|--------|--------------------------|-------------------|------------|-----------|
-| `nexus/mqtt/sensor/temperature` | entrada de telemetria | temperatura no formato `±XXX.Y` (ex.: `+025.5`); na conexão publica `ESP32 online` | ESP32-S3 sensor | Node-RED |
+|--------|--------------------------|-------------------|------------|-----------|\n| `nexus/mqtt/sensor/temperature` | entrada de telemetria | temperatura no formato `±XXX.Y` (ex.: `+025.5`); na conexão publica `ESP32 online` | ESP32-S3 sensor | Node-RED |
 | `nexus/mqtt/sensor/request` | comando ao sensor | `GET_TEMP` | Node-RED | ESP32-S3 sensor |
 | `nexus/mqtt/actuator/command` | comando ao atuador | `AQUECIMENTO_ON` · `REFRIGERACAO_ON` · `SYSTEM_OFF` | Node-RED | ESP32 atuador |
 | `nexus/mqtt/actuator/state` | estado do atuador | `Sistema aquecendo` · `Sistema resfriando` · `Sistema desligado` · `Aguardando comando` · `ESP32 online` (na conexão) | ESP32 atuador | Node-RED |
@@ -88,7 +87,7 @@ ESP32\_act/
 │   ├── mqtt\_app.h   ← enum estado\_sistema\_t, mqtt\_start(), mqtt\_publish\_status()
 │   └── wifi.h       ← SSID
 └── src/
-    ├── main.c       ← wifi\_init\_sta() → espera fixa de 5 s → mqtt\_start() → gpioInit()
+    ├── main.c       ← gpioInit() → wifi\_init\_sta() → espera fixa de 5 s → mqtt\_start()
     ├── atuador.c    ← gpioInit(), atualiza\_saidas()
     ├── mqtt\_app.c   ← conexão, assinatura, interpretação de comandos, publicação de status
     └── wifi.c       ← modo estação + reconexão automática
@@ -180,7 +179,8 @@ Projeto ESP-IDF (template `app-template`) cuja única função é **ser a comuni
 - Dependência: `espressif/mosquitto: "^2.0.20~7"` (Mosquitto real, portado para ESP-IDF pela Espressif).
 - `mosq_broker_run()` roda numa task FreeRTOS dedicada (stack de 8192 bytes, prioridade 5), escutando em `0.0.0.0:1883`, sem TLS.
 - Um callback (`handle_message_cb`) loga no monitor serial **toda mensagem que atravessa o broker** — cliente, tópico, QoS, retain e payload. Na apresentação isso funciona como um *sniffer* de camada de aplicação.
-  
+
+**Estado seguro em desconexão:** ao receber o evento `MQTT_EVENT_DISCONNECTED` (queda do broker, Wi-Fi ou cliente MQTT), o firmware chama `atualiza_saidas(DESLIGADO)`, zerando ambas as saídas. Assim, se a comunicação com o Node-RED for perdida, o atuador retorna automaticamente ao estado seguro desligado, evitando operação indefinida dos aquecedores ou ventiladores.
 ---
 
 ## 5. Integração com o dashboard (Node-RED)
@@ -189,12 +189,12 @@ O Node-RED (`192.168.0.100`) conecta-se ao broker `192.168.0.105:1883` como clie
 
 | Widget | Nó dashboard | Fluxo |
 |--------|--------------|-------|
-| Botão **Aquecimento** | `ui_button` → `ESP32/COM/Atuador` | payload `AQUECIMENTO_ON` |
-| Botão **Refrigeração** | `ui_button` → `ESP32/COM/Atuador` | payload `REFRIGERACAO_ON` |
-| Botão **Desligar** | `ui_button` → `ESP32/COM/Atuador` | payload `SYSTEM_OFF` |
-| Botão **Leitura temperatura** | `ui_button` → `ESP32S3/COM/get` | payload `GET_TEMP` |
-| Texto **Status** | `ESP32/COM/Status` → `ui_text` | espelho do estado do atuador |
-| Texto + **Chart temperatura** | `ESP32S3/COM/temperatura` → `ui_text`/`ui_chart` | telemetria com histórico |
+| Botão **Aquecimento** | `ui_button` → `nexus/mqtt/actuator/command` | payload `AQUECIMENTO_ON` |
+| Botão **Refrigeração** | `ui_button` → `nexus/mqtt/actuator/command` | payload `REFRIGERACAO_ON` |
+| Botão **Desligar** | `ui_button` → `nexus/mqtt/actuator/command` | payload `SYSTEM_OFF` |
+| Botão **Leitura temperatura** | `ui_button` → `nexus/mqtt/sensor/request` | payload `GET_TEMP` |
+| Texto **Status** | `nexus/mqtt/actuator/state` → `ui_text` | espelho do estado do atuador |
+| Texto + **Chart temperatura** | `nexus/mqtt/sensor/temperature` → `ui_text`/`ui_chart` | telemetria com histórico |
 
 A interoperabilidade cross-protocolo acontece no mesmo flow: comandos vindos do **CLP PROFINET** (`s7 in`, bits `DB7,X0.0..0.2`) e da **célula CAN** (`http in` `/mqtt_aquecer`, `/mqtt_resfriar`, `/mqtt_desligar`) convergem para os mesmos nós `function` que publicam em `ESP32/COM/Atuador` — ou seja, **qualquer rede opera o atuador desta célula**, e a temperatura desta célula é escrita de volta no CLP (`DB7,REAL2`) e enviada ao ESP da célula CAN via HTTP.
 
