@@ -264,7 +264,7 @@ Para que Node-RED responda as requisições foi criado funções em paralelo com
 
 ### Politica de segurança do browser
 
-A CORS (Cross Origin Resource Sharing) é um mecanismo de segurança do browser que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor. Dependendo do computador e de sua configuração a falta desta explicidade pode gerar um bloqueio, e consequente erro, impossibilitando a comunicação entre o Website e o Node-RED. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario)/.node-red` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo (HTTP/HTTPS) + dominio. Note que mesmo que o website que realiza o upload possui o diretorio `/upload`, ele não entra como endereço, apenas o endereço absoluto.
+A CORS (Cross Origin Resource Sharing) é um mecanismo de segurança do browser que bloqueia código Javascript de frontend de ler respostas de diferentes origens a não ser que seja explicitamente habilitado pelo servidor. Dependendo do computador e de sua configuração a falta desta explicidade pode gerar um bloqueio, e consequente erro, impossibilitando a comunicação entre o Website e o Node-RED. Portanto, dentro do parametro `origin` do objeto `httpNodeCors` no arquivo setting.js do Node-RED, presente no diretorio `(usuario)/.node-red` do seu computador, o desenvolvedor deve colocar o endereço completo do website que irá utilizar, protocolo (HTTP/HTTPS) + dominio. Note que mesmo que o website que realiza o upload e acessa o localhost possui o diretório `/upload`, ele não entra como endereço, apenas o endereço absoluto.
 
 <table>
   <tr>
