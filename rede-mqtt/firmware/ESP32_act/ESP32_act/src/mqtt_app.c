@@ -6,8 +6,8 @@
 
 #include "esp_log.h"
 
-#define TOPICO_PUB "ESP32/COM/Status"
-#define TOPICO_SUB "ESP32/COM/Atuador"
+#define TOPICO_PUB "nexus/mqtt/actuator/state"
+#define TOPICO_SUB "nexus/mqtt/actuator/command"
 
 estado_sistema_t estado_atual;
 acionamento_sistema_t atuador_atual;
@@ -119,8 +119,6 @@ static void mqtt_event_handler(
             ESP_LOGI("MQTT","Desconectado");
             /**abre os reles */
             atualiza_saidas(DESLIGADO);
-            /*Tenta iniciar uma nova conexção com o brocker*/
-            mqtt_start();
         break;
     }
 }

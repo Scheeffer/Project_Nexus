@@ -3,8 +3,8 @@
 #include "mqtt_client.h"
 #include "esp_log.h"
 #include "DS18B20.h"
-#define TOPICO_PUB "ESP32S3/COM/temperatura"
-#define TOPICO_SUB "ESP32S3/COM/get"
+#define TOPICO_PUB "nexus/mqtt/sensor/temperature"
+#define TOPICO_SUB "nexus/mqtt/sensor/request"
 
 static const char *TAG = "MQTT";
 char buffer[9];
