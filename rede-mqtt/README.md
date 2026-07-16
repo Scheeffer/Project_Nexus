@@ -4,7 +4,7 @@
 
 ## 1. Arquitetura da célula MQTT
 
-A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos:A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos:
+A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos: A célula utiliza uma rede local Wi-Fi baseada em TCP/IP (SSID COM_N_26.1, provida pelo ponto de acesso TP-Link em 192.168.0.167). Sobre essa infraestrutura, os dispositivos trocam mensagens por meio do protocolo MQTT, utilizando um broker embarcado em um ESP32. A célula é composta por três nós com papéis distintos:
 
 | Nó | Papel | IP |
 |----|----------|-------|
@@ -61,10 +61,10 @@ Sensor → Broker → Node-RED → Broker → Atuador
 
 | Tópico | Direção (visão do broker) | Payload (string) | Publicador | Assinantes |
 |--------|--------------------------|-------------------|------------|-----------|
-| `ESP32S3/COM/temperatura` | entrada de telemetria | valor numérico em texto (ex.: `23.75`) | ESP32-S3 sensor | Node-RED |
-| `ESP32S3/COM/get` | comando ao sensor | `GET_TEMP` | Node-RED | ESP32-S3 sensor |
-| `ESP32/COM/Atuador` | comando ao atuador | `AQUECIMENTO_ON` · `REFRIGERACAO_ON` · `SYSTEM_OFF` | Node-RED | ESP32 atuador |
-| `ESP32/COM/Status` | estado do atuador | `Sistema aquecendo` · `Sistema resfriando` · `Sistema desligado` · `ESP32 online` (no connect) | ESP32 atuador | Node-RED |
+| `nexus/mqtt/sensor/temperature` | entrada de telemetria | temperatura no formato `±XXX.Y` (ex.: `+025.5`); na conexão publica `ESP32 online` | ESP32-S3 sensor | Node-RED |
+| `nexus/mqtt/sensor/request` | comando ao sensor | `GET_TEMP` | Node-RED | ESP32-S3 sensor |
+| `nexus/mqtt/actuator/command` | comando ao atuador | `AQUECIMENTO_ON` · `REFRIGERACAO_ON` · `SYSTEM_OFF` | Node-RED | ESP32 atuador |
+| `nexus/mqtt/actuator/state` | estado do atuador | `Sistema aquecendo` · `Sistema resfriando` · `Sistema desligado` · `Aguardando comando` · `ESP32 online` (na conexão) | ESP32 atuador | Node-RED |
 
 ---
 
